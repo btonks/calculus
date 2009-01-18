@@ -1,0 +1,41 @@
+\chapter{Photo Credits}
+
+\footnotesize
+
+Except as specifically noted below or in a parenthetical credit in the
+caption of a figure, all the illustrations in this book are
+under my own copyright, and are copyleft licensed under the same license
+as the rest of the book. 
+
+In some cases it's clear from the date that the
+figure is public domain, but I don't know the name of the artist or photographer; I would
+be grateful to anyone who could help me to give proper credit.
+I have assumed that images
+that come from U.S. government web pages are copyright-free, since products
+of federal agencies fall into the public domain.
+I've included some
+public-domain paintings; photographic reproductions of them are not
+copyrightable in the U.S. (Bridgeman Art Library, Ltd. v. Corel Corp.,
+36 F. Supp. 2d 191, S.D.N.Y. 1999).
+
+\begin{sloppypar}
+\noindent
+
+\newcommand{\photocredit}[1]{\footnotesize{(\textit{#1})}}% for use in captions
+% for use in photo credits appendix:
+\newcommand{\docred}[3]{\textbf{#1} \emph{#2:} #3.\quad}
+\newcommand{\cred}[3]{\docred{\pageref{fig:#1}}{#2}{#3}}
+\newcommand{\credtwo}[4]{\docred{\pageref{fig:#1},\pageref{fig:#2}}{#3}{#4}}
+\newcommand{\credthree}[5]{\docred{\pageref{fig:#1},\pageref{fig:#2},\pageref{fig:#3}}{#4}{#5}}
+
+\textbf{cover:} Daniel Schwen, 2004; GFDL licensed
+\cred{gauss}{Gauss}{C.A. Jensen (1792-1870)}
+\cred{newton}{Newton}{Godfrey Kneller, 1702}
+\cred{leibniz}{Leibniz}{Bernhard Christoph Francke, 1700}
+\cred{berkeley}{Berkeley}{public domain?}
+\cred{robinson}{Robinson}{source: www-groups.dcs.st-and.ac.uk, copyright status unknown}
+\cred{euler}{Euler}{Emanuel Handmann, 1753}
+\cred{blondin}{tightrope walker}{public domain, since Blondin died in 1897}
+
+\end{sloppypar}\normalsize
+

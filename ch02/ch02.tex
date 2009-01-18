@@ -1,0 +1,1456 @@
+%%chapter%% 02
+\chapter{To infinity --- and beyond!}
+
+Little kids readily pick up the idea of infinity.\index{infinity}
+``When I grow up, I'm
+gonna have a million Barbies.'' ``Oh yeah? Well, I'm gonna have a billion.''
+``Well, I'm gonna have infinity Barbies.'' ``So what? I'll have two infinity of them.''
+Adults laugh, convinced that infinity, $\infty$, is the biggest number, so $2\infty$
+can't be any bigger. This is the idea behind the joke in the movie Toy Story. Buzz
+Lightyear's slogan is ``To infinity --- and beyond!'' We assume there \emph{isn't}
+any beyond. Infinity is supposed to be the biggest there is, so by definition there
+can't be anything bigger, right?
+
+\section{Infinitesimals}\index{infinitesimal number}
+
+\smallfig[t]{leibniz}{Gottfried Leibniz (1646-1716)}%
+Actually mathematicians have invented several many different logical systems for working
+with infinity, and in most of them infinity does come in different sizes and flavors.
+Newton, as well as the German mathematician Leibniz\index{Leibniz, Gottfried}
+who invented calculus independently,\footnote{There is
+some dispute over this point. Newton and his supporters claimed that Leibniz plagiarized Newton's
+ideas, and merely invented a new notation for them.}
+had a strong intuitive idea that calculus was really about numbers that were infinitely
+small: infinitesimals, the opposite of infinities. For instance, consider
+the number $1.1^2=1.21$. That 2 in the first decimal place is the same 2 that
+appears in the expression $2t$ for the derivative of $t^2$.
+
+%%graph%% close-up func=x**2 format=eps xlo=0.6 xhi=1.401 ylo=0.6 yhi=1.401 with=lines x=t y=x samples=300 xtic_spacing=.2 ytic_spacing=.2 border=1 ; func=2.1*x-1.1 with=lines
+\smallfig{close-up}{A close-up view of the function $x=t^2$, showing the line that connects the points $(1,1)$ and $(1.1,1.21)$.}
+
+Figure  \figref{close-up} shows the idea visually. The line connecting the points $(1,1)$ and $(1.1,1.21)$ is almost
+indistinguishable from the tangent line on this scale. Its slope is $(1.21-1)/(1.1-1)=2.1$, which is very close to the
+tangent line's slope of 2. It was a good approximation because the points were close together, separated by only
+0.1 on the $t$ axis.
+
+If we needed a better approximation, we could try calculating $1.01^2=1.0201$. The slope of the
+line connecting the points $(1,1)$ and $(1.01,1.0201)$ is 2.01, which is even closer to the slope of the tangent line.
+
+\smallfig[b]{t-squared-geometrically}{A geometrical interpretation of the derivative of $t^2$.}%
+%
+Another method of visualizing the idea is that we can interpret $x=t^2$ as the area of a square with sides of length $t$,
+as suggested in figure \figref{t-squared-geometrically}. We increase $t$ by an infinitesimally small number $\der t$.
+The $\der$ is Leibniz's notation for a very small difference,\index{Leibniz notation!infinitesimal}
+and $\der t$ is to be read is a single symbol,
+``dee-tee,'' not as a number $d$ multiplied by a number $t$. The idea is that $\der t$ is smaller than any ordinary
+number you could imagine, but it's not zero. The area of the square is increased by $\der x = 2t\der t +\der t^2$, which is
+analogous to the finite numbers $0.21$ and $0.0201$ we calculated earlier. Where before we divided by a finite
+change in $t$ such as $0.1$ or $0.01$, now we divide by $\der t$, producing
+\begin{align*}
+  \frac{\der x}{\der t} &=  \frac{2t\:\der t +\der t^2}{\der t} \\
+                        &= 2t+\der t
+\end{align*}
+for the derivative. On a graph like figure \figref{close-up}, $\der x/\der t$ is the slope of the tangent line: the change
+in $x$ divided by the changed in $t$.\index{Leibniz notation!derivative}
+
+But adding an infinitesimal number $\der t$ onto $2t$ doesn't really change it by any amount that's
+even theoretically measurable in the real world, so the answer is really $2t$. Evaluating it at $t=1$ gives the exact result, 2,
+that the earlier approximate results, 2.1 and 2.01, were getting closer and closer to.
+
+\begin{eg}\label{eg:third-power}
+To show the power of infinitesimals and the Leibniz notation, let's prove that the derivative of $t^3$ is $3t^2$:
+\begin{align*}
+  \frac{\der x}{\der t} &= \frac{(t+\der t)^3-t^3}{\der t} \\
+                        &= \frac{3t^2\:\der t + 3t\:\der t^2 + \der t^3}{\der t} \\
+                        &= 3t^2 + \ldots \qquad ,
+\end{align*}
+where the dots indicate infinitesimal terms that we can neglect.
+\end{eg}
+
+This result
+required significant sweat and ingenuity when proved on page \pageref{detour:polynomial-proof} by the methods of chapter 1,
+and not only that but the old method would have required a completely different method of proof for a function that
+wasn't a polynomial, whereas the new one can be applied more generally, as shown in the following example.
+
+\begin{eg}\label{eg:derivative-of-sin}
+The derivative of $x=\sin t$, with $t$ in units of radians, is
+\begin{equation*}
+  \frac{\der x}{\der t} = \frac{\sin(t+\der t)-\sin t}{\der t} \qquad , \\
+\end{equation*}
+and with the trig identity $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$, this becomes
+\begin{equation*}
+                        = \frac{\sin t \: \cos \der t + \cos t \: \sin \der t - \sin t}{\der t} \qquad .\\
+\end{equation*}
+Applying the small-angle approximations $\sin u\approx u$ and $\cos u\approx 1$,
+we have
+\begin{align*}
+\frac{\der x}{\der t}   &= \frac{\cos t \: \der t}{\der t} \\
+                        &= \cos t \qquad .
+\end{align*}
+But are the approximations good enough? The situation is similar to the one we encountered earlier,
+in which we computed $(t+\der t)^2$, and neglected the $\der t^2$ term represented by the small square
+in figure \figref{t-squared-geometrically}. Being a little less cavalier, I should demonstrate
+explicitly that the error introduced by the small-angle approximations is really of the same order
+of magnitude as $\der t^2$, i.e., a number that is infinitesimally small compared even to the
+infinitesimal size of $\der t$; I've done this on page \pageref{detour:sin-rigor}.\index{derivative!of the sine}\index{sine!derivative of}
+There's even a second subtle issue that I've swept under the rug, and I'll come back to that on page
+\pageref{transcendentals}.
+
+Figure \figref{derivative-of-sine} shows the graphs of the function and its derivative. Note how the two
+graphs correspond. At $t=0$, the slope of $\sin t$ is at its largest, and is positive; this is where
+the derivative, $\cos t$, attains its maximum positive value of 1. At $t=\pi/2$, $\sin t$ has reached
+a maximum, and has a slope of zero; $\cos t$ is zero here. At $t=\pi$, in the middle of the graph,
+$\sin t$ has its maximum negative slope, and $\cos t$ is at its most negative extreme of $-1$.
+
+Physically, $\sin t$ could represent the position of a pendulum as it moved back and forth from left
+to right, and $\cos t$ would then be the pendulum's velocity.
+\end{eg}
+%
+%%graph%% derivative-of-sine func=sin(x) format=eps xlo=0 xhi=6.283 ylo=-1 yhi=1 with=lines x=t y=x samples=300 xtic_spacing=1 ytic_spacing=1 ; func=cos(x)
+\smallfig{derivative-of-sine}{Graphs of $\sin t$, and its derivative $\cos t$.}
+
+\begin{eg}\label{eg:dcos}\index{derivative!of the cosine}\index{cosine!derivative of}
+What about the derivative of the cosine? The cosine and the sine are really the same function, shifted to the left or right by
+$\pi/2$. If the derivative of the sine is the same as itself, but shifted to the left by $\pi/2$, then the derivative of
+the cosine must be a cosine shifted to the left by $\pi/2$:
+\begin{align*}
+  \frac{\der\: \cos t}{\der t} &= \cos(t+\pi/2) \\
+                               &= -\sin t \qquad .
+\end{align*}
+\end{eg}
+
+\section{Safe use of infinitesimals}\index{infinitesimal number!safe use of}
+
+The idea of infinitesimally small numbers has always irked purists. One prominent critic of the calculus was Newton's
+contemporary George Berkeley, the Bishop of Cloyne. Although some of his complaints are clearly wrong (he denied the
+possibility of the second derivative), there was clearly something to his criticism of the infinitesimals. He wrote
+sarcastically,\index{infinitesimal number!criticism of}\index{Berkeley, George}
+``They are neither finite quantities, nor quantities infinitely small, nor yet nothing. May we not call them ghosts of departed quantities?''
+
+\smallfig[t]{berkeley}{Bishop George Berkeley (1685-1753)}%
+%
+Infinitesimals seemed scary, because if you mishandled them, you could prove absurd things. For example, let $\der u$ be
+an infinitesimal. Then $2\der u$ is also infinitesimal. Therefore both $1/\der u$ and $1/(2\der u)$ equal infinity, so
+$1/\der u = 1/(2\der u)$. Multiplying by $\der u$ on both sides, we have a proof that $1=1/2$.\label{bogus-proof}
+
+In the eighteenth century, the use of infinitesimals became like adultery: commonly practiced, but shameful to admit
+to in polite circles. Those who used them learned certain rules of thumb for handling them correctly. For instance,
+they would identify the flaw in my proof of $1=1/2$ as my assumption that there was only one size of infinity,
+when actually $1/\der u$ should be interpreted as an infinity twice as big as $1/(2\der u)$. The use of the symbol
+$\infty$ played into this trap, because the use of a single symbol for infinity implied that infinities only came
+in one size. However, the practitioners of infinitesimals had trouble articulating a clear set of principles
+for their proper use, and couldn't prove that a self-consistent system could be built around them.
+
+By the twentieth century, when I learned calculus, a clear consensus had formed that infinite and infinitesimal
+numbers weren't numbers at all. A notation like $\der x/\der t$, my calculus teacher told me, wasn't really
+one number divided by another, it was merely a symbol for the limit\index{derivative!defined using a limit}\index{limit}
+\begin{equation*}
+\lim_{\Delta t\rightarrow 0} \frac{\Delta x}{\Delta t} \qquad ,
+\end{equation*}
+where $\Delta x$ and $\Delta t$ represented finite changes. I'll give a formal definition (actually two different formal
+definitions) of the term ``limit'' in section \ref{sec:limits}, but intuitively the concept is that is that we can good
+an approximation to the derivative as we like, provided that we make $\Delta t$ small enough.
+
+That satisfied me until we got to a certain topic
+(implicit differentiation) in which we were encouraged to break the $\der x$ away from the $\der t$, leaving them on
+opposite sides of the equation. I buttonholed my teacher after class and asked why he was now doing what he'd
+told me you couldn't really do, and his response was that $\der x$ and $\der t$ weren't really numbers,
+but most of the time you could get away with treating them as if they were, and you would get the right
+answer in the end. \emph{Most of the time!?} That bothered me. How was I supposed to know when it \emph{wasn't}
+``most of the time?''
+
+\smallfig{robinson}{Abraham Robinson (1918-1974)}
+
+But unknown to me and my teacher, mathematician Abraham Robinson\index{Robinson, Abraham}
+had already shown in the 1960's that it
+was possible to construct a self-consistent number system that included infinite and infinitesimal numbers.
+He called it the hyperreal number system,\index{hyperreal number}
+and it included the real numbers as a subset.\footnote{The reader who
+wants to learn more about the hyperreal system might want to start
+by reading K. Stroyan's articles at 
+\verb@http://www.math.uiowa.edu/~stroyan/@\\
+\verb@InfsmlCalculus/InfsmlCalc.htm@.
+For more depth, one could next read the relevant parts of Keisler's
+\emph{Elementary Calculus: An Approach Using Infinitesimals}, an out-of-print calculus text that uses infinitesimals,
+available for free from the author's web site at
+\verb@http://www.math.wisc.edu/~keisler/@\\
+\verb@calc.html@. The standard (difficult) treatise on the subject is Robinson's
+\emph{Non-Standard Analysis}.}
+
+Moreover, the
+rules for what you can and can't do with the hyperreals turn out to be extremely simple. 
+Take any true statement about the real numbers. Suppose it's possible to translate it into a statement about
+the hyperreals in the most obvious way, simply by replacing the word ``real'' with the word ``hyperreal.''
+Then the translated statement is also true. This is known as the \emph{transfer principle}.\index{transfer principle}
+
+Let's look back at my bogus proof of $1=1/2$ in light of this simple principle. The final step of the proof,
+for example, is perfectly valid: multiplying both sides of the equation by the same thing. The following
+statement about the real numbers is true:
+
+\begin{indentedblock}
+For any real numbers $a$, $b$, and $c$, if $a=b$, then $ac=bc$.
+\end{indentedblock}
+
+This can be translated in an obvious way into a statement about the hyperreals:
+
+\begin{indentedblock}
+For any hyperreal numbers $a$, $b$, and $c$, if $a=b$, then $ac=bc$.
+\end{indentedblock}
+
+However, what about the statement that both $1/\der u$ and $1/(2\der u)$ equal infinity, so they're
+equal to each other? This isn't the translation of a statement that's true about the reals, so there's
+no reason to believe it's true --- and in fact it's false.
+
+What the transfer principle tells us is that the real numbers as we normally
+think of them are not unique in obeying the ordinary rules of algebra. There are completely different
+systems of numbers, such as the hyperreals, that also obey them.
+
+How, then, are the hyperreals even
+different from the reals, if everything that's true of one is true of the other? But recall that
+the transfer principle doesn't guarantee that every statement about the reals is also true of the
+hyperreals. It only works if the statement about the reals can be translated into a statement
+about the hyperreals in the most simple, straightforward way imaginable, simply by replacing
+the word ``real'' with the word ``hyperreal.'' Here's an example of a true statement about the reals that
+can't be translated in this way:
+
+\begin{indentedblock}
+For any real number $a$, there is an integer $n$ that is greater than $a$.
+\end{indentedblock}
+
+This one can't be translated so simplemindedly, because it refers to a subset of the reals called
+the integers. It might be possible to translate it somehow, but it would require some insight into
+the correct way to translate that word ``integer.'' The transfer principle doesn't apply to this
+statement, which indeed is false for the hyperreals, because the hyperreals contain infinite
+numbers that are greater than all the integers. In fact, the contradiction of this statement can be
+taken as a definition of what makes the hyperreals special, and different from the reals: we assume
+that there is at least one hyperreal number, $H$, which is greater than all the integers.
+
+As an analogy from everyday life, consider the following statements about the student body of the
+high school I attended:
+
+\begin{indentedblock}
+1. Every student at my high school had two eyes and a face.\\
+2. Every student at my high school who was on the football team was a jerk.
+\end{indentedblock}
+
+Let's try to translate these into statements about the population of California in general.
+The student body of my high school is like the set of real numbers, and the present-day population
+of California is like the hyperreals. Statement 1 can be translated mindlessly into a statement
+that every Californian has two eyes and a face; we simply substitute ``every Californian'' for
+``every student at my high school.'' But statement 2 isn't so easy, because it refers to the
+subset of students who were on the football team, and it's not obvious what the corresponding
+subset of Californians would be. Would it include everybody who played high school, college,
+or pro football? Maybe it shouldn't include the pros, because they belong to an organization
+covering a region bigger than California. Statement 2 is the kind of statement that the
+transfer principle doesn't apply to.\footnote{For a slightly more precise and formal statement
+of the transfer principle, the idea being expressed here is that the phrases ``for any'' and
+``there exists'' can only be used in phrases like ``for any real number $x$'' and ``there exists
+a real number $y$ such that\ldots'' The transfer principle does not apply to statements like ``there exists
+an integer $x$ such that\ldots'' or even ``there exists a subset of the real numbers such that\ldots''}
+
+\begin{eg}\label{eg:halo}
+As a nontrivial example of how to apply the transfer principle, let's consider how to handle
+expressions like the one that occurred when we wanted to differentiate $t^2$ using infinitesimals:
+\begin{equation*}
+  \frac{\der \left(t^2\right)}{\der t} = 2t+\der t  \qquad .
+\end{equation*}
+I argued earlier than $2t+\der t$ is so close to $2t$ that for all practical purposes, the
+answer is really $2t$. But is it really valid in general to say that $2t+\der t$ is the
+same hyperreal number as $2t$? No. We can apply the transfer principle to the
+following statement about the reals:
+
+\begin{indentedblock}
+For any real numbers $a$ and $b$, with $b\ne 0$, $a+b\ne a$.
+\end{indentedblock}
+
+Since $\der t$ isn't zero, $2t+\der t\ne 2t$.
+\end{eg}
+
+More generally, example \ref{eg:halo} leads us to visualize every number as being surrounded by
+a ``halo''\index{halo}
+of numbers that don't equal it, but differ from it by only an infinitesimal amount.
+Just as a magnifying glass would allow you to see the fleas on a dog, you would need an infinitely
+strong microscope to see this halo. This is similar to the idea that every integer is surrounded by a bunch of fractions that
+would round off to that integer. We can define the \emph{standard part}\index{standard part} of a finite hyperreal
+number, which means the unique real number that differs from it infinitesimally. For instance, the
+standard part of $2t+\der t$, notated $\st(2t+\der t)$, equals $2t$. The derivative of a function
+should actually be defined as the standard part of $\der x/\der t$, but we often write $\der x/\der t$
+to mean the derivative, and don't worry about the distinction.\index{derivative!defined using infinitesimals}
+
+One of the things Bishop Berkeley disliked about infinitesimals was the idea that
+they existed in a kind of hierarchy, with $\der t^2$ being not just infinitesimally small, but infinitesimally
+small compared to the infinitesimal $\der t$.
+If $\der t$ is the flea on a dog, then $\der t^2$ is a submicroscopic
+flea that lives on the flea, as in Swift's doggerel: ``Big fleas have little fleas/ On their backs to ride 'em,/
+and little fleas have lesser fleas,/And so, ad infinitum.'' Berkeley's criticism was off the mark here: there is
+such a hierarchy. Our basic assumption about the hyperreals was that they contain at least one infinite number,
+$H$, which is bigger than all the integers. If this is true, then $1/H$ must be less than $1/2$, less than
+$1/100$, less then $1/1,000,000$ --- less than $1/n$ for any integer $n$. Therefore the hyperreals are guaranteed
+to include infinitesimals as well, and so we have at least three levels to the hierarchy: infinities comparable
+to $H$, finite numbers, and infinitesimals comparable to $1/H$. If you can swallow that, then it's not too much
+of a leap to add more rungs to the ladder, like extra-small infinitesimals that are comparable to $1/H^2$.
+If this seems a little crazy, it may comfort you to think of statements about the hyperreals as descriptions
+of limiting processes involving real numbers. For instance, in the sequence of numbers $1.1^2=1.21$,
+$1.01^2=1.0201$, $1.001^2=1.002001$, \ldots, it's clear that the number represented by the digit 1 in the final decimal place is getting
+smaller faster than the contribution due to the digit 2 in the middle.
+
+\label{transcendentals}
+One subtle issue here, which I alluded to in the differentiation of the sine function on page \pageref{eg:derivative-of-sin},
+is whether the transfer principle is sufficient to let us define all the functions that
+appear as familiar keys on a calculator: $x^2$, $\sqrt{x}$, $\sin x$, $\cos x$, $e^x$, and so on.
+After all, these functions were originally defined as rules that would take a real number as an input
+and give a real number as an output. It's not trivially obvious that their definitions can naturally be extended
+to take a hyperreal number as an input and give back a hyperreal as an output. Essentially the answer is that
+we can apply the transfer principle to them just as we would to statements about simple arithmetic, but I've discussed
+this a little more on page \pageref{detour:transcendentals}.
+
+\section{The product rule}\index{derivative!product rule}\index{product rule}
+
+When I first learned calculus, it seemed to me that if the derivative of $3t$ was $3$, and the derivative of
+$7t$ was 7, then the derivative of $t$ multiplied by $t$ ought to be just plain old $t$, not $2t$. The reason there's
+a factor of 2 in the correct answer is that $t^2$ has two reasons to grow as $t$ gets bigger: it grows because
+the first factor of $t$ is increasing, but also because the second one is. In general, it's possible to find
+the derivative of the product of two functions any time we know the derivatives of the individual functions.
+
+\begin{important}[The product rule]
+If $x$ and $y$ are both functions of $t$, then the derivative of their product is
+\begin{equation*}
+  \frac{\der(xy)}{\der t} = \frac{\der x}{\der t}\cdot y +  x \cdot \frac{\der y}{\der t} \qquad .
+\end{equation*}
+\end{important}
+
+The proof is easy. Changing $t$ by an infinitesimal amount $\der t$ changes the product $xy$ by
+an amount
+\begin{gather*}
+  (x+\der x)(y+\der y)-xy \\
+      = y\der x + x\der y+\der x\der y \qquad , \\
+\intertext{and dividing by \der t makes this into}
+      \frac{\der x}{\der t}\cdot y +  x \cdot \frac{\der y}{\der t} + \frac{\der x \der y}{\der t} \qquad ,
+\end{gather*}
+whose standard part is the result to be proved.
+
+\begin{eg}
+\egquestion Find the derivative of the function $t\sin t$.
+
+\eganswer
+\begin{align*}
+  \frac{\der(t\sin t)}{\der t} &= t\cdot \frac{\der(\sin t)}{\der t}+\frac{\der t}{\der t}\cdot\sin t \\
+           &= t\cos t+\sin t
+\end{align*}
+\end{eg}
+
+Figure \figref{product-rule} gives the geometrical interpretation of the product rule. Imagine that the king, in his castle
+at the southwest corner of his rectangular kingdom, sends out a line of infantry to expand his territory
+to the north, and a line of cavalry to take over more land to the east. In a time interval $\der t$,
+the cavalry, which moves faster, covers a distance $\der x$ greater than that covered by the infantry,
+$\der y$. However, the strip of territory conquered by the cavalry, $y \der x$, isn't as great as it could have been,
+because in our example $y$ isn't as big as $x$.
+%
+\fig{product-rule}{A geometrical interpretation of the product rule.}
+
+\pagebreak[4]
+A helpful feature of the Leibniz notation is that one can easily use it to check whether the units of an
+answer make sense. If we measure distances in meters and time in seconds, then $xy$ has units of
+square meters (area), and so does the change in the area, $\der(xy)$. Dividing by $\der t$ gives the
+number of square meters per second being conquered. On the right-hand side of the product rule,
+$\der x/\der t$ has units of meters per second (velocity), and multiplying it by
+$y$ makes the units square meters per second, which is consistent with the left-hand side. The
+units of the second term on the right likewise check out. Some beginners might be tempted to
+guess that the product rule would be $\der(xy)/\der t=(\der x/\der t)(\der y/\der t)$, but the Leibniz
+notation instantly reveals that this can't be the case, because then the units on the left,
+$\munit^2/\sunit$, wouldn't match the ones on the right, $\munit^2/\sunit^2$.
+
+\pagebreak[4]
+Because this unit-checking feature is so helpful, there is a special way of writing a second
+derivative in the Leibniz notation. What Newton called $\Ddot{x}$, Leibniz wrote as
+\begin{equation*}
+  \frac{\der^2 x}{\der t^2} \qquad .
+\end{equation*}
+Although the different placement of the 2's on top and bottom seems strange and inconsistent to many
+beginners, it actually works out nicely.
+If $x$ is a distance, measured in meters, and $t$ is a time, in units of seconds, then the
+second derivative is supposed to have units of acceleration, in units of meters per second per
+second, also written $(\munit/\sunit)/\sunit$, or $\munit/\sunit^2$. (The acceleration of falling
+objects on Earth is $9.8\ \munit/\sunit^2$ in these units.) The Leibniz notation is meant to suggest
+exactly this: the top of the fraction looks like it has units of meters, because we're not squaring $x$,
+while the bottom of the fraction looks like it has units of seconds, because it looks like we're
+squaring $\der t$. Therefore the units come out right. It's important to realize, however, that
+the symbol $\der$ isn't a number (not a real one, and not a hyperreal one, either), so we can't really
+square it; the notation is not to be taken as a literal statement about infinitesimals.
+
+\vfill\pagebreak[4]
+
+\begin{eg}\label{eg:derivative-of-sqrt}\index{derivative!of square root}
+A tricky use of the product rule is to find the derivative of $\sqrt{t}$. Since $\sqrt{t}$ can be
+written as $t^{1/2}$, we might suspect that the rule $\der(t^k)/\der t=kt^{k-1}$ would work,
+giving a derivative $\frac{1}{2}t^{-1/2}=1/(2\sqrt{t})$. However, the methods used to prove
+that rule in chapter 1 only work if $k$ is an integer, so the best we could do would be to confirm
+our conjecture approximately by graphing.
+
+Using the product rule, we can write $f(t)=\der\sqrt{t}/\der t$ for our unknown derivative, and
+back into the result using the product rule:
+\begin{align*}
+  \frac{\der t}{\der t} &= \frac{\der(\sqrt{t}\sqrt{t})}{\der t} \\
+           &= f(t)\sqrt{t}+\sqrt{t}f(t) \\
+           &= 2f(t)\sqrt{t}
+\end{align*}
+But $\der t/\der t=1$, so $f(t)=1/(2\sqrt{t})$ as claimed.
+\end{eg}
+
+The trick used in example \ref{eg:derivative-of-sqrt} can also be used to prove that the power
+rule $\der(x^n)/\der x=nx^{n-1}$ applies to cases where $n$ is an integer less than 0, but
+I'll instead prove this on page \pageref{eg:der-x-to-any-k} by a technique that doesn't depend on
+a trick, and also applies to values of $n$ that aren't integers.\label{coy-der-x-to-neg-k}
+\vfill
+
+\widefig[t]{clowns}{Three clowns on seesaws demonstrate the chain rule.}
+
+\pagebreak[4]\section{The chain rule}\label{sec:chain-rule}\index{derivative!chain rule}\index{chain rule}
+
+Figure \figref{clowns} shows three clowns on seesaws. If the leftmost clown moves down by a distance $\der x$,
+the middle one will come up by $\der y$, but this will also cause the one on the right to move down by $\der z$.
+If we want to predict how much the rightmost clown will move in response to a certain amount of motion by the
+leftmost one, we have
+\begin{equation*}
+  \frac{\der z}{\der x} =   \frac{\der z}{\der y}  \cdot \frac{\der y}{\der x} \qquad .
+\end{equation*}
+This relation, called the chain rule, allows us to calculate a derivative of a function defined by one function
+inside another. The proof, given on page \pageref{detour:chain-rule}, is essentially just the application of the transfer principle. (As is often the case,
+the proof using the hyperreals is much simpler than the one using real numbers and limits.)
+
+\begin{eg}
+\egquestion Find the derivative of the function $z(x)=\sin(x^2)$.
+
+\eganswer Let $y(x)=x^2$, so that $z(x)=\sin(y(x))$. Then
+\begin{align*}
+  \frac{\der z}{\der x} &= \frac{\der z}{\der y} \cdot \frac{\der y}{\der x} \\
+                        &= \cos(y) \cdot 2x \\
+                        &= 2x \cos(x^2)
+\end{align*}
+The way people usually say it is that the chain rule tells you to take the derivative of
+the outside function, the sine in this case, and then multiply by the derivative of
+``the inside stuff,'' which here is the square. Once you get used to doing it, you don't
+need to invent a third, intermediate variable, as we did here with $y$.
+\end{eg}
+
+\section{Exponentials and logarithms}
+
+\subsection{The exponential}\index{derivative!of the exponential}\index{exponential!derivative of}
+An important application of the chain rule comes up when we want to differentiate
+the omnipresent function $e^x$, where $e=2.71828\ldots$ is the base of natural
+logarithms. We have
+\begin{align*}
+  \frac{\der e^x}{\der x} &= \frac{e^{x+\der x}-e^x}{\der x} \\
+                          &= \frac{e^x e^{\der x}-e^x}{\der x} \\
+                          &= e^x \: \frac{e^{\der x}-1}{\der x}
+\end{align*}
+The second factor, $\left(e^{\der x}-1\right)/\der x$, doesn't have $x$ in it, so it
+must just be a constant. Therefore we know that the derivative of $e^x$ is simply
+$e^x$, multiplied by some unknown constant,
+\begin{equation*}
+  \frac{\der e^x}{\der x} = c\:e^x .
+\end{equation*}
+A rough check by graphing at, say $x=0$, shows that the slope is close to 1, so $c$ is close to
+1. But how do we know it's exactly one? The proof is given on page \pageref{detour:exp}.\label{main:exp}
+
+\pagebreak[4]
+
+\begin{eg}\label{eg:caffeine}
+\egquestion The concentration of a foreign substance in the bloodstream generally falls off exponentially
+with time as $c=c_{\zu{o}}e^{-t/a}$, where $c_{\zu{o}}$ is the initial concentration, and $a$ is a constant.
+For caffeine in adults, $a$ is typically about 7 hours. An example is shown in figure \figref{caffeine}. Differentiate the concentration with respect
+to time, and interpret the result. Check that the units of the result make sense.
+
+\eganswer Using the chain rule,
+\begin{align*}
+  \frac{\der c}{\der t} &= c_{\zu{o}}e^{-t/a}\cdot\left(-\frac{1}{a}\right) \\
+                        &= -\frac{c_{\zu{o}}}{a}e^{-t/a}
+\end{align*}
+
+This can be interpreted as the rate at which caffeine is being removed from the blood and put into the person's urine. It's
+negative because the concentration is decreasing.
+According to the original expression for $x$, a substance with a large $a$ will take a long time to reduce its concentration,
+since $t/a$ won't be very big unless we have large $t$ on top to compensate for the large $a$ on the bottom.
+In other words, larger values of $a$ represent substances that the body has a harder time getting rid of efficiently.
+The derivative has $a$ on the bottom, and the interpretation of this is that for a drug that is hard to eliminate,
+the rate at which it is removed from the blood is low.
+
+It makes sense that $a$ has units of time, because the exponential function has to have a unitless argument, so the units
+of $t/a$ have to cancel out. The units of the result come from the factor of $c_{\zu{o}}/a$, and
+it makes sense that the units are concentration divided by time, because the result
+represents the rate at which the concentration is changing.
+\end{eg}
+%%graph%% caffeine func=2*exp(-x/7) format=eps xlo=0 xhi=24 ylo=0 yhi=2.1 with=lines x=t y=c xtic_spacing=6 ytic_spacing=.5 more_space_below=5
+\smallfig{caffeine}{Example \ref{eg:caffeine}. A typical graph of the concentration of caffeine in the blood, in units of milligrams per
+liter, as a function of time, in hours.}
+
+\begin{eg}
+\egquestion Find the derivative of the function $y=10^x$.
+
+\eganswer In general, one of the tricks to doing calculus is to rewrite functions in forms that
+you know how to handle. This one can be rewritten as a base-10 logarithm:
+\begin{align*}
+  y &= 10^x \\
+  \ln y &= \ln\left(10^x\right) \\
+  \ln y &= x \ln 10 \\
+  y &= e^{x\ln 10}
+\end{align*}
+Applying the chain rule, we have the derivative of the exponential, which is just the same
+exponential, multiplied by the derivative of the inside stuff:
+\begin{align*}
+  \frac{\der y}{\der x} &= e^{x\ln 10} \cdot \ln 10 \qquad .
+\end{align*}
+In other words, the ``$c$'' referred to in the discussion of the derivative of $e^x$ becomes
+$c=\ln 10$ in the case of the base-10 exponential.
+\end{eg}
+
+\subsection{The logarithm}\index{derivative!of the logarithm}\index{logarithm!definition of}
+
+The natural logarithm is the function that undoes the exponential. In a situation like this, we
+have
+\begin{equation*}
+  \frac{\der y}{\der x} = \frac{1}{\der x/\der y} \qquad ,
+\end{equation*}
+where on the left we're thinking of $y$ as a function of $x$, and on the right we consider
+$x$ to be a function of $y$. Applying this to the natural logarithm,
+\begin{align*}
+  y &= \ln x \\
+  x &= e^y \\
+  \frac{\der x}{\der y} &= e^y \\
+  \frac{\der y}{\der x} &= \frac{1}{e^y} \\
+                        & = \frac{1}{x} \\
+  \frac{\der \ln x}{\der x} &= \frac{1}{x} \qquad .
+\end{align*}
+
+This is noteworthy because it shows that there must be an exception to the rule
+that the derivative of $x^n$ is $nx^{n-1}$, and the integral of $x^{n-1}$ is
+$x^n/n$. (On page \pageref{coy-der-x-to-neg-k} I remarked that this rule could
+be proved using the product rule for negative integer values of $k$, but that I would
+give a simpler, less tricky, and more general proof later. The proof is example
+\ref{eg:der-x-to-any-k} below.) The integral of $x^{-1}$ is not $x^0/0$, which wouldn't make sense anyway
+because it involves division by zero.\footnote{Speaking casually, one can say  that
+division by zero gives infinity. This is often a good way to think when trying to
+connect mathematics to reality. However, it doesn't really work that way according
+to our rigorous treatment of the hyperreals. Consider this statement:
+``For a nonzero real number $a$, there is no real number $b$ such that $a=0b$.''
+This means that we can't divide $a$ by 0 and get $b$. Applying the transfer principle
+to this statement, we see that the same is true for the hyperreals: division by zero
+is undefined. However, we can divide a finite number by an infinitesimal, and get
+an infinite result, which is almost the same thing.} Likewise the derivative of
+$x^0=1$ is $0x^{-1}$, which is zero. Figure \figref{power-ladder} shows the idea.
+The functions $x^n$ form a kind of ladder, with differentiation taking us down
+one rung, and integration taking us up. However, there are two special cases where differentiation
+takes us off the ladder entirely.
+
+\fig{power-ladder}{Differentiation and integration of functions of the form $x^n$. Constants
+out in front of the functions are not shown, so keep in mind that, for example, the derivative
+of $x^2$ isn't $x$, it's $2x$.}
+
+\begin{eg}\label{eg:der-x-to-any-k}
+\egquestion Prove $\der(x^n)/\der x=nx^{n-1}$ for any real value of $n$.
+
+\eganswer
+\begin{align*}
+  y &= x^n \\
+    &= e^{n \ln x} \\
+\intertext{By the chain rule,}
+  \frac{\der y}{\der x} &= e^{n \ln x} \cdot \frac{n}{x} \\
+                        &= x^n \cdot \frac{n}{x} \\
+                        &= nx^{n-1} \qquad .
+\end{align*}
+(For $n=0$, the result is zero.)
+\end{eg}
+
+When I started the discussion of the derivative of the logarithm, I wrote $y=\ln x$ right
+off the bat. That meant I was implicitly assuming $x$ was positive.\label{log-neg}
+More generally, the derivative of $\ln|x|$ equals $1/x$, regardless of the sign (see
+problem \ref{hw:log-neg} on page \pageref{hw:log-neg}).
+
+\section{Quotients}\index{derivative!of a quotient}\index{quotient!derivative of}
+
+So far we've been successful with a divide-and-conquer approach to differentiation:
+the product rule and the chain rule offer methods of breaking a function down into
+simpler parts, and finding the derivative of the whole thing based on knowledge of
+the derivatives of the parts. We know how to find the derivatives of sums, differences,
+and products, so the obvious next step is to look for a way of handling division.
+This is straightforward, since we know that the derivative of the function function $1/u=u^{-1}$
+is $-u^{-2}$.
+Let $u$ and $v$ be functions of $x$. Then by the product rule,
+\begin{align*}
+  \frac{\der(v/u)}{\der x} &= \frac{\der v}{\der x}\cdot\frac{1}{u} + v\cdot \frac{\der(1/u)}{\der x} \\
+\intertext{and by the chain rule,}
+  \frac{\der(v/u)}{\der x} &= \frac{\der v}{\der x}\cdot\frac{1}{u} - v\cdot \frac{1}{u^2}\frac{\der u}{\der x}
+\end{align*}
+This is so easy to rederive on demand that I suggest not memorizing it.
+
+By the way, notice how the notation becomes a little awkward when we want to write a derivative like
+$\der(v/u)/\der x$. When we're differentiating a complicated function, it can be uncomfortable
+trying to cram the expression into the top of the $\der\ldots/\der\ldots$ fraction. Therefore
+it would be more common to write such an expression like this:
+\begin{equation*}
+  \frac{\der}{\der x} \left(\frac{v}{u}\right)
+\end{equation*}
+This could be considered an abuse of notation, making $\der$ look like a number being
+divided by another number $\der x$, when actually $\der$ is meaningless on its own. On the other hand,
+we can consider the symbol $\der/\der x$ to represent the operation of differentiation with respect to
+$x$; such an interpretation will seem more natural to those who have been inculcated with the taboo
+against considering infinitesimals as numbers in the first place.
+
+Using the new notation, the quotient rule becomes
+\begin{equation*}
+  \frac{\der}{\der x} \left(\frac{v}{u}\right) = \frac{1}{u}\cdot\frac{\der v}{\der x} - \frac{v}{u^2} \cdot \frac{\der u}{\der x} \qquad .
+\end{equation*}
+The interpretation of the minus sign is that if $u$ increases, $v/u$ decreases.
+
+\begin{eg}
+\egquestion Differentiate $y=x/(1+3x)$, and check that the result makes sense.
+
+\eganswer We identify $v$ with $x$ and $u$ with $1+x$. The result is
+\begin{align*}
+  \frac{\der}{\der x} \left(\frac{v}{u}\right) &= \frac{1}{u}\cdot\frac{\der v}{\der x} - \frac{v}{u^2} \cdot \frac{\der u}{\der x} \\
+            &= \frac{1}{1+x} - \frac{3x}{(1+x)^2} 
+\end{align*}
+One way to check that the result makes sense it to consider extreme values of $x$. For very large values of $x$, the
+1 on the bottom of $x/(1+x)$ becomes negligible compared to the $3x$, and the function $y$ approaches $x/3x=1/3$ as a limit.
+Therefore we expect that the derivative $\der y/\der x$ should approach zero, since the derivative of a constant is
+zero. It works: plugging in bigger and bigger numbers for $x$ in the expression for the derivative does give
+smaller and smaller results. (In the second term, the denominator gets bigger faster than the numerator, because
+it has a square in it.)
+
+Another way to check the result is to verify that the units work out. Suppose arbitrarily that $x$ has units of gallons.
+(If the 3 on the bottom is unitless, then the 1 would have to represent 1 gallon, since you can't add things that have
+different units.) The function $y$ is defined by an expression with units of gallons divided by gallons, so $y$ is
+unitless. Therefore the derivative $\der y/\der x$ should have units of inverse gallons. Both terms in the
+expression for the derivative do have those units, so the units of the answer check out.
+\end{eg}
+
+\section{Differentiation on a computer}\index{differentiation!computer-aided}
+In this chapter you've learned a set of rules for evaluating derivatives: derivatives of products,
+quotients, functions inside other functions, etc. Because these rules exist, it's always
+possible to find a formula for a function's derivative, given the formula for the original
+function. Not only that, but there is no real creativity required, so a computer can be
+programmed to do all the drudgery. For example, you can download a free, open-source program
+called Yacas from \verb@yacas.sourceforge.net@
+%
+%\noindent \verb@yacas.sourceforge.net@
+%
+and install it on a Windows or Linux machine. There is even a version you can run in a web
+browser without installing any special software:
+\verb@http://yacas.sourceforge.net/@
+\verb@yacasconsole.html  .@\\
+ A typical session with Yacas looks like this:\index{differentiation!computer-aided!symbolic}
+
+\restartLineNumbers
+\begin{eg}
+\startcodeeg
+\begin{Code}
+  \ii D(x) x^2
+  \oo{2*x}
+  \ii D(x) Exp(x^2)
+  \oo{2*x*Exp(x^2)}
+  \ii D(x) Sin(Cos(Sin(x)))
+  \oo{-Cos(x)*Sin(Sin(x))}
+  \oo{   *Cos(Cos(Sin(x)))}
+\end{Code}
+\finishcodeeg
+\end{eg}
+Upright type represents your input, and italicized type is
+the program's output.
+
+First I asked it to differentiate $x^2$ with respect to x, and it told me the result was $2x$.
+Then I did the derivative of $e^{x^2}$, which
+I also could have done fairly easily by hand.
+(If you're trying this out on a computer as you real along, make sure to capitalize functions
+like Exp, Sin, and Cos.)
+Finally I tried an example where I didn't know the answer off the top of my head, and that would
+have been a little tedious to calculate by hand.
+
+Unfortunately things are a little less rosy in the world of integrals. There are a few rules
+that can help you do integrals, e.g., that the integral of a sum equals the sum of the
+integrals, but the rules don't cover all the possible cases. Using Yacas to evaluate the
+integrals of the same functions, here's what happens.\footnote{If you're trying these on your own
+computer, note that the long input line for the function $\sin\:\cos\:\sin x$ shouldn't
+be broken up into two lines as shown in the listing.}\index{integration!computer-aided!symbolic}
+
+\restartLineNumbers
+\begin{eg}
+\startcodeeg
+\begin{Code}
+  \ii Integrate(x) x^2
+  \oo{x^3/3}
+  \ii Integrate(x) Exp(x^2)
+  \oo{Integrate(x)Exp(x^2)}
+  \ii{Integrate(x) }
+  \cc{Sin(Cos(Sin(x)))}
+  \oo{Integrate(x)}
+  \oo{    Sin(Cos(Sin(x)))}
+\end{Code}
+\finishcodeeg
+\end{eg}
+
+The first one works fine, and I can easily verify that the answer is correct, by
+taking the derivative of $x^3/3$, which is $x^2$. (The answer could have been $x^3/3+7$,
+or $x^3/3+c$, where $c$ was any constant, but Yacas doesn't bother to tell us that.)
+The second and third ones don't
+work, however; Yacas just spits back the input at us without making any progress on it.
+And it may not be because Yacas isn't smart enough to figure out these integrals.
+The function $e^{x^2}$ can't be integrated at all in terms of a formula containing
+ordinary operations and functions such as addition, multiplication, exponentiation,
+trig functions, exponentials, and so on.
+
+That's not to say that a program like this is useless. For example, here's an integral
+that I wouldn't have known how to do, but that Yacas handles easily:
+
+\restartLineNumbers
+\begin{eg}
+\startcodeeg
+\begin{Code}
+  \ii Integrate(x) Sin(Ln(x))
+  \oo{(x*Sin(Ln(x)))/2}
+  \oo{    -(x*Cos(Ln(x)))/2}
+\end{Code}
+\finishcodeeg
+\end{eg}
+
+This one is easy to check by differentiating, but I could have been marooned on a
+desert island for a decade before I could have figured it out in the first place.
+There are various rules, then, for integration, but they don't cover all possible
+cases as the rules for differentiation do, and sometimes it isn't obvious
+which rule to apply. Yacas's ability to integrate $\sin\:\ln x$ shows that it
+had a rule in its bag of tricks that I don't know, or didn't remember, or didn't realize
+applied to this integral.
+
+Back in the 17th century, when Newton and Leibniz invented calculus, there were no
+computers, so it was a big deal to be able to find a simple formula for your result.
+Nowadays, however, it may not be such a big deal. Suppose I want to find the derivative
+of $\sin\:\cos\:\sin x$, evaluated at $x=1$. I can do something like this on a calculator:
+
+\restartLineNumbers
+\begin{eg}
+\startcodeeg
+\begin{Code}
+  \ii sin cos sin 1 =  
+  \oo{0.61813407}
+  \ii sin cos sin 1.0001 =
+  \oo{0.61810240}
+  \ii(0.61810240-0.61813407) 
+  \cc{/.0001 = }
+  \oo{-0.3167}
+\end{Code}
+\finishcodeeg
+\end{eg}
+
+I have the right answer, with plenty of precision for most realistic applications,
+although I might have never guessed that the mysterious number $-0.3167$ was
+actually $-(\cos 1)(\sin\sin 1)(\cos\cos\sin 1)$. This could get a little tedious if I wanted to graph the function,
+for instance, but then I could just use a computer spreadsheet, or write a little
+computer program. In this chapter, I'm going to show you how to do derivatives
+and integrals using simple computer programs, using Yacas.
+The following little Yacas program does the same thing as the set of calculator
+operations shown above:\index{differentiation!computer-aided!numerical}
+
+\restartLineNumbers
+\begin{eg}
+\startcodeeg
+\begin{Code}
+  \nn f(x):=Sin(Cos(Sin(x)))
+  \nn x:=1
+  \nn dx:=.0001
+  \nn N( (f(x+dx)-f(x))/dx )
+  \oo{-0.3166671628}
+\end{Code}
+\finishcodeeg
+\end{eg}
+
+(I've omitted all of Yacas's output except for the final result.)
+Line 1 defines the function we want to differentiate. Lines 2 and
+3 give values to the variables x and dx. Line 4 computes the derivative;
+the \verb@N( )@ surrounding the whole thing is our way of telling Yacas
+that we want an approximate numerical result, rather than an exact symbolic one.
+
+An interesting thing to try now is to make dx smaller and smaller, and see if
+we get better and better accuracy in our approximation to the derivative.
+
+\begin{eg}\label{eg:derivative-limit}
+\startcodeeg
+\begin{Code}
+  \nn g(x,dx):= 
+  \cc N( (f(x+dx)-f(x))/dx )
+  \nn g(x,.1)
+  \oo{-0.3022356406}
+  \nn g(x,.0001)
+  \oo{-0.3166671628}
+  \nn g(x,.0000001)
+  \oo{-0.3160458019}
+  \nn g(x,.00000000000000001)
+  \oo{0}
+\end{Code}
+\end{eg}
+
+Line 5 defines the derivative function. It needs to know both x and dx. Line
+6 computes the derivative using $\der x=0.1$, which we expect to be a lousy approximation,
+since $\der x$ is really supposed to be infinitesimal, and $0.1$ isn't even that small.
+Line 7 does it with the same value of $\der x$ we used earlier. The two results agree
+exactly in the first decimal place, and approximately in the second, so we can be
+pretty sure that the derivative is $-0.32$ to two figures of precision. Line 8
+ups the ante, and produces a result that looks accurate to at least 3 decimal places.
+Line 9 attempts to produce fantastic precision by using an extremely small value of $\der x$.
+Oops --- the result isn't better, it's worse! What's happened here is that Yacas
+computed $f(x)$ and $f(x+\der x)$, but they were the same to within the precision it
+was using, so $f(x+\der x)-f(x)$ rounded off to zero.\footnote{Yacas can do arithmetic
+to any precision you like, although you may run into practical limits due to the amount
+of memory your computer has and the speed of its CPU. For fun, try \verb@N(Pi,1000)@,
+which tells Yacas to compute $\pi$ numerically to 1000 decimal places.}
+
+Example \ref{eg:derivative-limit} demonstrates the concept of how a derivative can be
+defined in terms of a limit:\index{derivative!defined using a limit}
+\begin{equation*}
+  \frac{\der y}{\der x} = \lim_{\Delta x\rightarrow 0} \frac{\Delta y}{\Delta x}
+\end{equation*}
+The idea of the limit is that we can theoretically make $\Delta y/\Delta x$ approach
+as close as we like to $\der y/\der x$, provided we make $\Delta x$ sufficiently small.
+In reality, of course, we eventually run into the limits of our ability to do the
+computation, as in the bogus result generated on line 9 of the example.
+
+\section{Continuity}
+
+Intuitively, a continuous function is one whose graph
+has no sudden jumps in it; the graph is all a single connected piece. Formally, $f(x)$ is defined to
+be continuous if for any real $x$ and any infinitesimal $\der x$, $f(x+\der x)-f(x)$ is infinitesimal.\index{continuous function}
+
+\begin{eg}
+Let the function $f$ be defined by $f(x)=0$ for $x\le 0$, and $f(x)=1$ for $x>0$. Then $f(x)$ is
+discontinuous, since for $\der x>0$, $f(0+\der x)-f(0)=1$, which isn't infinitesimal.
+\end{eg}
+
+If a function is discontinuous at a given point, then it is not differentiable at that point.
+On the other hand, a function like $y=|x|$ shows that a function can be continuous without
+being differentiable.
+
+Another way of thinking about continuous functions is given by the
+\emph{intermediate value theorem}.\index{intermediate value theorem}
+Intuitively, it says that if you are moving continuously along a road, 
+and you get from point A to point B, then you must also visit every other point
+along the road; only by teleporting (by moving discontinuously) could you
+avoid doing so. More formally, the theorem states
+that if $y$ is a continuous function on the interval from $a$ to $b$,
+and if $y$ takes on values $y_1$ and $y_2$ at certain points within this interval, then for any $y_3$ between $y_1$ and
+$y_2$, there is some $x$ in the interval for which $y(x)=y_3$.\footnote{For a proof of the
+intermediate value theorem starting from our definition of continuity, see Keisler's
+\emph{Elementary Calculus: An Approach Using Infinitesimals}, p. 162, available online at
+\verb@http://www.math.wisc.edu/~keisler/@ \verb@calc.html@.}
+
+\section{Limits}\label{sec:limits}
+
+Historically, the calculus of infinitesimals as created by Newton and Leibniz was reinterpreted
+in the nineteenth century by Cauchy, Bolzano, and Weierstrass in terms of limits. All mathematicians
+learned both languages, and switched back and forth between them effortlessly, like the lady I
+overheard in a Southern California supermarket telling her mother, ``Let's get that one, \emph{con los} nuts.''
+Those who had been trained in infinitesimals might hear a statement using the language of limits, but
+translate it mentally into infinitesimals; to them, every statement about limits was really a statement
+about infinitesimals. To their younger colleagues, trained using limits, every statement about infinitesimals
+was really to be understood as shorthand for a limiting process. When Robinson laid the rigorous foundations
+for the hyperreal number system in the 1960's, a common objection was that it was really nothing new, because
+every statement about infinitesimals was really just a different way of expressing a corresponding statement
+about limits; of course the same could have been said about Weierstrass's work of the preceding century!
+In reality, all practitioners of calculus had realized all along that different approaches worked better for
+different problems; problem \ref{hw:holditch} on page \pageref{hw:holditch} is an example of a result that
+is much easier to prove with infinitesimals than with limits.
+
+The Weierstrass definition of a limit is this:\index{limit!definition!Weierstrass}
+\begin{important}[Definition of the limit]
+We say that $\ell$ is the limit of the function $f(x)$ as $x$ approaches $a$, written
+\begin{equation*}
+  \lim_{x\rightarrow a} f(x) = \ell \qquad ,
+\end{equation*}
+if the following is true: for any real number $\epsilon$, there exists another real number
+$\delta$ such that for all $x$ in the interval $a-\delta\le x \le a+\delta$,
+the value of $f$ lies within the range from $\ell-\epsilon$ to $\ell+\epsilon$.
+\end{important}
+Intuitively, the idea is that if I want you to make $f(x)$ close to $\ell$, I just have
+to tell you how close, and you can tell me that it will be that close as long as
+$x$ is within a certain distance of $a$.
+
+In terms of infinitesimals, we have:\index{limit!definition!infinitesimals}
+\begin{important}[Definition of the limit]
+We say that $\ell$ is the limit of the function $f(x)$ as $x$ approaches $a$, written
+\begin{equation*}
+  \lim_{x\rightarrow a} f(x) = \ell \qquad ,
+\end{equation*}
+if the following is true: for any infinitesimal number $\der x$, 
+the value of $f(x+\der x)$ is finite, and the standard
+part of $f(x+\der x)$ equals $\ell$.
+\end{important}
+
+The two definitions are equivalent.
+
+Sometimes a limit can be evaluated simply by plugging in numbers:
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{1}{1+x} \qquad .
+\end{equation*}
+
+\eganswer Plugging in $x=0$, we find that the limit is 1.
+\end{eg}
+
+In some examples, plugging in fails if we try to do it directly, but
+can be made to work if we massage the expression into a different form:
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{\frac{2}{x}+7}{\frac{1}{x}+8686} \qquad .
+\end{equation*}
+
+\eganswer Plugging in $x=0$ fails because division by zero is undefined.
+
+Intuitively, however, we expect that the limit will be well defined, and will
+equal 2, because for very small values of $x$, the numerator is dominated
+by the $2/x$ term, and the denominator by the $1/x$ term, so the 7 and 8686 terms
+will matter less and less as $x$ gets smaller and smaller.
+
+To demonstrate this more rigorously, a trick that works is to multiply both the top and the bottom by $x$, giving
+\begin{equation*}
+  \frac{2+7x}{1+8686x} \qquad ,
+\end{equation*}
+which equals 2 when we plug in $x=0$, so we find that the limit is zero.
+
+This example is a little subtle, because
+when $x$ \emph{equals} zero, the function is not defined, and moreover it would
+not be valid to multiply both the top and the bottom by $x$. In general, it's not
+valid algebra to multiply both the top and the bottom of a fraction by 0, because the
+result is $0/0$, which is undefined. But we \emph{didn't} actually multiply both the
+top and the bottom by zero, because we never let $x$ equal zero. Both the Weierstrass
+definition and the definition in terms of infinitesimals only refer to the properties of
+the function in a region very close to the limiting point, not at the limiting point itself.
+
+This is an example in which the function was not well defined at a certain point, and
+yet the limit of the function was well defined as we approached that point. In a case like
+this, where there is only one point missing from the domain of the function, it is natural
+to extend the definition of the function by filling in the ``gap tooth.'' Example \ref{eg:limit-two-sides}
+shows that this kind of filling-in procedure is not always possible.
+\end{eg}
+
+%%graph%% no-limit func=x**-2 format=eps xlo=-2 xhi=2 ylo=0 yhi=4 with=lines xtic_spacing=1 ytic_spacing=1 more_space_below=5
+\smallfig{no-limit}{Example \ref{eg:no-limit}, the function $1/x^2$.}
+
+\begin{eg}\label{eg:no-limit}
+\egquestion Investigate the limiting behavior of $1/x^2$ as $x$ approaches 0, and 1.
+
+\eganswer At $x=1$, plugging in works, and we find that the limit is 1.
+
+At $x=0$, plugging in doesn't work, because division by zero is undefined.
+Applying the definition in terms of infinitesimals to the limit as $x$ approaches 0, we need to find
+out whether $1/(0+\der x)^2$ is finite for infinitesimal $\der x$, and if so, whether it always has the same standard
+part. But clearly $1/(0+\der x)^2=\der x^{-2}$ is always infinite, and we conclude that this limit is undefined.
+\end{eg}
+
+%%graph%% limit-two-sides-raw func=atan(1/x) format=svg xlo=-6 xhi=6 ylo=-2 yhi=2 with=lines xtic_spacing=2 ytic_spacing=1 more_space_below=5
+\smallfig{limit-two-sides}{Example \ref{eg:limit-two-sides}, the function $\tan^{-1}(1/x)$.}
+
+\begin{eg}\label{eg:limit-two-sides}
+\egquestion Investigate the limiting behavior of $f(x)=\tan^{-1}(1/x)$ as $x$ approaches 0.
+
+\eganswer Plugging in doesn't work, because division by zero is undefined.
+
+In the definition of the limit in terms of infinitesimals, the first requirement is that $f(0+\der x)$ be
+finite for infinitesimal values of $\der x$. The graph makes this look plausible, and indeed we can prove that
+it is true by the transfer principle. For any real $x$ we have $-\pi/2 \le f(x) \le \pi/2$, and
+by the transfer principle this holds for the hyperreals as well, and therefore $f(0+\der x)$ is finite.
+
+The second requirement is that the standard part of $f(0+\der x)$ have a uniquely defined value.
+The graph shows that we really have two cases to consider, one on the right side of the graph, and one on the left.
+Intuitively, we expect that the standard part of $f(0+\der x)$ will equal $\pi/2$ for positive $\der x$, and
+$-\pi/2$ for negative, and thus the second part of the definition will not be satisfied. For a more formal proof,
+we can use the transfer principle.
+For real $x$ with $0<x<1$, for example, $f$ is always positive and greater than 1, so we conclude based on the transfer principle
+that $f(0+\der x)>1$ for positive infinitesimal $\der x$. But on similar grounds we can be sure that  $f(0+\der x)<-1$
+when $\der x$ is negative and infinitesimal. Thus the standard part of $f(0+\der x)$ can have different values for
+different infinitesimal values of $\der x$, and we conclude that the limit is undefined.
+
+In examples like this, we can define a kind of one-sided limit, notated like this:
+\begin{align*}
+  \lim_{x\rightarrow 0^{-}} \tan^{-1}\frac{1}{x} &= -\frac{\pi}{2} \\
+  \lim_{x\rightarrow 0^{+}} \tan^{-1}\frac{1}{x} &= \frac{\pi}{2} \qquad ,
+\end{align*}
+where the notations $x\rightarrow 0^{-}$ and $x\rightarrow 0^{+}$ are to be read ``as $x$ approaches zero from
+below,'' and ``as $x$ approaches zero from above.''
+\end{eg}
+
+\subsection{L'H\^{o}pital's rule}\index{L'H\^{o}pital's rule}
+
+Consider the limit
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{\sin x}{x} \qquad .
+\end{equation*}
+
+Plugging in doesn't work, because we get $0/0$. Division by zero is undefined, both in the real number
+system and in the hyperreals. A nonzero number divided by a small number gives a big
+number; a nonzero number divided by a very small number gives a very big number; and a nonzero
+number divided by an infinitesimal number gives an infinite number. On the other hand,
+dividing \emph{zero} by zero means looking for a solution to the equation $0=0q$, where $q$ is
+the result of the division. But any $q$ is a solution of this equation, so even speaking
+casually, it's not correct to say that $0/0$ is infinite; it's not infinite, it's anything
+we like.
+
+Since plugging in zero didn't work, let's try estimating the limit by plugging in a number for
+$x$ that's small, but not zero. On a calculator,
+\begin{equation*}
+  \frac{\sin 0.00001}{0.00001} = 0.999999999983333 \qquad .
+\end{equation*}
+It looks like the limit is 1. We can confirm our conjecture to higher precision using Yacas's
+ability to do high-precision arithmetic:
+\begin{Code}
+  \ii N(Sin(10^-20)/10^-20,50)
+  \oo{  0.99999999999999999}
+  \oo{  9999999999999999999}
+  \oo{  99998333333333}
+\end{Code}
+It's looking pretty one-ish. This is the idea of the Weierstrass definition of a limit:
+it seems like we can get an answer as close to 1 as we like, if we're willing to make $x$ as close
+to 0 as necessary. The graph helps to make this plausible.
+
+%%graph%% sin-x-over-x func=sin(x)/x format=eps xlo=-20 xhi=20 ylo=-0.5 yhi=1.1 with=lines xtic_spacing=10 ytic_spacing=0.5
+\smallfig{sin-x-over-x}{The graph of $\sin x/x$.}
+
+The general idea here is that for small values of $x$, the small-angle approximation $\sin x\approx x$ obtains,
+and as $x$ gets smaller and smaller, the approximation gets better and better, so $\sin x/x$ gets closer and closer
+to 1.
+
+But we still haven't proved rigorously that the limit is exactly 1.
+Let's try using the definition of the limit in terms of
+infinitesimals.
+\begin{align*}
+  \lim_{x\rightarrow 0} \frac{\sin x}{x} &= \st\left[\frac{\sin (0+\der x)}{0+\der x}\right] \\
+            &= \st\left[\frac{\der x+\ldots}{\der x}\right] \qquad ,\\
+\intertext{where \ldots stands for terms of order $\der x^2$. So}
+  \lim_{x\rightarrow 0} \frac{\sin x}{x} &= \st\left[1+\frac{\ldots}{\der x}\right] \qquad ,\\
+                                         &= 1 \qquad .
+\end{align*}
+
+This is a special case of a the following rule for calculating limits involving $0/0$:
+
+\begin{important}[L'H\^{o}pital's rule]
+If $u$ and $v$ are functions with $u(a)=0$ and $v(a)=0$, the derivatives $\dot{v}(a)$ and $\dot{v}(a)$ are defined,
+and the derivative $\dot{v}(a)\ne 0$,
+then
+\begin{align*}
+  \lim_{x\rightarrow a} \frac{u}{v} &= \frac{\dot{u}(a)}{\dot{v}(a)} \qquad .
+\end{align*}
+\end{important}
+
+Proof: Since $u(a)=0$, and the derivative $\der u/\der x$ is defined at $a$, $u(a+\der x)=\der u$ is infinitesimal, and likewise for $v$. By the definition
+of the limit, the limit is the standard part of
+\begin{equation*}
+  \frac{u}{v} = \frac{\der u}{\der v} = \frac{\der u/\der x}{\der v/\der x} \qquad ,
+\end{equation*}
+where by assumption the numerator and denominator are both defined (and finite, because the derivative
+is defined in terms of the standard part). The standard part of a quotient like $p/q$ equals the quotient of the
+standard parts, provided that both $p$ and $q$ are finite (which we've established), and $q \ne 0$ (which is
+true by assumption). But the standard part of $\der u/\der x$ is the definition of the derivative $\dot{u}$, and
+likewise for  $\der v/\der x$, so this establishes the result.
+
+By the way, the housetop accent on the ``\^{o}'' in L'H\^{o}pital means that in Old French it used to be spelled and
+pronounced ``L'Hospital,'' but the ``s'' later became silent, so they stopped writing it. So yes, it is the
+same word as ``hospital.''
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{e^x-1}{x}
+\end{equation*}
+
+\eganswer Taking the derivatives of the top and bottom, we find $e^x/1$, which equals 1 when
+evaluated at $x=0$.
+\end{eg}
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow 1} \frac{x-1}{x^2-2x+1}
+\end{equation*}
+
+\eganswer Plugging in $x=1$ fails, because both the top and the bottom are zero.
+Taking the derivatives of the top and bottom, we find $1/(2x-2)$, which blows up to
+infinity when $x=1$. To symbolize the fact that
+the limit is undefined, and undefine because it blows up to infinity, we write
+\begin{equation*}
+  \lim_{x\rightarrow 1} \frac{x-1}{x^2-2x+1} = \infty
+\end{equation*}
+\end{eg}
+
+\pagebreak[4]
+
+In the following example, we have to use L'H\^{o}pital's rule twice before we get an answer.
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow \pi} \frac{1+\cos x}{(x-\pi)^2}
+\end{equation*}
+
+\eganswer Applying  L'H\^{o}pital's rule gives
+\begin{equation*}
+  \frac{-\sin x}{2(x-\pi)} \qquad ,
+\end{equation*}
+which still produces $0/0$ when we plug in $x=\pi$. Going again, we get
+\begin{equation*}
+  \frac{-\cos x}{2} = \frac{1}{2} \qquad .
+\end{equation*}
+\end{eg}
+
+\subsection{Another perspective on indeterminate forms}
+
+An expression like $0/0$, called an indeterminate form,\index{indeterminate form}
+can be thought of in a different way in terms of
+infinitesimals. Suppose I tell you I have two infinitesimal numbers $d$ and $e$ in my
+pocket, and I ask you whether $d/e$ is finite, infinite, or infinitesimal.
+You can't tell, because $d$ and $e$ might not be infinitesimals of the same order of
+magnitude. For instance, if $e=37d$, then $d/e=1/37$ is finite; but if
+$e=d^2$, then $d/e$ is infinite; and if $d=e^2$, then $d/e$ is infinitesimal.
+Acting this out with numbers that are small but not infinitesimal,
+\begin{align*}
+  \frac{.001}{.037} &= \frac{1}{37} \\
+  \frac{.001}{.000001} &= 1000 \\
+  \frac{.000001}{.001} &= .001 \qquad.
+\end{align*}
+
+On the other hand, suppose I tell you I have an infinitesimal number $d$ and a
+finite number $x$, and I ask you to speculate about $d/x$. You know for sure
+that it's going to be infinitesimal. Likewise, you can be sure that $x/d$ is
+infinite. These aren't indeterminate forms.
+
+We can do something similar with infinite numbers. If $H$ and $K$ are both
+infinite, then $H-K$ is indeterminate. It could be infinite, for example, if
+$H$ was positive infinite and $K=H/2$. On the other hand, it could be finite
+if $H=K+1$. Acting this out with big but finite numbers,
+\begin{align*}
+  1000-500 &= 500 \\
+  1001-1000 &= 1 \qquad .
+\end{align*}
+
+\begin{eg}
+\egquestion If $H$ is a positive infinite number, is $\sqrt{H+1}-\sqrt{H-1}$
+finite, infinite, infinitesimal, or indeterminate?
+
+\eganswer Trying it with a finite, big number, we have
+\begin{align*}
+  \sqrt{1000001}-&\sqrt{999999} \\
+    = 1.000000&00020373\times 10^{-3} \qquad ,
+\end{align*}
+which is clearly a wannabe infinitesimal. More rigorously, we can rewrite
+the expression as $\sqrt{H}(\sqrt{1+1/H}-\sqrt{1-1/H})$. Since the derivative
+of the square root function $\sqrt{x}$ evaluated at $x=1$ is 1/2, we can
+approximate this as
+\begin{align*}
+  \sqrt{H}&\left[1+\frac{1}{2H}+\ldots-\left(1-\frac{1}{2H}+\ldots\right)\right] \\
+    &= \sqrt{H}\left[\frac{1}{H}+\ldots\right] \\
+    &= \frac{1}{\sqrt{H}} \qquad ,
+\end{align*}
+which is clearly infinitesimal.
+\end{eg}
+
+\subsection{Limits at infinity}
+
+The definition of the limit in terms of infinitesimals extends immediately to limiting
+processes where $x$ gets bigger and bigger, rather than closer and closer to some
+finite value. For example, the function $3+1/x$ clearly gets closer and closer to
+3 as $x$ gets bigger and bigger. If $a$ is an infinite number, then the definition
+says that evaluating this expression at $a+\der x$, where $\der x$ is infinitesimal,
+gives a result whose standard part is 3. It doesn't matter that $a$ happens to be
+infinite, the definition still works. We also note that in this example, it doesn't
+matter what infinite number $a$ is; the limit equals 3 for \emph{any} infinite $a$.
+We can write this fact as
+\begin{equation*}
+   \lim_{x\rightarrow \infty} \left(3+\frac{1}{x}\right) =3 \qquad ,
+\end{equation*}
+where the symbol $\infty$ is to be interpreted as ``nyeah nyeah, I don't even care
+what infinite number you put in here, I claim it will work out to 3 no matter what.''
+The symbol $\infty$ is \emph{not} to be interpreted as standing for any specific
+infinite number. That would be the type of fallacy that lay behind the bogus proof
+on page \pageref{bogus-proof} that $1=1/2$, which assumed that all infinities had to be
+the same size.
+
+A somewhat different example is the arctangent function. The arctangent of 1000 equals
+approximately $1.5698$, and inputting bigger and bigger numbers gives answers that appear
+to get closer and closer to $\pi/2\approx1.5707$. But the arctangent
+of -1000 is approximately $-1.5698$, i.e., very close to $-\pi/2$.
+From these numerical
+observations, we conjecture that
+\begin{equation*}
+   \lim_{x\rightarrow a} \tan^{-1} x
+\end{equation*}
+equals $\pi/2$ for positive infinite $a$, but $-\pi/2$ for negative infinite $a$.
+It would not be correct to write
+\begin{equation*}
+   \lim_{x\rightarrow \infty} \tan^{-1} x = \frac{\pi}{2} \qquad \text{[wrong]} \qquad ,
+\end{equation*}
+because it \emph{does} matter what infinite number we pick. Instead we write
+\begin{align*}
+   \lim_{x\rightarrow +\infty} \tan^{-1} x &= \frac{\pi}{2} \\
+   \lim_{x\rightarrow -\infty} \tan^{-1} x &= -\frac{\pi}{2} \qquad .
+\end{align*}
+
+Some expressions don't have this kind of limit at all. For example, if you take the
+sines of big numbers like a thousand, a million, etc., on your calculator, the results
+are essentially random numbers lying between $-1$ and 1. They don't settle down to any
+particular value, because the sine function oscillates back and forth forever.
+To prove formally that $\lim_{x\rightarrow +\infty} \sin x$ is undefined, consider that the sine function, defined on the real
+numbers, has the property that you can always change its result by at least $0.1$ if you
+add either $1.5$ or $-1.5$ to its input. For example, $\sin(.8)\approx 0.717$, and $\sin(.8-1.5)\approx-0.644$.
+Applying the transfer principle to this statement, we find that the same is true
+on the hyperreals. Therefore there cannot be any value $\ell$ that differs infinitesimally
+from $\sin a$ for all positive infinite values of $a$.
+
+Often we're interested in finding the limit as $x$ approaches infinity of an expression
+that is written as an indeterminate form like $H/K$, where both  $H$ and $K$ are infinite.
+
+\begin{eg}
+\egquestion Evaluate the limit
+\begin{equation*}
+  \lim_{x\rightarrow \infty} \frac{2x+7}{x+8686} \qquad .
+\end{equation*}
+
+\egquestion Intuitively, if $x$ gets large enough the constant terms will be negligible, and
+the top and bottom will be dominated by the $2x$ and $x$ terms, respectively, giving an
+answer that approaches 2.
+
+One way to verify this is to divide both the top and the bottom by $x$, giving
+\begin{equation*}
+  \frac{2+\frac{7}{x}}{1+\frac{8686}{x}} \qquad .
+\end{equation*}
+If $x$ is infinite, then the standard part of the top is 2, the standard part of the
+bottom is 1, and the standard part of the whole thing is therefore 2.
+
+Another approach is to use L'H\^{o}pital's rule. The derivative
+of the top is 2, and the derivative of the bottom is 1, so the limit is 2/1=2.
+\end{eg}
+
+\begin{hwsection}
+
+\begin{hwwithsoln}{fourth-power}
+Carry out a calculation like the one in example \ref{eg:third-power} on page \pageref{eg:third-power} to
+show that the derivative of $t^4$ equals $4t^3$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{derivative-of-cos}
+Example \ref{eg:dcos} on page \pageref{eg:dcos} gave a tricky argument to show that the derivative of
+$\cos t$ is $-\sin t$. Prove the same result using the method of example \ref{eg:derivative-of-sin} instead.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{infinite-subtraction}
+Suppose $H$ is a big number. Experiment on a calculator to figure out whether $\sqrt{H+1}-\sqrt{H-1}$
+comes out big, normal, or tiny. Try making $H$ bigger and bigger, and see if you observe a trend.
+Based on these numerical examples, form a conjecture about what happens to this expression when $H$ is infinite.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{infinitesimal-sqrt}
+Suppose $\der x$ is a small but finite number. Experiment on a calculator to figure out how $\sqrt{\der x}$
+compares in size to $\der x$.  Try making $\der x$ smaller and smaller, and see if you observe a trend.
+Based on these numerical examples, form a conjecture about what happens to this expression when $\der x$ is
+infinitesimal.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{transfer}
+To which of the following statements can the transfer principle be applied? If you think it can't be applied
+to a certain statement, try to prove that the statement is false for the hyperreals, e.g., by giving a
+counterexample.
+
+(a) For any real numbers $x$ and $y$, $x+y=y+x$.\\
+(b) The sine of any real number is between $-1$ and 1.\\
+(c) For any real number $x$, there exists another real number $y$ that is greater than $x$.\\
+(d) For any real numbers $x\ne y$, there exists another real number $z$ such that $x<z<y$.\\
+(e) For any real numbers $x\ne y$, there exists a rational number $z$ such that $x<z<y$. (A rational number is
+one that can be expressed as an integer divided by another integer.)\\
+(f) For any real numbers $x$, $y$, and $z$, $(x+y)+z=x+(y+z)$.\\
+(g) For any real numbers $x$ and $y$, either $x<y$ or $x=y$ or $x>y$.\\
+(h) For any real number $x$, $x+1\ne x$.
+\end{hwwithsoln}
+
+\begin{hw}
+If we want to pump air or water through a pipe, common sense tells us that it will be easier
+to move a larger quantity more quickly through a fatter pipe. Quantitatively, we can define
+the resistance, $R$, which is the ratio of the pressure difference produced by the pump to the
+rate of flow. A fatter pipe will have a lower resistance. Two pipes can be used in parallel,
+for instance when you turn on the water both in the kitchen and in the bathroom, and in this
+situation, the two pipes let more water flow than either would have let flow by itself, which
+tells us that they act like a single pipe with some lower resistance. The equation for their
+combined resistance is $R=1/(1/R_1+1/R_2)$. Analyze the case where one resistance is finite,
+and the other infinite, and give a physical interpretation. Likewise, discuss the case where
+one is finite, but the other is infinitesimal.
+\end{hw}
+
+\begin{hw}
+Naively, we would imagine that if a spaceship traveling at $u=3/4$ of the speed of light was to shoot a missile
+in the forward direction at $v=3/4$ of the speed of light (relative to the ship), then the missile would be traveling at $u+v=3/2$ of the
+speed of light. However, Einstein's theory of relativity tells us that this is too good to be true, because
+nothing can go faster than light. In fact, the relativistic equation for combining velocities in this way
+is not $u+v$, but rather $(u+v)/(1+uv)$. In ordinary, everyday life, we never travel at speeds anywhere near
+the speed of light. Show that the nonrelativistic result is recovered in the case where both $u$ and $v$ are
+infinitesimal.
+\end{hw}
+
+\begin{hwwithsoln}{hundredth}
+Differentiate  $(2x+3)^{100}$ with respect to $x$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{one-and-two-hundred}
+Differentiate  $(x+1)^{100}(x+2)^{200}$ with respect to $x$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{ex-chain}
+Differentiate  the following with respect to $x$: $e^{7x}$, $e^{e^x}$. (In the latter expression,
+as in all exponentials nested inside exponentials, the evaluation proceeds from the top down, i.e.,
+$e^{(e^x)}$, not $(e^e)^x$.)
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{sinusoidal}
+Differentiate $a\sin(bx+c)$ with respect to $x$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{integrate-sinusoidal}
+Find a function whose derivative with respect to $x$ equals $a\sin(bx+c)$. That is, find an
+integral of the given function.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{max-range}
+The range of a gun, when elevated to an angle $\theta$, is given by
+\begin{align*}
+  R=\frac{2v^2}{g}\sin\theta\:\cos\theta \qquad .
+\end{align*}
+Find the angle that will produce the maximum range.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{cosh}\index{hyperbolic cosine}
+The hyperbolic cosine function is defined by
+\begin{align*}
+  \cosh x = \frac{e^x+e^{-x}}{2} \qquad .
+\end{align*}
+Find any minima and maxima of this function.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{air-res-v}
+In free fall, the acceleration will not be exactly constant, due to air resistance. For example,
+a skydiver does not speed up indefinitely until opening her chute, but rather approaches a certain
+maximum velocity at which the upward force of air resistance cancels out the force of gravity.
+The expression for the distance dropped by of a free-falling object, with air resistance, is\footnote{Jan Benacka
+and Igor Stubna, \emph{The Physics Teacher}, 43 (2005) 432.}
+\begin{equation*}
+  d = A \ln\left[\cosh\left(t\sqrt{\frac{g}{A}}\right)\right] \qquad ,
+\end{equation*}
+where $g$ is the acceleration the object would have without air resistance, the function cosh
+has been defined in problem \ref{hw:cosh}, and
+$A$ is a constant that depends on the size, shape, and mass of the object, and the density of
+the air. (For a sphere of mass $m$ and diameter $d$ dropping in air, $A=4.11m/d^2$.
+Cf. problem \ref{hw:air-res-taylor}, p. \pageref{hw:air-res-taylor}.)\\
+(a) Differentiate this expression to find the velocity.  Hint: In order to simplify the writing,
+start by defining some other symbol to stand for the constant $\sqrt{g/A}$.\\
+(b) Show that your answer can be reexpressed in terms of the function tanh defined by
+$\tanh x=(e^x-e^{-x})/(e^x+e^{-x})$.\index{hyperbolic tangent}\\
+(c) Show that your result for the velocity approaches
+a constant for large values of $t$.\\
+(d) Check that your answers to parts b and c have units of velocity.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{derivative-of-tan}
+Differentiate $\tan\theta$ with respect to $\theta$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{cube-root}
+Differentiate $\sqrt[3]{x}$ with respect to $x$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{thompson-sqrts}
+Differentiate the following with respect to $x$:\\
+(a) $y=\sqrt{x^2+1}$ \\
+(b) $y=\sqrt{x^2+a^2}$ \\
+(c) $y=1/\sqrt{a+x}$ \\
+(d) $y=a/\sqrt(a-x^2)$ \\
+ \thompson
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{logarithmy}
+Differentiate $\ln(2t+1)$ with respect to $t$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{unnecessary-prod}
+If you know the derivative of $\sin x$, it's not necessary to use the product rule in order
+to differentiate $3\sin x$, but show that using the product rule gives the right result anyway.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{gamma}
+The $\Gamma$ function (capital Greek letter gamma) is a continuous mathematical function that
+has the property $\Gamma(n)=1\cdot2\cdot\ldots\cdot(n-1)$ for $n$ an integer. $\Gamma(x)$ is also well
+defined for values of $x$ that are not integers, e.g., $\Gamma(1/2)$ happens to be $\sqrt{\pi}$.
+Use computer software that is capable of evaluating the $\Gamma$ function to determine numerically
+the derivative of $\Gamma(x)$ with respect to $x$, at $x=2$. (In Yacas, the function is called Gamma.)
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{cylinder}
+For a cylinder of fixed surface area, what proportion of length to radius will give the maximum volume?
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{relativistic-ke}
+This problem is a variation on problem \ref{hw:ke} on page \pageref{hw:ke}. Einstein found that the
+equation $K=(1/2)mv^2$ for kinetic energy was only a good approximation for speeds much less than
+the speed of light, $c$. At speeds comparable to the speed of light, the correct equation is
+\begin{equation*}
+  K = \frac{\frac{1}{2}mv^2}{\sqrt{1-v^2/c^2}} \qquad .
+\end{equation*}
+(a) As in the earlier, simpler problem, find the power $\der K/\der t$ for an object accelerating
+at a steady rate, with $v=at$. \\
+(b) Check that your answer has the right units.\\
+(c) Verify that the power required becomes infinite in the limit as $v$ approaches $c$, the speed of
+light. This means that no material object can go as fast as the speed of light.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{log-neg}
+Prove, as claimed on page \pageref{log-neg},
+that the derivative of $\ln |x|$ equals $1/x$, for both positive and negative $x$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}[2]{neg-power-trick}
+Use a trick similar to the one used in example \ref{eg:derivative-of-sqrt} to prove that the power
+rule $\der(x^k)/\der x=kx^{k-1}$ applies to cases where $k$ is an integer less than 0.
+\end{hwwithsoln}
+
+\begin{hw}[2]
+The plane of Euclidean geometry is today often described as the set of all coordinate pairs $(x,y)$, where
+$x$ and $y$ are real. We could instead imagine the plane F that is defined in the same way, but with $x$ and $y$ taken from the
+set of hyperreal numbers. As a third alternative, there is the plane G in which the finite hyperreals are used.
+In E, Euclid's parallel postulate holds: given a line and a point not on the line, there exists exactly one line passing
+through the point that does not intersect the line. Does the parallel postulate hold in F? In G?
+Is it valid to associate only E with the plane described by Euclid's axioms?
+\end{hw}
+
+\begin{hwwithsoln}{limit-of-sum}
+(a) Prove, using the Weierstrass definition of the limit, that if $\lim_{x\rightarrow a} f(x) = F$ and $\lim_{x\rightarrow a} g(x) = G$ both exist,
+them $\lim_{x\rightarrow a} [f(x)+g(x)] = F+G$, i.e., that the limit of a sum is the sum of the limits. (b) Prove the same thing using the
+definition of the limit in terms of infinitesimals.
+\end{hwwithsoln}
+
+\begin{hw}
+Sketch the graph of the function $e^{-1/x}$, and evaluate the following four limits:
+\begin{align*}
+  \lim_{x\rightarrow 0^{+}} & e^{-1/x} \\
+  \lim_{x\rightarrow 0^{-}} & e^{-1/x} \\
+  \lim_{x\rightarrow +\infty} & e^{-1/x} \\
+  \lim_{x\rightarrow -\infty} & e^{-1/x} 
+\end{align*}
+\end{hw}
+
+\begin{hw}
+Verify the following limits.
+\begin{align*}
+  \lim_{s\rightarrow 1} & \frac{s^3-1}{s-1} = 3 \\
+  \lim_{\theta\rightarrow 0} & \frac{1-\cos\theta}{\theta^2} = \frac{1}{2} \\
+  \lim_{x\rightarrow \infty} & \frac{5x^2-2x}{x} = \infty \\
+  \lim_{n\rightarrow \infty} & \frac{n(n+1)}{(n+2)(n+3)} = 1 \\
+  \lim_{x\rightarrow \infty} & \frac{ax^2+bx+c}{dx^2+ex+f} = \frac{a}{d}
+\end{align*}
+\granville
+\end{hw}
+
+\end{hwsection}

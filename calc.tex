@@ -1,0 +1,51 @@
+% (c) 2005 Ben Crowell, licensed under the Creative Commons
+% Attribution-ShareAlike license,
+% http://creativecommons.org/licenses/by-sa/1.0/
+%
+\documentclass{calc}
+
+\makeindex
+
+\begin{document}
+
+\VerbatimFootnotes
+
+\renewcommand{\chapdir}{ch00}
+\include{ch00/cover}
+\include{ch00/frontmatter}
+
+\begin{multicols}{2}
+  \tableofcontents
+  \setcounter{unbalance}{0}
+\end{multicols}
+\twocolumn
+
+\formatchtoc{\Large}{}{4mm}
+%========================= main matter =========================
+\mainmatter
+\sloppy
+%-- I want the whole book numbered sequentially, arabic:
+  \pagenumbering{arabic} 
+  \addtocounter{page}{6} 
+%========================= chapters =========================
+	\renewcommand{\chapdir}{ch00}\include{ch00/preface}% 
+\setcounter{chapter}{0}
+	\renewcommand{\chapdir}{ch01}\include{ch01/ch01}% 
+	\renewcommand{\chapdir}{ch02}\include{ch02/ch02}% 
+	\renewcommand{\chapdir}{ch03}\include{ch03/ch03}% 
+	\renewcommand{\chapdir}{ch04}\include{ch04/ch04}% 
+	\renewcommand{\chapdir}{ch05}\include{ch05/ch05}% 
+	\renewcommand{\chapdir}{ch06}\include{ch06/ch06}% 
+\formatchtoc{\large}{\quad\contentspage}{4mm} % This has to go before the last chapter.
+	\renewcommand{\chapdir}{ch07}\include{ch07/ch07}% 
+\onecolumn
+\setcounter{chapter}{0}
+\renewcommand{\thechapter}{\Alph{chapter}}
+\renewcommand{\chaptermark}[1]{\markboth{\textsf{\thechapter\hspace{\myfooterspace}#1}}{}}
+	\renewcommand{\chapdir}{ch99}\include{ch99/detours}% 
+	\renewcommand{\chapdir}{ch99}\include{ch99/hwans}% 
+	\renewcommand{\chapdir}{ch99}\include{ch99/photocredits}% 
+	\renewcommand{\chapdir}{ch99}\include{ch99/reference}% 
+\printindex
+\end{document}
+

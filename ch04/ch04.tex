@@ -1,0 +1,806 @@
+%%chapter%% 04
+\chapter{Techniques}
+
+\section{Newton's method}\index{Newton's method}
+
+In the 1958 science fiction novel \textbf{Have Space Suit --- Will Travel}, by
+Robert Heinlein, Kip is a high school student who wants to be an engineer,
+and his father is trying to convince him to stretch himself more if he
+wants to get anything out of his education:
+
+\newcommand{\quoted}[1]{\textit{#1}}
+
+\quoted{``Why did Van Buren fail of re-election? How do you extract the cube
+root of eighty-seven?''}
+
+\quoted{Van Buren had been a president; that was all I remembered. But I could
+answer the other one. ``If you want a cube root, you look in a table
+in the back of the book.''}
+
+\quoted{Dad sighed. ``Kip, do you think that table was brought down from on
+high by an archangel?''}
+
+We no longer use tables to compute roots, but how does a pocket calculator
+do it? A technique called Newton's method allows us to calculate
+the inverse of any function efficiently, including cases that aren't
+preprogrammed into a calculator. In the example from the novel,
+we know how to calculate the function $y=x^3$ fairly accurately and
+quickly for any given value of $x$, but we want to turn the equation
+around and find $x$ when $y=87$. We start with a rough mental guess:
+since $4^3=64$ is a little too small, and $5^3=125$ is much too big,
+we guess $x\approx 4.3$. Testing our guess, we have
+$4.3^3=79.5$. We want $y$ to get bigger by $7.5$, and we can use
+calculus to find approximately how much bigger $x$ needs to get
+in order to accomplish that:
+\begin{align*}
+  \Delta x &= \frac{\Delta x}{\Delta y} \Delta y \\
+           &\approx \frac{\der x}{\der y} \Delta y \\
+           &= \frac{\Delta y}{\der y/\der x} \\
+           &= \frac{\Delta y}{3x^2} \\
+           &= \frac{\Delta y}{3x^2} \\
+           &= 0.14
+\end{align*}
+Increasing our value of $x$ to $4.3+0.14=4.44$, we find that 
+$4.44^3=87.5$ is a pretty good approximation to 87. If we need higher
+precision, we can go through the process again with $\Delta y=-0.5$,
+giving
+\begin{align*}
+  \Delta x &\approx \frac{\Delta y}{3x^2} \\
+           &= 0.14 \\
+  x &= 4.43 \\
+  x^3 &= 86.9 \qquad .
+\end{align*}
+This second iteration gives an excellent approximation.
+
+\fig{keplerian}{Example \ref{eg:keplerian}.}
+
+\begin{eg}\label{eg:keplerian}
+\egquestion Figure \ref{eg:keplerian} shows the astronomer Johannes Kepler's\index{Kepler, Johannes}\index{planets, motion of} analysis
+of the motion of the planets. The ellipse is the orbit of the planet around
+the sun. At $t=0$, the planet is at its closest approach to the sun, A. At some
+later time, the planet is at point B. The angle $x$ (measured in radians) is defined with reference
+to the imaginary circle encompassing the orbit. Kepler found the equation
+\begin{equation*}
+  2\pi \frac{t}{T} = x-e\sin x \qquad ,
+\end{equation*}
+where the period, $T$, is the time required for the planet to complete a full orbit, and
+the eccentricity of the ellipse, $e$, is a number that measures how much it
+differs from a circle. The relationship is complicated because the planet
+speeds up as it falls inward toward the sun, and slows down again as it swings
+back away from it.
+
+The planet Mercury has $e=0.206$. Find the angle $x$
+when Mercury has completed $1/4$ of a period.
+
+\eganswer We have
+\begin{equation*}
+  y = x-(0.206)\sin x \qquad ,
+\end{equation*}
+and we want to find $x$ when $y=2\pi/4=1.57$. As a first guess, we try $x=\pi/2$ (90 degrees), since the eccentricity of Mercury's
+orbit is actually much smaller than the example shown in the figure, and
+therefore the planet's speed doesn't vary all that much as it goes around the sun.
+For this value of $x$ we have $y=1.36$, which is too small by $0.21$.
+\begin{align*}
+  \Delta x &\approx \frac{\Delta y}{\der y/\der x} \\
+           &= \frac{0.21}{1-(0.206)\cos x} \\
+           &= 0.21
+\end{align*}
+(The derivative $\der y/\der x$ happens to be 1 at $x=\pi/2$.) This gives a new value of $x$, 1.57+.21=1.78.
+Testing it, we have $y=1.58$, which is correct to within rounding errors after only one iteration.
+(We were only supplied with a value of $e$ accurate to three significant figures, so we can't get a result
+with precision better than about that level.)
+\end{eg}
+
+\section{Implicit differentiation}\index{implicit differentiation}\index{differentiation!implicit}
+
+We can differentiate any function that is written as a formula,
+and find a result in terms of a formula. However, sometimes the
+original problem can't be written in any nice way as a formula.
+For example, suppose we want to find $\der y/\der x$ in a case
+where the relationship between $x$
+and $y$ is given by the following equation:
+\begin{equation*}
+  y^7+y = x^7+x^2 \qquad .
+\end{equation*}
+There is no equivalent of the quadratic formula for seventh-order
+polynomials, so we have no way to solve for one variable in terms
+of the other in order to differentiate it. However, we can still
+find $\der y/\der x$ in terms of $x$ and $y$. Suppose we let $x$
+grow to $x+\der x$. Then for example the $x^2$ term will grow
+to $(x+\der x)^2=x+2\der x+\der x^2$. The squared infinitesimal
+is negligible, so the increase in $x^2$ was really just
+$2\der x$, and we've really just computer the derivative of
+$x^2$ with respect to $x$ and multiplied it by $\der x$. In
+symbols,
+\begin{align*}
+  \der(x^2) &= \frac{\der(x^2)}{\der x} \cdot \der x \\
+           &= 2x \: \der x \qquad .
+\end{align*}
+That is, the change in $x^2$ is $2x$ times the change in $x$.
+Doing this to both sides of the original equation, we have
+\begin{gather*}
+  \der(y^7+y) = \der(x^7+x^2)\\
+  7y^6\:\der y + 1\:\der y = 7x^6\:\der x + 2x\:\der x\\
+  (7y^6+1)\der y = (7x^6+2x)\der x \\
+  \frac{\der y}{\der x} = \frac{7x^6+2x}{7y^6+1} \qquad .
+\end{gather*}
+This still doesn't give us a formula for the derivative in
+terms of $x$ alone, but it's not entirely useless. For instance,
+if we're given a numerical value of $x$, we can always use
+Newton's method to find $y$, and then
+evaluate the derivative.
+
+\section{Taylor series}\index{Taylor series}
+
+If you calculate $e^{0.1}$ on your calculator, you'll find that
+it's very close to 1.1. This is because the tangent line at $x=0$
+on the graph of $e^x$ has a slope of 1 ($\der e^x/\der x=e^x=1$ at $x=0$),
+and the tangent line is a good approximation to the exponential curve
+as long as we don't get too far away from the point of tangency.
+
+%%graph%% ex-tangent func=exp(x) format=eps xlo=-1 xhi=1 ylo=0 yhi=3 with=lines xtic_spacing=1 ytic_spacing=1 ; func=1+x
+\smallfig{ex-tangent}{The function $e^x$, and the tangent line at $x=0$.}
+
+How big is the error? The actual value of $e^{0.1}$ is $1.10517091807565\ldots$, which
+differs from $1.1$ by about $0.005$. If we go farther from the point of tangency,
+the approximation gets worse. At $x=0.2$, the error is about $0.021$, which is about
+four times bigger. In other words, doubling $x$ seems to roughly quadruple the error,
+so the error is proportional to $x^2$; it seems to be about $x^2/2$. Well, if we want a handy-dandy, super-accurate
+estimate of $e^x$ for small values of $x$, why not just account for this
+error. Our new and improved estimate is
+\begin{align*}
+  e^x \approx 1+x+\frac{1}{2}x^2
+\end{align*}
+for small values of $x$.
+
+%%graph%% ex-quadratic func=exp(x) format=eps xlo=-1 xhi=1 ylo=0 yhi=3 with=lines xtic_spacing=1 ytic_spacing=1 ; func=1+x+x**2/2
+\smallfig{ex-quadratic}{The function $e^x$, and the approximation $1+x+x^2/2$.}
+
+Figure \figref{ex-quadratic} shows that the approximation is now extremely good for sufficiently small values of $x$.
+The difference is that whereas $1+x$ matched both the y-intercept and the slope of the curve, $1+x+x^2/2$ matches
+the curvature as well. Recall that the second derivative is a measure of curvature. The second derivatives of the
+function and its approximation are
+\begin{gather*}
+  \frac{\der}{\der x} e^x = 1\\
+  \frac{\der}{\der x} \left(1+x+\frac{1}{2}x^2\right) = 1
+\end{gather*}
+
+%%graph%% ex-cubic func=exp(x) format=eps xlo=-1 xhi=1 ylo=0 yhi=3 with=lines xtic_spacing=1 ytic_spacing=1 ; func=1+x+x**2/2+x**3/6
+\smallfig{ex-cubic}{The function $e^x$, and the approximation $1+x+x^2/2+x^3/6$.}
+%
+We can do even better. Suppose we want to match the third derivatives. All the derivatives of $e^x$, evaluated
+at $x=0$, are 1, so we just need to add on a term proportional to $x^3$ whose third derivative is one. Taking the
+first derivative will bring down a factor of 3 in front, and taking and the second derivative will give a 2, so
+to cancel these out we need the third-order term to be $(1/2)(1/3)$:
+\begin{align*}
+  e^x \approx 1+x+\frac{1}{2}x^2+\frac{1}{2\cdot3}x^3
+\end{align*}
+Figure \figref{ex-cubic} shows the result. For a significant range of $x$ values close to zero, the approximation is
+now so good that we can't even see the difference between the two functions on the graph.
+
+ On the other hand, figure \figref{ex-cubic-wide} shows that 
+the cubic approximation for somewhat larger negative and positive values of $x$ is poor --- worse, in fact, than the
+linear approximation, or even the constant approximation $e^x=1$. This is to be expected, because
+any polynomial will blow up to either positive or negative infinity as $x$ approaches negative infinity, whereas
+the function $e^x$ is supposed to get very close to zero for large negative $x$. The idea here is that derivatives
+are \emph{local} things: they only measure the properties of a function very close to the point at which they're
+evaluated, and they don't necessarily tell us anything about points far away.
+%
+%%graph%% ex-cubic-wide func=exp(x) format=eps xlo=-4 xhi=2.5 ylo=-10 yhi=12 with=lines xtic_spacing=1 ytic_spacing=5 ; func=1+x+x**2/2+x**3/6
+\fig{ex-cubic-wide}{The function $e^x$, and the approximation $1+x+x^2/2+x^3/6$, on a wider scale.}
+
+It's a remarkable fact, then, that by taking enough terms in a polynomial approximation, we can always get as good an
+approximation to $e^x$ as necessary --- it's just that a large number of terms may be required for large values of $x$.
+In other words, the \emph{infinite series}
+\begin{equation*}
+   1+x+\frac{1}{2}x^2+\frac{1}{2\cdot3}x^3+\ldots
+\end{equation*}
+always gives exactly $e^x$. But what is the pattern here that would allows us to figure out, say, the fourth-order
+and fifth-order terms that were swept under the rug with the symbol ``\ldots''? Let's do the fifth-order term as
+an example. The point of adding in a fifth-order term is to make the fifth derivative of the approximation equal
+to the fifth derivative of $e^x$, which is 1. The first, second, \ldots derivatives of $x^5$ are
+\begin{align*}
+  \frac{\der}{\der x}x^5 &= 5x^4 \\
+  \frac{\der^2}{\der x^2}x^5 &= 5\cdot4 x^3 \\
+  \frac{\der^3}{\der x^3}x^5 &= 5\cdot4\cdot3 x^2 \\
+  \frac{\der^4}{\der x^4}x^5 &= 5\cdot4\cdot3\cdot2 x \\
+  \frac{\der^5}{\der x^5}x^5 &= 5\cdot4\cdot3\cdot2\cdot1  
+\end{align*}
+The notation for a product like $1\cdot2\cdot\ldots\cdot n$ is $n!$, read\index{factorial} ``$n$ factorial.'' So to get a term
+for our polynomial whose fifth derivative is 1, we need $x^5/5!$. The result for the infinite series is
+\begin{equation*}
+  e^x = \sum_{n=0}^\infty \frac{x^n}{n!} \qquad ,
+\end{equation*}
+where the special case of $0!=1$ is assumed.\footnote{This makes sense, because, for example, 4!=5!/5, 3!=4!/4, etc., so
+we should have 0!=1!/1.} This is called the \emph{Taylor series} for $e^x$, evaluated around $x=0$, and it's true, although I haven't proved it,
+that this particular Taylor series always converges to $e^x$, no matter how far $x$ is from zero.
+
+A Taylor series can be used to approximate other functions besides $e^x$, and when you ask your calculator to evaluate a
+function such as a sine or a cosine, it may actually be using a Taylor series to do it. In general, the Taylor series
+around $x=0$ for a function $y$ is
+\begin{equation*}
+  T_0(x) = \sum_{n=0}^\infty a_n x^n \qquad ,
+\end{equation*}
+where the condition for equality of the nth order derivative is
+\begin{equation*}
+  \left. a_n = \frac{1}{n!}\frac{\der^n y}{\der x^n}\right|_{x=0} \qquad .
+\end{equation*}
+Here the notation $\left.\right|_{x=0}$ means that the derivative is to be evaluated at $x=0$.
+
+\begin{eg}
+The function $y=e^{-1/x^2}$, shown in figure \figref{nonanalytic}, never converges to its Taylor series, except at $x=0$.
+This is because the Taylor series for this function, evaluated around $x=0$ is exactly zero! At $x=0$, we have
+$y=0$, $\der y/\der x=0$, $\der^2 y/\der x^2=0$, and so on for every derivative. The zero function matches the function
+$y(x)$ and all its derivatives to all orders, and yet is useless as an approximation to $y(x)$.
+\end{eg}
+
+%%graph%% nonanalytic func=exp(-1/x**2) format=eps xlo=-4 xhi=4 ylo=0 yhi=1.1 with=lines xtic_spacing=2 ytic_spacing=1
+\fig{nonanalytic}{The function $e^{-1/x^2}$ never converges to its Taylor series.}
+%
+In general, every function's Taylor series around $x=0$ converges to the function for all values of $x$ in the range
+defined by $|x|<r$, where $r$ is some number, known as the radius of convergence.\index{radius of convergence}
+For the function $e^x$, the radius
+of convergence happens to be infinite, whereas for $e^{-1/x^2}$ it's zero.
+
+A function's Taylor series doesn't have to be evaluated around $x=0$. The Taylor series around some other
+center $x=c$ is given by
+\begin{equation*}
+  T_c(x) = \sum_{n=0}^\infty a_n (x-c)^n \qquad ,
+\end{equation*}
+where 
+\begin{equation*}
+  \left. \frac{a_n}{n!} = \frac{\der^n y}{\der x^n}\right|_{x=c} \qquad .
+\end{equation*}
+
+\begin{eg}
+\egquestion Find the Taylor series of $y=\sin x$, evaluated around $x=0$.
+
+\eganswer  The first few derivatives are
+\begin{align*}
+  \frac{\der}{\der x}\sin x &= \cos x \\
+  \frac{\der^2}{\der x^2}\sin x &= -\sin x\\
+  \frac{\der^3}{\der x^3}\sin x &= -\cos x\\
+  \frac{\der^4}{\der x^4}\sin x &= \sin x\\
+  \frac{\der^5}{\der x^5}\sin x &= \cos x
+\end{align*}
+We can see that there will be a cycle of $\sin$, $\cos$, $-\sin$, and $-\cos$, repeating
+indefinitely. Evaluating these derivatives at $x=0$, we have
+0, 1, 0, $-1$, \ldots. All the even-order terms of the series are zero, and all the odd-order
+terms are $\pm1/n!$. The result is
+\begin{equation*}
+  \sin x = x - \frac{1}{3!}x^3 + \frac{1}{5!}x^5 - \ldots \qquad .
+\end{equation*}
+The linear term is the familiar small-angle approximation $\sin x\approx x$.
+
+The radius of convergence of this series turns out to be infinite. Intuitively the reason for
+this is that the factorials grow extremely rapidly, so that the successive terms in the series eventually start
+diminish quickly, even for large values of $x$.
+\end{eg}
+
+\begin{eg}
+\egquestion Find the Taylor series of $y=1/(1-x)$ around $x=0$, and see what you can say about
+its radius of convergence.
+
+\eganswer Rewriting the function as $y=(1-x)^{-1}$ and applying the chain rule, we have
+\begin{align*}
+                                                & \left.y\right|_{x=0} = 1\\
+  \left.\frac{\der y}{\der x}\right|_{x=0}     =& \left.(1-x)^{-2}\right|_{x=0} = 1\\
+  \left.\frac{\der^2 y}{\der x^2}\right|_{x=0} =& \left.2(1-x)^{-3}\right|_{x=0} = 2\\
+  \left.\frac{\der^3 y}{\der x^3}\right|_{x=0} =& \left.2\cdot3(1-x)^{-4}\right|_{x=0} = 2\cdot3\\
+                                                & \ldots
+\end{align*}
+The pattern is that the nth derivative is $n!$. The Taylor series therefore has $a_n=n!/n!=1$:
+\begin{equation*}
+  \frac{1}{1-x} =  1+x+x^2+x^3+\ldots
+\end{equation*}
+
+The radius of convergence of this series definitely can't be greater than 1, since for $x=1$ the
+series is $1+1+1+\ldots$, which grows indefinitely without ever converging to a specific number.
+Likewise for $x=-1$ the series becomes $1-1+1-1+\ldots$, which oscillates back and forth rather
+than converging. Intuitively we can see a couple of hints as to why this happens: (1) The
+function $1/(1-x)$ itself misbehaves at $x=1$, blowing up to infinity; (2) 
+The only way a series can get closer and closer to a finite value is if the absolute values of the terms
+decrease, and decrease sufficiently rapidly. But the coefficients
+$a_n$ of this Taylor series don't decrease with $n$, so so the only way the absolute values of
+the terms can decrease is for $|x|<1$.
+
+\end{eg}
+
+\section{Methods of integration}
+
+\subsection{Change of variable}\index{integration!methods of!change of variable}
+
+Sometimes and unfamiliar-looking integral can be made into a familiar one by substituting a
+a new variable for an old one. For example, we know how to integrate $1/x$ --- the answer
+is $\ln x$ --- but what about
+\begin{equation*}
+  \int \frac{\der x}{2x+1}   \qquad ?
+\end{equation*}
+Let $u=2x+1$. Differentiating both sides, we have $\der u=2\der x$, or $\der x=\der u/2$, so
+\begin{align*}
+  \int \frac{\der x}{2x+1}   &= \int \frac{\der u/2}{u} \\
+       &= \frac{1}{2}\ln u + c \\
+       &= \frac{1}{2}\ln(2x+1) +c \qquad .
+\end{align*}
+
+In the case of a definite integral, we have to remember to change the limits of integration
+to reflect the new variable.
+
+\begin{eg}
+\egquestion Evaluate $\int_3^4 \der x/(2x+1)$.
+
+\eganswer As before, let $u=2x+1$.
+\begin{align*}
+  \int_{x=3}^{x=4} \frac{\der x}{2x+1}   &= \int_{u=7}^{u=9} \frac{\der u/2}{u} \\
+       &= \left.\frac{1}{2}\ln u\right|_{u=7}^{u=9} \\
+\intertext{Here the notation $\left.\right|_{u=7}^{u=9}$ means to evaluate the function at
+7 and 9, and subtract the former from the latter. The result is}
+  \int_{x=3}^{x=4} \frac{\der x}{2x+1}  &= \frac{1}{2}(\ln 9-\ln 7) \\
+            &=\frac{1}{2}\ln\frac{9}{7} \qquad .
+\end{align*}
+\end{eg}
+
+Sometimes, as in the next example, a clever substitution is the secret to doing a
+seemingly impossible integral.
+
+\begin{eg}\label{eg:not-so-tricky}
+\egquestion Evaluate
+\begin{equation*}
+  \int \frac{e^{\sqrt x}}{\sqrt x} \der x \qquad .
+\end{equation*}
+
+\eganswer The only hope for reducing this to a form we can do is to let
+$u=\sqrt x$. Then $\der x=\der(u^2)=2u\der u$, so
+\begin{align*}
+  \int \frac{e^{\sqrt x}}{\sqrt x} \der x &=   \int \frac{e^u}{u} \cdot 2u\:\der u \\
+             &= 2 \int e^u \der u \\
+             &= 2e^u \\
+             &= 2e^{\sqrt{x}} \qquad .
+\end{align*}
+\end{eg}
+
+Example \ref{eg:not-so-tricky} really isn't so tricky, since there was only one logical
+choice for the substitution that had any hope of working. The following is a little more
+dastardly.
+
+\begin{eg}\label{eg:arctan}\index{arctangent}
+\egquestion Evaluate
+\begin{equation*}
+  \int \frac{\der x}{1+x^2} \qquad .
+\end{equation*}
+
+\eganswer The substitution that works is $x=\tan u$. First let's see what this does
+to the expression $1+x^2$. The familiar identity
+\begin{align*}
+   &\sin^2 u + \cos^2 u = 1 \qquad ,\\
+\intertext{when divided by $\cos^2 u$, gives}
+   &\tan^2 u + 1 = \sec^2 u \qquad ,
+\end{align*}
+so $1+x^2$ becomes $\sec^2 u$.
+But differentiating both sides of $x=\tan u$ gives
+\begin{align*}
+  \der x &= \der \left[\sin u(\cos u)^{-1}\right] \\
+         &= (\der\sin u)(\cos u)^{-1}\\
+         &  \quad +(\sin u)\der\left[(\cos u)^{-1}\right] \\
+         &= \left(1+\tan^2 u\right)\der u \\
+         &= \sec^2 u\:\der u \qquad , 
+\end{align*}
+so the integral becomes
+\begin{align*}
+  \int \frac{\der x}{1+x^2} &= \int \frac{\sec^2 u \der u}{\sec^2 u} \\
+           &= u+c \\
+           &= \tan^{-1} x+c \qquad .
+\end{align*}
+\end{eg}
+%
+What mere mortal would ever have suspected that the substitution $x=\tan u$ was
+the one that was needed in example \ref{eg:arctan}? One possible answer is to
+give up and do the integral on a computer:
+
+\begin{Code}
+  \ii Integrate(x) 1/(1+x^2)
+  \oo{ArcTan(x)}
+\end{Code}
+
+Another possible answer is that you can usually smell the possibility of
+this type of substitution, involving a trig function, when the thing to be
+integrated contains something reminiscent of the Pythagorean theorem, as
+suggested by figure \figref{tan-substitution}. The $1+x^2$ looks like what
+you'd get if you had a right triangle with legs 1 and $x$, and were using the
+Pythagorean theorem to find its hypotenuse.
+%
+\smallfig{tan-substitution}{The substitution $x=\tan u$.}
+
+\begin{eg}
+\egquestion Evaluate $\int \der x/\sqrt{1-x^2}$.
+
+\eganswer The $\sqrt{1-x^2}$ looks like what you'd get if you had a right
+triangle with hypotenuse 1 and a leg of length $x$, and were using the
+Pythagorean theorem to find the other leg, as in figure \figref{cos-substitution}.
+This motivates us to try the substitution $x=\cos u$, which gives
+$\der x=-\sin u\:\der u$ and $\sqrt{1-x^2}=\sqrt{1-\cos^2u}=\sin u$. The result is
+\begin{align*}
+  \int \frac{\der x}{\sqrt{1-x^2}} &= \int \frac{-\sin u\:\der u}{\sin u} \\
+                 &= u+c \\
+                 &= \cos^{-1}x \qquad .
+\end{align*}
+\end{eg}
+%
+\smallfig{cos-substitution}{The substitution $x=\cos u$.}
+
+\subsection{Integration by parts}\index{integration!methods of!by parts}
+
+Figure \figref{by-parts} shows a technique called integration by parts.
+If the integral $\int v\der u$ is easier than the integral $\int u\der v$,
+then we can calculate the easier one, and then by simple geometry determine
+the one we wanted. Identifying the large rectangle that surrounds both
+shaded areas, and the small white rectangle on the lower left, we have
+\begin{align*}
+  \int u\:\der v =& (\text{area of large rectangle})\\
+                &-(\text{area of small rectangle})\\
+                &\int v\:\der u \qquad .
+\end{align*}
+
+\fig{by-parts}{Integration by parts.}
+
+In the case of an indefinite integral, we have a similar relationship
+derived from the product rule:
+\begin{gather*}
+  \:\der(uv) = u \:\der v + v \:\der u \\
+  u \:\der v = \der(uv) - v \:\der u \\
+\end{gather*}
+Integrating both sides, we have the following relation.
+\begin{important}[Integration by parts]
+\begin{equation*}
+  \int u \:\der v = uv - \int v \:\der u \qquad .
+\end{equation*}
+\end{important}
+Since a definite integral can always be done by evaluating an indefinite
+integral at its upper and lower limits, one usually uses this form.
+Integrals don't usually come prepackaged in a form that makes it
+obvious that you should use integration by parts. What the equation for
+integration by parts tells us is that if we can split up the integrand
+into two factors, one of which (the $\der v$) we know how to integrate, we have
+the option of changing the integral into a new form in which that factor
+becomes its integral, and the other factor becomes its derivative. If we
+choose the right way of splitting up the integrand into parts, the result can be
+a simplification.
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \int x \cos x \:\der x
+\end{equation*}
+
+\egquestion There are two obvious possibilities for splitting up the integrand
+into factors,
+\begin{align*}
+  u \:\der v &= (x)(\cos x\:\der x) \\
+\intertext{or}
+  u \:\der v &= (\cos x)(x\:\der x) \qquad .
+\end{align*}
+The first one is the one that lets us make progress. If $u=x$, then
+$\der u=\der x$, and if $\der v=\cos x\:\der x$, then integration
+gives $v=\sin x$.
+\begin{align*}
+  \int x \cos x \:\der x &= \int u \:\der v \\
+                       &= uv - \int v \:\der u \\
+                       &= x\sin x-\int \sin x \:\der x \\
+                       &= x\sin x+\cos x
+\end{align*}
+Of the two possibilities we considered for $u$ and $\der v$, the reason
+this one helped was that differentiating $x$ gave $\der x$, which was
+simpler, and integrating $\cos x\der x$ gave $\sin x$, which was no
+more complicated than before. The second possibility would have made
+things worse rather than better, because integrating $x\der x$ would
+have given $x^2/2$, which would have been more complicated rather than
+less.
+\end{eg}
+
+\begin{eg}
+\egquestion Evaluate $\int \ln x \:\der x$.
+
+\eganswer This one is a little tricky, because it isn't explicitly
+written as a product, and yet we can attack it using integration by
+parts. Let $u=\ln x$ and $\der v=\der x$.
+\begin{align*}
+  \int \ln x \:\der x &= \int u \:\der v \\
+                       &= uv - \int v \:\der u \\
+                       &= x\ln x-\int x \frac{\der x}{x} \\
+                       &= x\ln x-x
+\end{align*}
+\end{eg}
+
+\subsection{Partial fractions}\index{integration!methods of!partial fractions}\index{partial fractions}
+
+Given a function like
+\begin{equation*}
+  \frac{-1}{x-1}+\frac{1}{x+1} \qquad ,
+\end{equation*}
+we can rewrite it over a common denominator like this:
+\begin{align*}
+  &\left(\frac{-1}{x-1}\right)\left(\frac{x+1}{x+1}\right) \\
+  &+\left(\frac{1}{x+1}\right)\left(\frac{x-1}{x-1}\right) \\
+  &=\frac{-x-1+x-1}{(x-1)(x+1)} \\
+  &=\frac{-2}{x^2-1} \qquad .
+\end{align*}
+But note that the original form is easily integrated to give
+\begin{multline*}
+  \int \left(\frac{-1}{x-1}+\frac{1}{x+1}\right)\:\der x \\
+    =-\ln(x-1)+\ln(x+1)+c \qquad ,
+\end{multline*}
+while faced with the form \linebreak[4] $-2/(x^2-1)$, we wouldn't have known how to
+integrate it.
+
+The idea of the method of partial fractions is that if we want to
+do an integral of the form
+\begin{equation*}
+  \int \frac{\der x}{P(x)} \qquad ,
+\end{equation*}
+where $P(x)$ is an nth order polynomial, we can always rewrite $1/P$ as
+\begin{equation*}
+  \frac{1}{P(x)} = \frac{A_1}{x-r_1} + \ldots \frac{A_n}{x-r_n} \qquad ,
+\end{equation*}
+where $r_1$ \ldots $r_n$ are the roots of the polynomial, i.e., the
+solutions of the equation $P(r)=0$. If the polynomial is second-order,
+you can find the roots $r_1$ and $r_2$ using the quadratic formula; I'll assume for
+the time being that they're real.
+For higher-order polynomials, there is no surefire, easy
+way of finding the roots by hand, and you'd be smart simply to use computer software
+to do it. In Yacas, you can find the real roots of a polynomial like this:
+
+\begin{Code}
+  \ii FindRealRoots(x^4-5*x^3
+  \ii    -25*x^2+65*x+84)
+  \oo{\{3.,7.,-4.,-1.\}}
+\end{Code}
+
+(I assume it uses Newton's method to find them.) The constants
+$A_i$ can then be determined by algebra, or by the trick of evaluating
+$1/P(x)$ for a value of $x$ very close to one of the roots.
+In the example of the polynomial 
+$x^4-5x^3-25x^2+65x+84$, let $r_1$ \ldots $r_4$ be the roots in the
+order in which they were returned by Yacas. Then $A_1$ can be
+found by evaluating $1/P(x)$ at $x=3.000001$:
+
+\begin{Code}
+  \ii P(x):=x^4-5*x^3-25*x^2
+  \ii   +65*x+84
+  \ii N(1/P(3.000001))
+  \oo{-8928.5702094768}
+\end{Code}
+
+We know that for $x$ very close to 3, the expression
+\begin{equation*}
+  \frac{1}{P} = \frac{A_1}{x-3}+\frac{A_2}{x-7}+\frac{A_3}{x+4}+\frac{A_4}{x+1}
+\end{equation*}
+will be dominated by the $A_1$ term, so
+\begin{gather*}
+  -8930 \approx \frac{A_1}{3.000001-3} \\
+  A_1 \approx (-8930)(10^{-6})  \qquad .
+\end{gather*}
+By the same method we can find the other four constants:
+\begin{Code}
+  \ii dx:=.000001
+  \ii N(1/P(7+dx),30)*dx
+  \oo{0.2840908276e-2}
+  \ii N(1/P(-4+dx),30)*dx
+  \oo{-0.4329006192e-2}
+  \ii N(1/P(-1+dx),30)*dx
+  \oo{0.1041666664e-1}
+\end{Code}
+(The \verb@N( ,30)@ construct is to tell Yacas to do a numerical calculation rather than an exact
+symbolic one, and to use 30 digits of precision, in order to
+avoid problems with rounding errors.) Thus, \begin{align*}
+  \frac{1}{P} &= \frac{-8.93\times10^{-3}}{x-3} \\
+              &+ \frac{2.84\times10^{-3}}{x-7} \\
+              &- \frac{4.33\times10^{-3}}{x+4} \\
+              &+ \frac{1.04\times10^{-2}}{x+1} \qquad .
+\end{align*}
+The desired integral is
+\begin{align*}
+  \int \frac{\der x}{P(x)} &= -8.93\times10^{-3}\ln(x-3) \\
+              & +2.84\times10^{-3}\ln(x-7) \\
+              & -4.33\times10^{-3}\ln(x+4) \\
+              &+ 1.04\times10^{-2}\ln(x+1) \\
+              &+c \qquad .
+\end{align*}
+
+There are some possible complications:
+(1) The same factor may occur more than once, as in
+$x^3-5x^2+7x-3=(x-1)(x-1)(x-3)$. In this example, we have to look for an answer of the form
+$A/(x-1)+B/(x-1)^2+C/(x-3)$, the solution being
+$-.25/(x-1)-.5/(x-1)^2+.25/(x-3)$.
+(2) The roots may be complex. 
+This is no show-stopper
+if you're using computer software that handles complex numbers gracefully. (You can choose a $c$
+that makes the result real.) 
+In fact, as discussed in section \ref{sec:complex-part-frac}, some beautiful things can happen
+with complex roots. But as an alternative,
+any polynomial with real coefficients can be factored into linear
+and quadratic factors with real coefficients. For each quadratic factor $Q(x)$, we then have a
+partial fraction of the form $(A+Bx)/Q(x)$, where $A$ and $B$ can be determined by algebra.
+In Yacas, this can be done using the \verb@Apart@ function.
+
+\begin{eg}
+\egquestion Evaluate the integral
+\begin{equation*}
+  \int \frac{\der x}{(x^4-8*x^3+8*x^2-8*x+7}
+\end{equation*}
+using the method of partial fractions.
+
+\eganswer First we use Yacas to look for real roots of the polynomial:
+
+\begin{Code}
+  \ii FindRealRoots(x^4-8*x^3
+  \ii   +8*x^2-8*x+7)
+  \oo{\{1.,7.\}}
+\end{Code}
+
+Unfortunately this polynomial seems to have only two real roots; the rest
+are complex.
+We can divide out the factor $(x-1)(x-7)$, but that still
+leaves us with a second-order polynomial, which has no real roots.
+One approach would be to factor the polynomial into the form
+$(x-1)(x-7)(x-p)(x-q)$, where $p$ and $q$ are complex,
+as in section \ref{sec:complex-part-frac}. Instead, let's use
+Yacas to expand the integrand in terms of partial fractions:
+
+\begin{Code}
+  \ii Apart(1/(x^4-8*x^3
+  \ii   +8*x^2-8*x+7))
+  \oo{((2*x)/25+3/50)/(x^2+1)}
+  \oo{  +1/(300*(x-7))}
+  \oo{  +(-1)/(12*(x-1))}
+\end{Code}
+
+We can now rewrite the integral like this:
+
+\begin{align*}
+   &\frac{2}{25} \int \frac{x\:\der x}{x^2+1} \\
+  +&\frac{3}{50} \int \frac{\der x}{x^2+1} \\
+  +&\frac{1}{300} \int \frac{\der x}{x-7} \\
+  -&\frac{1}{12} \int \frac{\der x}{x-1} \\
+\intertext{which we can evaluate as follows:}
+  & \frac{1}{25} \ln(x^2+1) \\
+  +&\frac{3}{50} \tan^{-1}x \\
+  +&\frac{1}{300} \ln(x-7) \\
+  -&\frac{1}{12} \ln(x-1) \\
+  +&c
+\end{align*}
+
+In fact, Yacas should be able to do the whole integral for us from scratch, but
+it's best to understand how these things work under the hood, and to avoid
+being completely dependent on one particular piece of software. As an illustration
+of this gem of wisdom, I found that when I tried to make Yacas evaluate the
+integral in one gulp, it choked because the calculation became too complicated!
+Because I understood the ideas behind the procedure, I was still able to
+get a result through a mixture of computer calculations and working it by hand.
+Someone who didn't have the knowledge of the technique might have tried
+the integral using the software, seen it fail, and concluded, incorrectly,
+that the integral was one that simply couldn't be done. A computer is
+no substitute for understanding.
+\end{eg}
+
+% possible example: integration by parts followed by partial fractions
+% integration of rational functions: P/Q; Q in terms of partial fractions; divide each term
+
+\begin{hwsection}
+\begin{hw}
+Graph the function $y=e^x-7x$ and get an approximate idea of where any of its zeroes
+are (i.e., for what values of $x$ we have $y(x)=0$).
+Use Newton's method to find the zeroes to three significant figures of precision.
+\end{hw}
+
+\begin{hw}
+The relationship between $x$ and $y$ is given by $xy = \sin y+x^2y^2$.\\
+(a) Use Newton's method to find the nonzero solution for $y$ when $x=3$. Answer: $y=0.2231$\\
+(b) Find $\der y/\der x$ in terms of $x$ and $y$, and evaluate the derivative
+at the point on the curve you found in part a. Answer: $\der y/\der x=-0.0379$\\
+{\footnotesize Based on an example by Craig B. Watkins.}
+\end{hw}
+
+\begin{hw}
+Find the Taylor series expansion of $\ln(1+x)$ around $x=0$, and use it to evaluate
+$\ln 1.776$ to four significant figures of precision.
+\end{hw}
+
+\begin{hw}\label{hw:air-res-taylor}
+In free fall, the acceleration will not be exactly constant, due to air resistance. For example,
+a skydiver does not speed up indefinitely until opening her chute, but rather approaches a certain
+maximum velocity at which the upward force of air resistance cancels out the force of gravity.
+If an object is dropped from a height $h$, and the time it takes to reach the ground is used to
+measure the acceleration of gravity, $g$, then the relative error in the result due to air
+resistance is\footnote{Jan Benacka
+and Igor Stubna, \emph{The Physics Teacher}, 43 (2005) 432.}
+\begin{align*}
+  E &= \frac{g-g_{vacuum}}{g} \\
+   & = 1-\frac{2b}{\ln^2\left(e^b+\sqrt{e^{2b}-1}\right)} \qquad ,
+\end{align*}
+where $b=h/A$, and
+$A$ is a constant that depends on the size, shape, and mass of the object, and the density of
+the air.   (For a sphere of mass $m$ and diameter $d$ dropping in air, $A=4.11m/d^2$. Cf. problem \ref{hw:air-res-v}, p. \pageref{hw:air-res-v}.)
+Evaluate the constant and linear terms of the Taylor series for the function $E(b)$.
+\end{hw}
+% ans: E(b)=b/3+...
+
+\begin{hw}
+Suppose you want to evaluate
+\begin{equation*}
+  \int \frac{\der x}{1+\sin 2x} \qquad ,
+\end{equation*}
+and you've found
+\begin{equation*}
+  \int \frac{\der x}{1+\sin x} = -\tan\left(\frac{\pi}{4}-\frac{x}{2}\right)
+\end{equation*}
+in a table of integrals. Use a change of variable to find the answer to the
+original problem.
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int \frac{\sin x \der x}{1+\cos x} \qquad .
+\end{equation*}
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int \frac{\sin x \der x}{1+\cos^2 x} \qquad .
+\end{equation*}
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int x e^{-x^2} \:\der x \qquad .
+\end{equation*}
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int x e^x \:\der x \qquad .
+\end{equation*}
+\end{hw}
+
+\begin{hw}
+Use integration by parts to evaluate the following integrals.
+\begin{gather*}
+  \int \sin^{-1} x\:\der x \\
+  \int \cos^{-1} x\:\der x \\
+  \int \tan^{-1} x\:\der x 
+\end{gather*}
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int x^2 \sin x \:\der x \qquad .
+\end{equation*}
+Hint: Use integration by parts more than once.
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int \frac{\der x}{x^2-x-6} \qquad .
+\end{equation*}
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int \frac{\der x}{x^3+3x^2-4} \qquad .
+\end{equation*}
+\end{hw}
+
+\begin{hw}
+Evaluate
+\begin{equation*}
+  \int \frac{\der x}{x^3-x^2+4x-4} \qquad .
+\end{equation*}
+\end{hw}
+
+\end{hwsection}

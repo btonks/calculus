@@ -1,0 +1,165 @@
+%%chapter%% 06
+\chapter{Improper integrals}\index{integral!improper}\index{improper integral}
+
+\section{Integrating a function that blows up}
+When we integrate a function that blows up to infinity at some
+point in the interval we're integrating, the result may be either
+finite or infinite.
+
+\begin{eg}\label{eg:improper-a}
+\egquestion Integrate the function $y=1/\sqrt{x}$ from $x=0$ to $x=1$.
+
+\eganswer The function blows up to infinity at one end of the region
+of integration, but let's just try evaluating it, and see what happens.
+\begin{align*}
+  \int_0^1 x^{-1/2}\:\der x &= \left.2x^{1/2}\right|_0^1 \\
+                         &= 2
+\end{align*}
+
+The result turns out to be finite. Intuitively, the reason for this
+is that the spike at $x=0$ is very skinny, and gets skinny fast
+as we go higher and higher up.
+\end{eg}
+
+%%graph%% improper-a-raw func=x**-.5 format=svg xlo=0 xhi=1.1 ylo=0 yhi=10 with=lines xtic_spacing=1 ytic_spacing=5
+\smallfig{improper-a}{The integral $\int_0^1 \der x/\sqrt{x}$ is finite.}
+
+\pagebreak
+
+\begin{eg}
+\egquestion Integrate the function $y=1/x^2$ from $x=0$ to $x=1$.
+
+\eganswer 
+\begin{align*}
+  \int_0^1 x^{-2}\:\der x &= \left.-x^{-1}\right|_0^1 \\
+                         &= -1+\frac{1}{0}
+\end{align*}
+
+Division by zero is undefined, so the result is undefined.
+
+Another way of putting it, using the hyperreal number system,
+is that if we were to integrate
+from $\epsilon$ to 1, where $\epsilon$ was an infinitesimal
+number, then the result would be $-1+1/\epsilon$, which is
+infinite. The smaller we make $\epsilon$, the bigger the
+infinite result we get out.
+
+Intuitively, the reason that this integral comes out infinite is
+that the spike at $x=0$ is fat, and doesn't get skinny fast enough.
+\end{eg}
+
+%%graph%% improper-b-raw func=x**-2 format=svg xlo=0 xhi=1.1 ylo=0 yhi=10 with=lines xtic_spacing=1 ytic_spacing=5
+\smallfig{improper-b}{The integral $\int_0^1 \der x/x^2$ is infinite.}
+
+These two examples were examples of improper integrals.
+
+\section{Limits of integration at infinity}
+
+Another type of improper integral is one in which one of the
+limits of integration is infinite. The notation
+\begin{equation*}
+  \int_a^\infty f(x)\:\der x
+\end{equation*}
+means the limit of $\int_a^H f(x)\:\der x$, where $H$ is
+made to grow bigger and bigger. Alternatively, we can
+think of it as an integral in which the top end of the
+interval of integration is an infinite hyperreal number.
+A similar interpretation applies when the lower limit is
+$-\infty$, or when both limits are infinite.
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \int_1^\infty x^{-2}\:\der x 
+\end{equation*}
+
+\eganswer
+\begin{align*}
+  \int_1^H x^{-2}\:\der x &= \left.-x^{-1}\right|_1^H \\
+               &= -\frac{1}{H}+1
+\end{align*}
+As $H$ gets bigger and bigger, the result gets closer and closer
+to 1, so the result of the improper integral is 1.
+
+Note that this is the same graph as in example \ref{eg:improper-a}, but with the $x$ and $y$ axes
+interchanged; this shows that the two different types of improper integrals really aren't so different.
+\end{eg}
+
+%%graph%% improper-c-raw func=x**-2 format=svg xlo=0 xhi=10 ylo=0 yhi=1 with=lines xtic_spacing=5 ytic_spacing=1
+\smallfig{improper-c}{The integral $\int_1^\infty \der x/x^2$ is finite.}
+
+\begin{eg}
+\egquestion Newton's law of gravity states that the gravitational force between two objects
+is given by $F=Gm_1m_2/r^2$, where $G$ is a constant, $m_1$ and $m_2$ are the objects' masses,
+and $r$ is the center-to-center distance between them. Compute the work that must be done
+to take an object from the earth's surface, at $r=a$, and remove it to $r=\infty$.
+
+\eganswer
+\begin{align*}
+  W &= \int_a^\infty \frac{Gm_1m_2}{r^2} \: \der r \\
+    &= Gm_1m_2 \int_a^\infty r^{-2} \: \der r \\
+    &= -Gm_1m_2 \left.r^{-1}\right|_a^\infty  \\
+    &= \frac{Gm_1m_2}{a}
+\end{align*}
+
+The answer is inversely proportional to $a$. In other words, if we were able to start from
+higher up, less work would have to be done.
+\end{eg}
+
+\begin{hwsection}
+
+\begin{hw}
+Integrate
+\begin{equation*}
+  \int_0^\infty e^{-x} \der x \qquad ,
+\end{equation*}
+or show that it diverges.
+\end{hw}
+
+\begin{hw}
+Integrate
+\begin{equation*}
+  \int_1^\infty \frac{\der x}{x} \qquad ,
+\end{equation*}
+or show that it diverges.
+\end{hw}
+
+\begin{hw}
+Integrate
+\begin{equation*}
+  \int_0^1 \frac{\der x}{x} \qquad ,
+\end{equation*}
+or show that it diverges.
+\end{hw}
+
+\begin{hw}
+Integrate
+\begin{equation*}
+  \int_0^\infty e^{-x}\cos x \: \der x
+\end{equation*}
+or show that it diverges.
+\end{hw}
+
+\begin{hw}
+Prove that
+\begin{equation*}
+  \int_0^\infty e^{-e^x} \: \der x
+\end{equation*}
+converges, but don't evaluate it.
+\end{hw}
+
+\begin{hw}\label{hw:laser}
+(a) Verify that the probability distribution $\der P/\der x$ given in example \ref{eg:laser} on page \pageref{eg:laser}
+is properly normalized.\\
+(b) Find the average value of $x$, or show that it diverges.\\
+(c) Find the standard deviation of $x$, or show that it diverges.
+\end{hw}
+
+\begin{hw}[2]
+Prove
+\begin{equation*}
+  \int_0^\infty e^{-x}x^n\:\der x = n! \qquad .
+\end{equation*}
+\end{hw}
+
+\end{hwsection}

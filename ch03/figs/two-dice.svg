@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 11 Build 196, SVG Export Plug-In . SVG Version: 6.0.0 Build 78)  -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="147.401"
+   height="111.323"
+   viewBox="0 0 147.401 111.323"
+   style="overflow:visible;enable-background:new 0 0 147.401 111.323"
+   xml:space="preserve"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.42.2"
+   sodipodi:docname="two-dice.svg"
+   sodipodi:docbase="/home/bcrowell/Documents/writing/calc/trunk/ch03/figs"><metadata
+   id="metadata174"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs172"><linearGradient
+   id="linearGradient2117"><stop
+     style="stop-color:#eaeaea;stop-opacity:1.0000000;"
+     offset="0.0000000"
+     id="stop2119" /><stop
+     id="stop2125"
+     offset="0.50000000"
+     style="stop-color:#dddddd;stop-opacity:1.0000000;" /><stop
+     style="stop-color:#bdbdbd;stop-opacity:1.0000000;"
+     offset="1.0000000"
+     id="stop2121" /></linearGradient><linearGradient
+   inkscape:collect="always"
+   xlink:href="#linearGradient2117"
+   id="linearGradient2123"
+   x1="-3.2775605"
+   y1="79.441277"
+   x2="147.49022"
+   y2="79.441277"
+   gradientUnits="userSpaceOnUse"
+   gradientTransform="matrix(0.995989,0.000000,0.000000,1.000000,-0.311109,1.566802e-14)" />
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		 
+	</defs><sodipodi:namedview
+   inkscape:cy="46.818891"
+   inkscape:cx="144.40968"
+   inkscape:zoom="0.73079569"
+   inkscape:window-height="510"
+   inkscape:window-width="712"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   borderopacity="1.0"
+   bordercolor="#666666"
+   pagecolor="#ffffff"
+   id="base"
+   inkscape:window-x="473"
+   inkscape:window-y="473"
+   inkscape:current-layer="svg2" />
+	<style
+   type="text/css"
+   id="style4">
+	
+	</style>
+	<rect
+   style="fill:#ebebeb;fill-opacity:1.0000000;fill-rule:evenodd;stroke:none;stroke-width:1.0000000pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000"
+   id="rect1387"
+   width="150.76778"
+   height="165.06985"
+   x="-3.5755222"
+   y="-50.171341" /><rect
+   style="fill:#e8e8e8;fill-opacity:1.0000000;fill-rule:evenodd;stroke:none;stroke-width:1.0000000pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000"
+   id="rect2209"
+   width="77.677490"
+   height="18.397301"
+   x="-3.5802407"
+   y="35.280827" /><rect
+   style="fill:url(#linearGradient2123);fill-opacity:1.0000000;fill-rule:evenodd;stroke:none;stroke-width:1.0000000pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;overflow:visible"
+   id="rect2115"
+   width="150.16304"
+   height="67.934883"
+   x="-3.5755222"
+   y="45.473835" /><image
+   id="image1544"
+   height="102.85456"
+   width="112.17176"
+   sodipodi:absref="/home/bcrowell/Documents/writing/calc/trunk/ch03/figs/dice.jpg"
+   xlink:href="dice.jpg"
+   x="34.411556"
+   y="-50.168610" /><rect
+   id="rect7"
+   height="87.000000"
+   width="114.00000"
+   style="fill:none;stroke:#000000;stroke-width:0.50000000"
+   y="0.25000000"
+   x="29.000000" /><rect
+   id="rect9"
+   height="11.352000"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="75.898003"
+   x="29.000000" /><rect
+   id="rect11"
+   height="22.705000"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="64.544998"
+   x="39.409000" /><rect
+   id="rect13"
+   height="34.056999"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="53.193001"
+   x="49.818001" /><rect
+   id="rect15"
+   height="45.409000"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="41.841000"
+   x="60.228001" /><rect
+   id="rect17"
+   height="56.761002"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="30.489000"
+   x="70.637001" /><rect
+   id="rect19"
+   height="68.112999"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="19.136999"
+   x="81.045998" /><rect
+   id="rect21"
+   height="56.761002"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="30.489000"
+   x="91.455002" /><rect
+   id="rect23"
+   height="45.409000"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="41.841000"
+   x="101.86400" /><rect
+   id="rect25"
+   height="34.056999"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="53.193001"
+   x="112.27400" /><rect
+   id="rect27"
+   height="22.705000"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="64.544998"
+   x="122.68300" /><rect
+   id="rect29"
+   height="11.352000"
+   width="9.9209995"
+   style="fill:#808080;stroke:#000000;stroke-width:0.50000000;fill-opacity:1.0000000"
+   y="75.898003"
+   x="133.09200" /><g
+   id="g31">
+			<g
+   id="g33">
+				<text
+   id="text35"
+   transform="translate(23.33740,90.85990)"><tspan
+     id="tspan37"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">0</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g39">
+			<g
+   id="g41">
+				<text
+   id="text43"
+   transform="matrix(0.000000,-1.000000,1.000000,0.000000,10.54590,74.37300)"><tspan
+     id="tspan45"
+     style="font-size:8.5000000px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">probability</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g47">
+			<g
+   id="g49">
+				<text
+   id="text51"
+   transform="translate(67.33350,106.8599)"><tspan
+     id="tspan53"
+     style="font-size:8.5000000px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">result</tspan></text>
+
+
+			</g>
+		</g><line
+   id="line57"
+   y2="6.1929998"
+   x2="29.292000"
+   y1="6.1929998"
+   x1="34.792000"
+   style="fill:none;stroke:#000000;stroke-width:0.50000000" /><g
+   id="g59">
+			<g
+   id="g61">
+				<text
+   id="text63"
+   transform="translate(15.00000,10.19340)"><tspan
+     id="tspan65"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">0.2</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g75">
+			<g
+   id="g77">
+				<text
+   id="text79"
+   transform="translate(32.00000,96.69340)"><tspan
+     id="tspan81"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">2</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g83">
+			<g
+   id="g85">
+				<text
+   id="text87"
+   transform="translate(42.39040,96.69340)"><tspan
+     id="tspan89"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">3</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g91">
+			<g
+   id="g93">
+				<text
+   id="text95"
+   transform="translate(52.78100,96.69340)"><tspan
+     id="tspan97"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">4</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g99">
+			<g
+   id="g101">
+				<text
+   id="text103"
+   transform="translate(63.17140,96.69340)"><tspan
+     id="tspan105"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">5</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g107">
+			<g
+   id="g109">
+				<text
+   id="text111"
+   transform="translate(73.56200,96.69340)"><tspan
+     id="tspan113"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">6</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g115">
+			<g
+   id="g117">
+				<text
+   id="text119"
+   transform="translate(83.95210,96.69340)"><tspan
+     id="tspan121"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">7</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g123">
+			<g
+   id="g125">
+				<text
+   id="text127"
+   transform="translate(94.34280,96.69340)"><tspan
+     id="tspan129"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">8</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g131">
+			<g
+   id="g133">
+				<text
+   id="text135"
+   transform="translate(104.7329,96.69340)"><tspan
+     id="tspan137"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">9</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g139">
+			<g
+   id="g141">
+				<text
+   id="text143"
+   transform="translate(112.6221,96.69340)"><tspan
+     id="tspan145"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">10</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g147">
+			<g
+   id="g149">
+				<text
+   id="text151"
+   transform="translate(123.3452,96.69340)"><tspan
+     id="tspan153"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">1</tspan></text>
+
+
+			</g>
+			<g
+   id="g155">
+				<text
+   id="text157"
+   transform="translate(127.6826,96.69340)"><tspan
+     id="tspan159"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">1</tspan></text>
+
+
+			</g>
+		</g><g
+   id="g161">
+			<g
+   id="g163">
+				<text
+   id="text165"
+   transform="translate(133.4028,96.69340)"><tspan
+     id="tspan167"
+     style="font-size:7.6500001px;font-family:Bitstream Vera Sans"
+     y="0"
+     x="0">12</tspan></text>
+
+
+			</g>
+		</g>
+</svg>

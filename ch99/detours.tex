@@ -1,0 +1,255 @@
+\chapter{Detours}
+
+\newcommand{\detour}[2]{\textbf{#2}\label{detour:#1}}
+
+\detour{def-tangent}{Formal definition of the tangent line}\index{tangent line!formal definition}
+
+Let $(a,b)$ be a point on the graph of the function $x(t)$.
+A line $\ell(t)$ through this point is said not to cut through the graph
+if there exists some real number $d>0$ such that
+$x(t)-\ell(t)$ has the same sign for all $t$ between $a-d$ and $a+d$.
+The line is said to be the tangent line at this point if it is the
+only line through this point that doesn't cut through the graph.\footnote{As an exception,
+there are cases in which the function is smooth and well-behaved throughout a certain
+region, but has no tangent line according to this definition at one particular point.
+For example, the function $x(t)=t^3$ has tangent lines everywhere except at $t=0$,
+which is an inflection point (p. \pageref{inflection}). In such cases, we fill in the
+``gap tooth'' in the derivative function in the obvious way.}
+
+\detour{polynomial-proof}{Derivatives of polynomials}\index{derivative!of a polynomial}
+
+We want to prove that the derivative of $t^k$ is $kt^{k-1}$. It suffices to
+prove that the derivative equals $k$ when evaluated at $t=1$, since we can
+then apply the kind of scaling argument\footnote{In the special case of $t=0$,
+the scaling argument doesn't work. For even $k$, it can be easily verified that
+the derivative at $t=0$ equals zero. For odd $k$, we have to fill in the ``gap tooth''
+as described in the preceding footnote.} used on page \pageref{scaling} to
+show that the derivative of $t^2/2$ was $t$. The proposed tangent line at $(1,1)$
+has the equation $\ell=k(t-1)+1$, so what we need to prove is that
+the polynomial $t^k-[k(t-1)+1]$ is greater than or equal to zero in some
+finite region around $t=1$.
+
+First, let's change variables to $u=t-1$. Then the polynomial in question becomes
+$P(u)=(u+1)^k-(ku+1)$, and we want to prove that it's nonnegative in some region
+around $u=0$. (We assume $k\ge 2$, since we've already found the derivatives in the
+cases of $k=0$ and 1, and in those cases $P(u)$ is identically zero.)
+
+Now the last two terms in the binomial series for $(u+1)^k$ are just $ku$ and 1,
+so $P(u)$ is a polynomial whose lowest-order term is a $u^2$ term. Also, all the
+nonzero coefficients of the polynomial are positive, so $P$ is positive for
+$u\ge 0$.
+
+To complete the proof we only need to establish that $P$ is also positive for sufficiently small
+negative values of $u$.
+For negative $u$, the even-order terms of $P$ are positive, and the odd-order
+terms negative. To make the idea clear, consider the $k=5$ case,
+where $P(u)=u^5+5u^4+10u^3+10u^2$. The idea is to pair off each positive
+term with the negative one immediately to its left. Although the coefficient
+of the negative term may, in general, be greater than the coefficient of
+the positive term with which we've paired it, a property of the binomial coefficients
+is that the ratio of successive coefficients is never greater than $k$. Thus for
+$-1/k<u<0$, each positive term is guaranteed to dominate the negative term
+immediately to its left.
+
+\detour{sin-rigor}{Details of the proof of the derivative of the sine function}\index{derivative!of the sine}
+
+Some ideas in this proof are due to Jerome Keisler.
+
+On page \pageref{eg:derivative-of-sin}, I computed
+\begin{align*}
+  \der x &= \sin(t+\der t)-\sin t \qquad , \\
+         &= \sin t \: \cos \der t \\
+         &\quad + \cos t \: \sin \der t - \sin t \\
+         &\approx \cos t \: \der t \qquad .
+\end{align*}
+Here I'll prove that the error introduced by the small-angle approximations really
+is of order $\der t^2$. We have
+\begin{equation*}
+  \sin(t+\der t) = \sin t + \cos t \der t - E \qquad ,
+\end{equation*}
+where the error $E$ introduced by the approximations is
+\begin{align*}
+  E = &\sin t (1-\cos \der t) \\
+    + &\cos t (\der t - \sin \der t) \qquad .
+\end{align*}
+
+\smallfig{sin-rigor}{Geometrical interpretation of the error term.}
+
+Let the radius of the circle in figure \figref{sin-rigor} be one, so AD
+is $\cos \der t$ and CD is $\sin \der t$. The area of the shaded pie slice
+is $\der t/2$, and the area of triangle ABC is $\sin\der t/2$, so the
+error made in the approximation $\sin\der t\approx\der t$ equals twice
+the area of the dish shape formed by line BC and arc BC. Therefore
+$\der t-\sin\der t$ is less than the area of rectangle CEBD.
+But CEBD has both an infinitesimal width and an infinitesimal height,
+so this error is of no more than order $\der t^2$.
+
+For the approximation $\cos\der t\approx 1$, the error (represented
+by BD) is $1-\cos\der t=1-\sqrt{1-\sin^2\der t}$, which is less
+than $1-\sqrt{1-\der t^2}$, since $\sin \der t<\der t$. Therefore
+this error is of order $\der t^2$.
+
+\detour{transcendentals}{The transfer principle applied to functions}
+
+On page \pageref{transcendentals}, I told you not to worry about whether it was legitimate to
+apply familiar functions like $x^2$, $\sqrt{x}$, $\sin x$, $\cos x$, and $e^x$ to hyperreal numbers.
+But since you're reading this, you're obviously in need of more reassurance.
+
+For some of these functions, the transfer principle straightforwardly guarantees that they work
+for hyperreals, have all the familiar properties, and can be computed in the same way. For example,
+the following statement is in a suitable form to have the transfer principle applied to it:
+\emph{
+  For any real number $x$, $x\cdot x \ge0$.
+}
+Changing ``real'' to ``hyperreal,'' we find out that the square of a hyperreal number is
+greater than or equal to zero, just like the square of a real number. Writing it as $x^2$ or
+calling it a square is just a matter of notation and terminology.
+The same applies to this statement:
+\emph{
+  For any real number $x\ge 0$, there exists a real number $y$ such that $y^2=x$.
+}
+Applying the transfer function to it tells us that square roots can be defined for
+the hyperreals as well.
+
+There's a problem, however, when we get to functions like $\sin x$ and $e^x$.
+If you look up the definition of the sine function in a trigonometry textbook, it will
+be defined geometrically, as the ratio of the lengths of two sides of a certain triangle.
+The transfer principle doesn't apply to geometry, only to arithmetic. It's not even obvious
+intuitively that it makes sense to define a sine function on the hyperreals. In an
+application like the differentiation of the sine function on page \pageref{eg:derivative-of-sin},
+we only had to take sines of hyperreal numbers that were infinitesimally close to real numbers,
+but if the sine is going to be a full-fledged function defined on the hyperreals, then we should
+be allowed, for example, to take the sine of an infinite number. What would that mean? If you
+take the sine of a number like a million or a billion on your calculator, you just get some
+apparently random result between $-1$ and 1. The sine function wiggles back and forth indefinitely
+as $x$ gets bigger and bigger, never settling down to any specific limiting value. Apparently
+we could have $\sin H=1$ for a particular infinite $H$, and then $\sin (H+\pi/2)=0$, $\sin(H+\pi)=-1$, \ldots
+
+It turns out that the moral equivalent of the  transfer function can indeed be applied to any function on
+the reals, yielding a function that is in some sense its natural ``big brother'' on the the hyperreals, but the consequences can be
+either disturbing or exhilirating depending on your tastes.\index{transfer principle!applied to functions}
+ For example, consider the function $[x]$ that takes
+a real number $x$ and rounds it down to the greatest integer that is less than or equal to to $x$, e.g.,
+$[3]=3$, and $[\pi]=3$. This function, like any other real function,
+can be extended to the hyperreals, and that means that we can define
+the \emph{hyperintegers},\index{hyperinteger}
+the set of hyperreals that satisfy $[x]=x$. The hyperintegers include the integers as a subset,
+but they also include infinite numbers. This is likely to seem magical, or even unreasonable, if we come
+at the hyperreals from the axiomatic point of view,
+as in this book and Keisler's more detailed treatment in
+\emph{Elementary Calculus: An Approach Using Infinitesimals}, \url{http://www.math.wisc.edu/~keisler/calc.html}.
+The extension of functions to the hyperreals seems much more natural in an alternative,
+constructive approach, which is explained admirably in an online article at \url{http://mathforum.org/dr.math/faq/analysis_hyperreals.html}.
+
+\detour{chain-rule}{Proof of the chain rule}
+
+In the statement of the chain rule on page \pageref{sec:chain-rule}, I followed my usual custom of writing
+derivatives as $\der y/\der x$, when actually the derivative is the standard part, $\st(\der y/\der x)$. In more rigorous
+notation, the chain rule should be stated like this:
+\begin{equation*}
+  \st\left(\frac{\der z}{\der x}\right) =   \st\left(\frac{\der z}{\der y}\right) \st\left(\frac{\der y}{\der x}\right) \qquad .
+\end{equation*}
+The transfer principle allows us to rewrite the left-hand side as $\st[(\der z/\der y)(\der y/\der x)]$, and then
+we can get the desired result using the identity $\st(ab)=\st(a)\st(b)$.
+
+\detour{exp}{Derivative of $e^x$}\index{derivative!of the exponential}
+
+All of the reasoning on page \pageref{main:exp} would have applied equally well to any other
+exponential function with a different base, such as $2^x$ or $10^x$. Those functions would have
+different values of $c$, so if we want to determine the value of $c$ for the base-$e$ case, we
+need to bring in the definition of $e$, or of the exponential function $e^x$, somehow.
+
+We can take the definition of $e^x$ to be\label{definition-of-exp}\index{exponential!definition of}
+\begin{align*}
+  e^x = \lim_{n\rightarrow \infty} \left(1+\frac{x}{n}\right)^n \qquad .
+\end{align*}
+The idea behind this relation is similar to the idea of compound interest. If the interest rate is 10\%, compounded
+annually, then $x=0.1$, and the balance grows by a factor $(1+x)=1.1$ in one year. If, instead, we want to compound the
+interest monthly, we can set the monthly interest rate to $0.1/12$, and then the growth of the
+balance over a year is $(1+x/12)^{12}=1.1047$, which is slightly larger because the interest from the earlier months
+itself accrues interest in the later months. Continuing this limiting process, we find $e^{1.1}=1.1052$.
+
+If $n$ is large, then we have a good approximation to the base-$e$ exponential, so let's differentiate
+this finite-$n$ approximation and try to find an approximation to the derivative of $e^x$. The chain rule
+tells is that the derivative of $(1+x/n)^n$ is the derivative of the raising-to-the-nth-power function,
+multiplied by the derivative of the inside stuff, $\der(1+x/n)/\der x=1/n$. We then have
+\begin{align*}
+  \frac{\der \left(1+\frac{x}{n}\right)^n}{\der x} &= \left[n\left(1+\frac{x}{n}\right)^{n-1}\right]\cdot \frac{1}{n} \\
+            &= \left(1+\frac{x}{n}\right)^{n-1} \qquad .
+\end{align*}
+But evaluating this at $x=0$ simply gives 1, so at $x=0$, the approximation to the derivative is exactly 1 for all values of
+$n$ --- it's not even necessary to imagine going to larger and larger values of $n$. This establishes that $c=1$,
+so we have
+\begin{equation*}
+  \frac{\der e^x}{\der x} = e^x 
+\end{equation*}
+for all values of $x$.
+
+\detour{fundamental-thm-proof}{Proof of the fundamental theorem of calculus}\index{calculus!fundamental theorem of!proof}\index{fundamental theorem of calculus!proof}
+
+There are three parts to the proof: (1)  Take the equation that states
+the fundamental theorem, differentiate both sides with respect to $b$, and show that they're equal.
+(2) Show that continuous functions with equal derivatives must be essentially the same function, except for an
+additive constant. (3) Show that the constant in question is zero.
+
+1. By the definition of the indefinite integral, the derivative of $x(b)-x(a)$ with respect to $b$ equals
+$\xdot(b)$. We have to establish that this equals the following:
+\begin{align*}
+  \frac{\der}{\der b} \int_a^b \xdot(t) \der t 
+    &= \st \frac{1}{\der b}\left[\int_a^{b+\der b}  \xdot(t) \der t - \int_a^b  \xdot(t) \der t\right] \\
+    &= \st \frac{1}{\der b}\int_b^{b+\der b}  \xdot(t) \der t \\
+    &= \st \frac{1}{\der b}\lim_{H\rightarrow\infty} \sum_{i=0}^H  \xdot(b\:+\:i\:\der b/H) \frac{\der b}{H} \\
+    &= \st \lim_{H\rightarrow\infty} \frac{1}{H} \sum_{i=0}^H  \xdot(b\:+\:i\:\der b/H)
+\end{align*}
+Since $\xdot$ is continuous, all the values of $\xdot$ occurring inside the sum can differ
+only infinitesimally from $\xdot(b)$. Therefore the quantity inside the limit differs only infinitesimally from
+$\xdot(b)$, and the standard part of its limit must be $\xdot(b)$.\footnote{If you don't want to use infinitesimals,
+then you can express the derivative as a limit, and in the final step of the argument use the mean value theorem,
+introduced later in the chapter.}
+
+2. Suppose $f$ and $g$ are two continuous functions whose derivatives are equal. Then $d=f-g$ is a continuous function whose derivative is zero.
+But the only continuous function with a derivative of zero is a constant, so $f$ and $g$ differ by at most an additive constant.
+
+3. I've established that the derivatives with respect to $b$ of $x(b)-x(a)$ and $\int_a^b \xdot \der t$ are the same, so they differ by
+at most an additive constant. But at $b=a$, they're both zero, so the constant must be zero.
+
+\detour{mean-value-proof}{Proof of the mean value theorem}\index{mean value theorem!proof}
+
+Suppose that the mean value theorem is violated. Let $L$ by the set of all $x$ in the interval from $a$ to $b$
+such that $y(x)<\bar{y}$, and likewise let $M$ be the set with $y(x)>\bar{y}$. If the theorem is violated, then
+the union of these two sets covers the entire interval from $a$ to $b$. Neither one can be empty; if, for example, $M$ was
+empty, then we would have $y<\bar{y}$ everywhere and also $\int_a^b y=\int_a^b\bar{y}$, but it follows directly from
+the definition of the definite integral that when one function is less than another, its integral is also less
+than the other's. Since $y$ takes on values less than and greater than $\bar{y}$, it follows from the intermediate value theorem
+that $y$ takes on the value $\bar{y}$ somewhere (intuitively, at a boundary between $L$ and $M$).
+
+\detour{fn-thm-alg-proof}{Proof of the fundamental theorem of algebra}\index{fundamental theorem of algebra!proof}
+
+Theorem: In the complex number system, an nth-order polynomial has exactly $n$
+roots, i.e., it can be factored into the form $P(z)=(z-a_1)(z-a_2)\ldots(z-a_n)$,
+where the $a_i$ are complex numbers.
+
+Proof: The proofs in the cases of $n=0$ and 1 are trivial, so our strategy is to
+reduce higher-$n$ cases to lower ones. If an nth-degree polynomial $P$ has at least
+one root, $a$, then we can always reduce it to a polynomial of degree $n-1$ by
+dividing it by $(z-a)$. Therefore the theorem is proved by induction provided that
+we can show that every polynomial of degree greater than zero has at least one
+root.
+
+Suppose, on the contrary, that there is an nth order polynomial $P(z)$, with $n>0$, that has
+no roots at all. Then $|P(z)|$ must have some minimum value, which is achieved
+at $z=z_\zu{o}$. (Polynomials don't have asymptotes, so the minimum really does
+have to occur for some specific, finite $z_\zu{o}$.) To make things more
+simple and concrete, we can construct another polynomial $Q(z)=P(z+z_\zu{o})/P(z_\zu{o})$,
+so that $|Q|$ has a minimum value of 1, achieved at $Q(0)=1$. This means that
+$Q$'s constant term is 1. What about its other terms? Let $Q(z)=1+c_1z+\ldots+c_nz^n$.
+Suppose $c_1$ was nonzero.
+Then for infinitesimally small values of $z$, the terms of order $z^2$ and higher
+would be negligible, and we could make $Q(z)$ be a real number less than one by
+an appropriate choice of $z$'s argument. Therefore $c_1$ must be zero. But that means
+that if $c_2$ is nonzero, then for infinitesimally small $z$, the $z^2$ term dominates
+the $z^3$ and higher terms, and again this would allow us to make $Q(z)$ be real and
+less than one for appropriately chosen values of $z$. Continuing this process, we
+find that $Q(z)$ has no terms at all beyond the constant term, i.e., $Q(z)=1$. This
+contradicts the assumption that $n$ was greater than zero, so we've proved by
+contradiction that there is no $P$ with the properties claimed.

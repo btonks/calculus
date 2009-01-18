@@ -1,0 +1,14 @@
+*~
+*/.xvpics/*
+a.a
+*.pdf
+old_outline
+outline
+temp.pdf
+TODO
+*.aux
+*.log
+*.idx
+*.toc
+*.bak
+thumbnail.png

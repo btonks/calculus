@@ -1,0 +1,10 @@
+tmax := 100;
+H := 1000;
+dt := tmax/H;
+sum := 0;
+t := 0;
+While (t<=tmax) [
+  sum := N(sum+t*dt);
+  t := N(t+dt);
+];
+Echo(sum);

@@ -1,0 +1,363 @@
+\chapter{Iterated integrals}\label{ch:iterated-int}
+
+\section{Integrals inside integrals}\index{integral!iterated}\index{iterated integral}
+
+In various applications, you need to do
+integrals stuck inside other integrals. These are known as
+iterated integrals, or double integrals, triple integrals, etc. Similar concepts
+crop up all the time even when you're not doing calculus, so let's start by
+imagining such an example. Suppose you want to count how many squares there are
+on a chess board, and you don't know how to multiply eight times eight. You
+could start from the upper left, count eight squares across, then continue with
+the second row, and so on, until you how counted every square, giving the result
+of 64. In slightly more formal mathematical language, we could write the following
+recipe: for each row, $r$, from 1 to 8, consider the columns, $c$, from 1 to 8,
+and add one to the count for each one of them. Using the sigma notation, this
+becomes
+\begin{equation*}
+  \sum_{r=1}^8 \sum_{c=1}^8 1 \qquad .
+\end{equation*}
+If you're familiar with computer programming, then you can think of this as
+a sum that could be calculated using a loop nested inside another loop.
+To evaluate the result (again, assuming we don't know how to multiply, so we
+have to use brute force), we can first evaluate the inside sum, which equals
+8, giving
+\begin{equation*}
+  \sum_{r=1}^8 8 \qquad .
+\end{equation*}
+Notice how the ``dummy'' variable $c$ has disappeared. Finally we do the outside
+sum, over $r$, and find the result of 64.
+
+Now imagine doing the same thing with the pixels on a TV screen. The electron
+beam sweeps across the screen, painting the pixels in each row, one at a time.
+This is really no different than the example of the chess board, but because the
+pixels are so small, you normally think of the image on a TV screen as continuous
+rather than discrete.
+This is the idea of an integral in calculus.
+Suppose we want to find the area of a rectangle of width
+$a$ and height $b$, and we don't know that we can just multiply to get the
+area $ab$. The brute force way to do this is to break up the rectangle into
+a grid of infinitesimally small squares, each having width $\der x$ and
+height $\der y$, and therefore the infinitesimal area $\der A = \der x \der y$.\index{area!in Cartesian coordinates}
+For convenience, we'll imagine that the rectangle's
+lower left corner is at the origin. Then the area is given by this integral:
+\begin{align*}
+  \text{area} &= \int_{y=0}^b \int_{x=0}^a \der A \\
+              &= \int_{y=0}^b \int_{x=0}^a \der x \:\der y 
+\end{align*}
+Notice how the leftmost integral sign, over $y$, and the rightmost differential, $\der y$,
+act like bookends, or the pieces of bread on a sandwich. Inside them, we have
+the integral sign that runs over $x$, and the differential $\der x$ that matches
+it on the right. Finally, on the innermost layer, we'd normally
+have the thing we're integrating, but here's it's 1, so I've omitted it. Writing the
+lower limits of the integrals with $x=$ and $y=$ helps to keep it straight which
+integral goes with with differential. The result is
+\begin{align*}
+  \text{area} &= \int_{y=0}^b \int_{x=0}^a \der A \\
+              &= \int_{y=0}^b \int_{x=0}^a \der x \:\der y \\
+              &= \int_{y=0}^b \left(\int_{x=0}^a \der x\right) \der y \\
+              &= \int_{y=0}^b a \:\der y \\
+              &= a \int_{y=0}^b \der y \\
+              &= ab \qquad .
+\end{align*}
+
+\begin{eg}[Area of a triangle]
+\egquestion Find the area of a 45-45-90 right triangle having legs $a$.
+
+\eganswer Let the triangle's hypotenuse run from the origin to the point $(a,a)$,
+and let its legs run from the origin to $(0,a)$, and then to $(a,a)$. In other
+words, the triangle sits on top of its hypotenuse. Then the integral can be set
+up the same way as the one before, but for a particular value of $y$, values of
+$x$ only run from 0 (on the $y$ axis) to $y$ (on the hypotenuse). We then have
+\begin{align*}
+  \text{area} &= \int_{y=0}^a \int_{x=0}^y \der A \\
+              &= \int_{y=0}^a \int_{x=0}^y \der x \:\der y \\
+              &= \int_{y=0}^a \left(\int_{x=0}^y \der x\right) \der y \\
+              &= \int_{y=0}^a y \:\der y \\
+              &= \frac{1}{2}a^2
+\end{align*}
+Note that in this example, because the upper end of the $x$ values depends
+on the value of $y$, it makes a difference which order we do the integrals
+in. The $x$ integral has to be on the inside, and we have to do it first.
+\end{eg}
+
+\begin{eg}[Volume of a cube]
+\egquestion Find the volume of a cube with sides of length $a$.
+
+\eganswer This is a three-dimensional example, so we'll have integrals
+nested three deep, and the thing we're integrating is the volume
+$\der V = \der x \der y \der z$.
+
+\begin{align*}
+  \text{volume} &= \int_{z=0}^a \int_{y=0}^a \int_{x=0}^a \der V \\
+              &= \int_{z=0}^a \int_{y=0}^a \int_{x=0}^a \der x \: \der y \: \der z \\
+              &= \int_{z=0}^a \int_{y=0}^a a \: \der y \: \der z \\
+              &= a \int_{z=0}^a \int_{y=0}^a \der y \: \der z \\
+              &= a \int_{z=0}^a a \: \der z \\
+              &= a^2 \int_{z=0}^a \der z \\
+              &= a^3
+\end{align*}
+\end{eg}
+
+\begin{eg}[Area of a circle]
+\egquestion Find the area of a circle.
+
+\eganswer To make it easy, let's find the area of a semicircle and then double it.
+Let the circle's radius be $r$, and let it be centered on the origin and bounded
+below by the $x$ axis. Then the curved edge is given by the equation $R^2=x^2+y^2$,
+or $y=\sqrt{R^2-x^2}$. Since the $y$ integral's limit depends on $x$, the $x$
+integral has to be on the outside.
+The area is
+\begin{align*}
+  \text{area} &= \int_{x=-R}^r \int_{y=0}^{\sqrt{R^2-x^2}} \der y \: \der x\\
+              &= \int_{x=-R}^r \sqrt{R^2-x^2} \der x\\
+              &= r \int_{x=-R}^r \sqrt{1-(x/R)^2} \: \der x \qquad .
+\intertext{Substituting $u=x/R$,}
+  \text{area} & = R^2 \int_{u=-1}^1 \sqrt{1-u^2} \: \der u \\
+\end{align*}
+The definite integral equals $\pi$, as you can
+find using a trig substitution or simply by looking it
+up in a table, and the result is, as expected, $\pi R^2/2$ for the area of
+the semicircle. Doubling it, we find the expected result of $\pi R^2$ for
+a full circle.
+\end{eg}
+
+\section{Applications}
+
+Up until now, the integrand of the innermost integral has always been 1, so
+we really could have done all the double integrals as single integrals. The
+following example is one in which you really need to do iterated integrals.
+
+\smallfig{blondin}{The famous tightrope walker Charles Blondin uses a long pole
+for its large moment of inertia.}
+
+\begin{eg}[Moments of inertia]\index{moment of inertia}
+The moment of inertia\index{moment of inertia} is a measure of how difficult
+it is to start an object rotating (or stop it). For example, tightrope walkers
+carry long poles because they want something with a big moment of inertia.
+The moment of inertia is defined by $I=\int R^2 \der m$, where $\der m$ is
+the mass of an infinitesimally small portion of the object, and $R$ is the
+distance from the axis of rotation.
+
+To start with, let's do an example that doesn't require iterated integrals.
+Let's calculate the moment of inertia of a thin rod of
+mass $M$ and length $L$ about a line perpendicular to the rod
+and passing through its center.
+
+\begin{align*}
+	I	&= \int R^2 \der m \\
+		&= \int_{-L/2}^{L/2} x^2\:\frac{M}{L}\:\der x \\
+\intertext{[$r=|x|$, so $R^2=x^2$]}
+		&= \frac{1}{12}ML^2
+\end{align*}
+
+Now let's do one that requires iterated integrals:
+the moment of inertia of a cube of side $b$,
+for rotation about an axis that passes through its center
+and is parallel to four of its faces.
+
+Let the origin be at the center of the cube, and
+let $x$ be the rotation axis.
+\begin{align*}
+	I	&=  \int R^2 \der m \\
+		&= \rho \int R^2 \der V \\
+		&= \rho \int_{b/2}^{b/2} \int_{b/2}^{b/2} \int_{b/2}^{b/2} \left(y^2+z^2\right)
+					 \der x\: \der y\: \der z \\
+		&= \rho b \int_{b/2}^{b/2} \int_{b/2}^{b/2}  \left(y^2+z^2\right)
+					 \der y \: \der z 
+\end{align*}
+The fact that the last step is a trivial integral results
+from the symmetry of the problem. The integrand of the
+remaining double integral breaks down into two terms, each
+of which depends on only one of the variables, so we break
+it into two integrals,
+\begin{align*}
+		I =& \rho b \int_{b/2}^{b/2} \int_{b/2}^{b/2}  y^2 \der y\: \der z \\
+			&+ \rho b \int_{b/2}^{b/2} \int_{b/2}^{b/2}  z^2 \der y\: \der z
+\end{align*}
+which we know have identical results. We therefore only need
+to evaluate one of them and double the result:
+\begin{align*}
+	I	&= 2\rho b \int_{b/2}^{b/2} \int_{b/2}^{b/2}  z^2 \der y\: \der\: z \\
+		&= 2 \rho b^2 \int_{b/2}^{b/2} z^2 \der z \\
+		&= \frac{1}{6} \rho b^5 \\
+		&= \frac{1}{6} M b^2
+\end{align*}
+\end{eg}
+
+\pagebreak
+
+\section{Polar coordinates}\index{polar coordinates}\index{coordinates!polar}\index{area!in polar coordinates}
+
+\smallfig{descartes}{Ren\'{e} Descartes (1596-1650)}\index{Descartes, R\'{e}ne}
+
+Philosopher and mathematician Ren\'{e} Descartes originated the idea of describing plane
+geometry using $(x,y)$ coordinates measured from a pair of perpendicular coordinate
+axes. These rectangular coordinates are known as Cartesian coordinates, in his honor.\index{Cartesian coordinates}\index{coordinates!Cartesian}
+
+\fig{polar-coordinates}{Polar coordinates.}
+
+As a logical extension of Descartes' idea, one can find different ways of defining coordinates on
+the plane, such as the polar coordinates in figure \figref{polar-coordinates}. In polar coordinates,
+the differential of area, figure \figref{da-polar} can be written as $\der a=R \:\der R\:\der \phi$. The idea
+is that since $\der R$ and $\der \phi$ are infinitesimally small, the shaded area in the figure is very
+nearly a rectangle, measuring $\der R$ is one dimension and $R\:\der \phi$ in the other. (The latter follows
+from the definition of radian measure.)
+
+\smallfig{da-polar}{The differential of area in polar coordinates}
+
+\begin{eg}
+\egquestion A disk has mass $M$ and radius $b$. Find its moment of inertia for rotation about the axis
+passing perpendicularly through its center.
+
+\eganswer
+\begin{align*}
+  I &= \int R^2 \der M \\
+    &= \int R^2 \frac{\der M}{\der a}\:\der a \\
+    &= \int R^2 \frac{M}{\pi b^2}\:\der a \\
+    &= \frac{M}{\pi b^2}\int_{R=0}^b \int_{\phi=0}^{2\pi} R^2 \cdot R \:\der \phi\:\der R \\
+    &= \frac{M}{\pi b^2}\int_{R=0}^b R^3 \int_{\phi=0}^{2\pi} \der \phi\:\der R \\
+    &= \frac{2 M}{ b^2}\int_{R=0}^b R^3 \:\der R \\
+    &= \frac{M b^4}{2}
+\end{align*}
+\end{eg}
+
+\section{Spherical and cylindrical coordinates}\index{cylindrical coordinates}\index{coordinates!cylindrical}
+
+In cylindrical coordinates $(R,\phi,z)$,
+$z$ measures distance
+along the axis, $R$ measures distance from the axis, and $\phi$
+is an angle that wraps around the axis.
+%
+\fig{cylindrical-coordinates}{Cylindrical coordinates.}
+
+The differential of volume in cylindrical coordinates can be\index{volume!in cylindrical coordinates}
+written as $\der v = R \: \der R \: \der z \der \phi$. This follows from adding a third dimension,
+along the $z$ axis, to the rectangle in figure \figref{da-polar}.
+
+\begin{eg}
+\egquestion Show that the expression for $\der v$ has the right units.
+
+\eganswer Angles are unitless, since the definition of radian measure involves a distance
+divided by a distance. Therefore the only factors in the expression that have units
+are $R$, $\der R$, and $\der z$. If these three factors are measured, say, in meters, then
+their product has units of cubic meters, which is correct for a volume.
+\end{eg}
+
+\begin{eg}
+\egquestion Find the volume of a cone whose height is $h$ and whose base has radius $b$.
+
+\eganswer Let's plan on putting the $z$ integral on the outside of the sandwich. That means
+we need to express the radius $r_{max}$ of the cone in terms of $z$. This comes out nice and
+simple if we imagine the cone upside down, with its tip at the origin.
+Then since we have $r_{max}(z=0)=0$, and $r_{max}(h)=b$, evidently $r_{max}=zb/h$.
+
+\begin{align*}
+  v &= \int \der v \\
+    &= \int_{z=0}^h \int_{r=0}^{zb/h} \int_{\phi=0}^{2\pi} R \: \der\phi \:\der R \: \der z \\
+    &= 2\pi \int_{z=0}^h \int_{r=0}^{zb/h} R \:\der R \: \der z \\
+    &= 2\pi \int_{z=0}^h (zb/h)^2/2 \: \der z \\
+    &= \pi (b/h)^2 \int_{z=0}^h z^2 \: \der z \\
+    &= \frac{\pi b^2 h}{3}
+\end{align*}
+
+As a check, we note that the answer has units of volume. This is the classical result, known
+by the ancient Egyptians, that a cone has one third the volume of its enclosing cylinder.
+\end{eg}
+
+In spherical coordinates\index{spherical coordinates}\index{coordinates!spherical}
+$(r,\theta,\phi)$, the coordinate
+$r$ measures the distance from the origin, and $\theta$ and $\phi$ are analogous to
+latitude and longitude, except that $\theta$ is measured down from the pole rather than
+from the equator.
+
+\fig{spherical-coordinates}{Spherical coordinates.}
+
+The differential of volume in spherical coordinates is $\der v = r^2\sin\theta \:\der r\:\der\theta\:\der\phi$.\index{volume!in spherical coordinates}
+
+\begin{eg}
+\egquestion Find the volume of a sphere.
+
+\eganswer
+\begin{align*}
+  v &= \int \der v \\
+    &= \int_{\theta=0}^\pi \int_{r=0}^{r=b} \int_{\phi=0}^{2\pi} r^2\sin\theta \:\der\phi \:\der r\:\der\theta \\
+    &= 2\pi \int_{\theta=0}^\pi \int_{r=0}^{r=b}  r^2\sin\theta \:\der r\:\der\theta \\
+    &= 2\pi\cdot\frac{b^3}{3} \int_{\theta=0}^\pi \sin\theta \:\der\theta \\
+    &= \frac{4\pi b^3}{3}
+\end{align*}
+\end{eg}
+
+\begin{hwsection}
+
+\begin{hw}\label{hw:snail}
+Pascal's snail (named after \'{E}tienne Pascal, father of Blaise Pascal)
+is the shape shown in the figure, defined by $R=b(1+\cos\theta)$ in polar coordinates.\\
+(a) Make a rough visual estimate of its area from the figure.\\
+(b) Find its area exactly, and check against your result from part a.\\
+% ans: 3pi/2
+(c) Show that your answer has the right units.\thompson
+\end{hw}
+
+\fig{hw-snail}{Problem \ref{hw:snail}: Pascal's snail with $b=1$.}
+
+\begin{hw}
+A cone with a curved base is defined by $r\le b$ and $\theta\le \pi/4$ in spherical
+coordinates.\\
+(a) Find its volume.\\
+(b) Show that your answer has the right units.
+\end{hw}
+
+\begin{hw}
+Find the moment of inertia of a sphere for rotation about an axis passing through its center.
+\end{hw}
+
+\begin{hw}
+A jump-rope swinging in circles has the shape of a sine function. Find the volume enclosed by
+the swinging rope, in terms of the radius $b$ of the circle at the rope's fattest point, and
+the straight-line distance $\ell$ between the ends.
+\end{hw}
+
+\begin{hw}
+A curvy-sided cone is defined in cylindrical coordinates by $0\le z\le h$ and
+$R\le kz^2$. (a) What units are implied for the constant $k$? (b) Find the volume
+of the shape. (c) Check that your answer to b has the right units.
+\end{hw}
+
+\begin{hw}\label{hw:nuclear-shape}
+The discovery of nuclear fission\index{nucleus}\index{fission}\index{liquid drop model}
+was originally explained by modeling the atomic nucleus as
+a drop of liquid. Like a water balloon, the drop could spin or vibrate, and if the motion became
+sufficiently violent, the drop could split in half --- undergo fission. It was later learned that
+even the nuclei in matter under ordinary conditions are often not
+spherical but deformed, typically with an elongated ellipsoidal shape like an American football.
+One simple way of describing such a shape is with the equation
+\begin{align*}
+  r \le b[1+c(\cos^2\theta-k)] \qquad ,
+\end{align*}
+where $c=0$ for a sphere, $c>0$ for an elongated shape, and $c<0$ for a flattened one.
+Usually for nuclei in ordinary matter, $c$ ranges from about 0 to $+0.2$. The constant
+$k$ is introduced because without it, a change in $c$ would entail not just a change in
+the shape of the nucleus, but a change in its volume as well. Observations show, on the
+contrary, that the nuclear fluid, is highly incompressible, just like ordinary water, so the
+volume of the nucleus is not expected to change significantly, even in violent processes
+like fission. Calculate the volume of the nucleus, throwing away terms of order $c^2$
+or higher, and show that $k=1/3$ is required in order to keep the volume constant.
+\end{hw}
+% c=.95beta, beta is known as Hill-Wheeler, see Ring & Schuck p.34
+
+\begin{hw}[2]
+This problem is a continuation of problem \ref{hw:nuclear-shape}, and assumes the result of that problem
+is already known.
+The nucleus $^{168}\zu{Er}$ has the type of elongated ellipsoidal shape described in that
+problem, with $c>0$. Its mass is
+$2.8\times10^{-25}$ kg, it is observed to have a moment of inertia of $2.62\times10^{-54}\ \kgunit\unitdot\munit^2$
+for end-over-end rotation, and its shape is believed to be described by $b\approx 6\times10^{-15}\ \munit$ and $c\approx 0.2$.
+Assuming that it rotated rigidly, the usual equation for the moment of inertia could be applicable, but
+it may rotate more like a water balloon, in which case its moment of inertia would be significantly less because
+not all the mass would actually flow. Test which type of rotation it is by calculating its moment of inertia for end-over-end
+rotation and comparing with the observed moment of inertia.
+\end{hw}
+
+
+\end{hwsection}

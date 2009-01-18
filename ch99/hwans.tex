@@ -1,0 +1,600 @@
+%%chapter%% 99
+\chapter{Answers and solutions}
+
+\hwanssection{Answers to Self-Checks}
+
+\beginscanswers{3}
+
+\scanshdr{interpret-human-height}
+
+The area under the curve from 130 to 135 cm is about 3/4 of a rectangle. The area from
+135 to 140 cm is about 1.5 rectangles. The number of people in the second range is
+about twice as much. We could have converted these to actual probabilities
+($1\ \text{rectangle}=5\ \zu{cm}\times0.005\ \zu{cm}^{-1}=0.025$), but that would
+have been pointless, because we were just going to compare the two areas.
+
+\beginscanswers{5}
+
+\scanshdr{complex-square-root}
+Say we're looking for $u=\sqrt{z}$, i.e., we want a number $u$ that, multiplied by
+itself, equals $z$.
+Multiplication multiplies the magnitudes, so
+the magnitude of $u$ can be found by taking the square root of the magnitude of $z$.
+Since multiplication also adds the arguments of the numbers, squaring a number
+doubles its argument. Therefore
+we can simply divide the argument of $z$ by two to find the argument of
+$u$. This results in one of the square roots of $z$. There is another one, which
+is $-u$, since $(-u)^2$ is the same as $u^2$.
+This may seem a little odd: if $u$ was chosen so that doubling its
+argument gave the argument of $z$, then how can the same be true for $-u$?
+Well for example, suppose the argument of $z$ is $4\degunit$. Then $\arg u=2\degunit$,
+and $\arg(-u)=182\degunit$. Doubling 182 gives 364, which is actually a synonym for
+4 degrees.
+
+\vfill\pagebreak[4]
+
+\hwanssection{Solutions to homework problems}
+
+\beginsolutions{1}
+
+\hwsolnhdr{check-twot-graph}
+
+The tangent line has to pass through the point (3,9), and it also seems, at least approximately, to pass
+through (1.5,0). This gives it a slope of $(9-0)/(3-1.5)=9/1.5=6$, and that's exactly what $2t$ is at $t=3$.
+%%graph%% soln-check-twot-graph func=x**2 format=eps xlo=0 xhi=4 ylo=0 yhi=16 x=t y=x ytic_spacing=2 more_space_below=6 more_space_above=10 ; func=6*x-9
+\smallfig{soln-check-twot-graph}{Problem \ref{hw:check-twot-graph}.}
+
+\hwsolnhdr{graph-sin-et}
+
+The tangent line has to pass through the point $(0,\sin(e^0))=(0,0.84)$, and it also seems, at least approximately, to pass
+through (-1.6,0). This gives it a slope of $(0.84-0)/(0-(-1.6))=0.84/1.6=0.53$. The more accurate result given in the problem
+can be found using the methods of chapter 2.
+
+%%graph%% soln-graph-sin-et func=sin(exp(x)) format=eps xlo=-2 xhi=2 ylo=-1 yhi=1.5 x=t y=x ytic_spacing=1 more_space_below=6 more_space_above=10 ; func=.540302*x+sin(1)
+\smallfig{soln-graph-sin-et}{Problem \ref{hw:graph-sin-et}.}
+
+\pagebreak[4]
+
+\hwsolnhdr{diff-monomials}\\*
+The derivative is a rate of change, so the derivatives of the constants 1 and 7, which don't change, are
+clearly zero. The derivative can be interpreted geometrically as the slope of the tangent line, and since
+the functions $t$ and $7t$ \emph{are} lines, their derivatives are simply their slopes, 1, and 7. 
+All of these could also have been found using the formula that says the derivative of $t^k$ is
+$kt^{k-1}$, but it wasn't really necessary to get that fancy.
+To find the derivative of $t^2$, we can use the formula, which gives $2t$. One of the properties of
+the derivative is that multiplying a function by a constant multiplies its derivative by the same
+constant, so the derivative of $7t^2$ must be $(7)(2t)=14t$. By similar reasoning, the derivatives
+of $t^3$ and $7t^3$ are $3t^2$ and $21t^2$, respectively.
+
+\hwsolnhdr{diff-polynomial}
+
+One of the properties of the derivative is that the derivative of a sum is the sum of the derivatives,
+so we can get this by adding up the derivatives of $3t^7$, $-4t^2$, and 6. The derivatives of the
+three terms are $21t^6$, $-8t$, and 0, so the derivative of the whole thing is $21t^6-8t$.
+
+\hwsolnhdr{diff-symbolic-const}
+
+This is exactly like problem \ref{hw:diff-polynomial}, except that instead of explicit
+numerical constants like 3 and $-4$, this problem involves symbolic constants $a$, $b$, and
+$c$. The result is $2at+bt$.
+
+\hwsolnhdr{same-deriv}
+
+The first thing that comes to mind is $3t$. Its graph would be a line with a slope of 3,
+passing through the origin. Any other line with a slope of 3 would work too, e.g.,
+$3t+1$.
+
+\hwsolnhdr{integ-monomial}
+
+Differentiation lowers the power of a monomial by one, so to get something with an exponent
+of 7, we need to differentiate something with an exponent of 8. The derivative of
+$t^8$ would be $8t^7$, which is eight times too big, so we really need $(t^8/8)$.
+As in problem \ref{hw:same-deriv}, any other function that differed by an additive constant
+would also work, e.g., $(t^8/8)+1$.
+
+\hwsolnhdr{integ-monomial-const}
+
+This is just like problem \ref{hw:integ-monomial}, but we need something whose derivative
+is three times bigger. Since multiplying by a constant multiplies the derivative by the
+same constant, the way to accomplish this is to take the answer to problem \ref{hw:integ-monomial},
+and multiply by three. A possible answer is $(3/8)t^8$, or that function plus any constant.
+
+\hwsolnhdr{integ-polynomial}
+
+This is just a slight generalization of problem \ref{hw:integ-monomial-const}. Since
+the derivative of a sum is the sum of the derivatives, we just need to handle each term
+individually, and then add up the results. The answer is
+$(3/8)t^8-(4/3)t^3+6t$, or that function plus any constant.
+
+\hwsolnhdr{observable-universe}
+
+The function $v=(4/3)\pi(ct)^3$ looks scary and complicated, but it's nothing more than a constant
+multiplied by $t^3$, if we rewrite it as $v=\left[(4/3)\pi c^3\right]t^3$. The whole thing
+in square brackets is simply one big constant, which just comes along for the ride
+when we differentiate. The result is $\dot{v}=\left[(4/3)\pi c^3\right](3t^2)$, or,
+simplifying, $\dot{v}=\left(4\pi c^3\right)t^2$. (For further physical insight, we can
+factor this as $\left[4\pi (ct)^2\right]c$, where $ct$ is the radius of the expanding sphere, and
+the part in brackets is the sphere's surface area.)
+
+For purposes of checking the units, we can ignore the unitless constant $4\pi$, which just
+leaves $c^3t^2$. This has units of $(\text{meters per second})^3(\text{seconds})^2$, which
+works out to be cubic meters per second. That makes sense, because it tells us how quickly
+a volume is increasing over time.
+
+\hwsolnhdr{ke}\\*
+This is similar to problem \ref{hw:observable-universe}, in that it looks scary, but we can rewrite
+it as a simple monomial, $K=(1/2)mv^2=(1/2)m(at)^2=(ma^2/2)t^2$. The derivative is
+$(ma^2/2)(2t)=ma^2t$. The car needs more and more power to accelerate as its speed increases.
+
+To check the units, we just need to show that the expression $ma^2t$ has units that are like
+those of the original expression for $K$, but divided by seconds, since it's a rate of
+change of $K$ over time. This indeed works out, since the only change in the factors that
+aren't unitless is the reduction of the powet of $t$ from 2 to 1.
+
+\hwsolnhdr{expanding-square}
+
+The area is $a=\ell^2=(1+\alpha T)^2\ell_\zu{o}^2$. To make this into something we know how
+to differentiate, we need to square out the expression involving $T$, and make it into something
+that is expressed explicitly as a polynomial:
+\begin{equation*}
+  a=\ell_\zu{o}^2+2\ell_\zu{o}^2\alpha T+\ell_\zu{o}^2\alpha^2T^2
+\end{equation*}
+Now this is just like problem \ref{hw:diff-symbolic-const}, except that the constants superficially
+look more complicated. The result is
+\begin{align*}
+  \dot{a} &=2\ell_\zu{o}^2\alpha +2\ell_\zu{o}^2\alpha^2T \\
+          &=2\ell_\zu{o}^2\left(\alpha +\alpha^2T\right) \qquad .
+\end{align*}
+
+We expect the units of the result to be area per unit temperature, e.g., degrees per square meter.
+This is a little tricky, because we have to figure out what units are implied for the constant
+$\alpha$. Since the question talks about $1+\alpha T$, apparently the quantity $\alpha T$ is unitless.
+(The 1 is unitless, and you can't add things that have different units.) Therefore the units
+of $\alpha$ must be ``per degree,'' or inverse degrees. It wouldn't make sense to add $\alpha$ and
+$\alpha^2T$ unless they had the same units (and you can check for yourself that they do), so
+the whole thing inside the parentheses must have units of inverse degrees. Multiplying by the
+$\ell_\zu{o}^2$ in front, we have units of area per degree, which is what we expected.
+
+\hwsolnhdr{second-deriv}
+
+The first derivative is $6t^2-1$. Going again, the answer is $12t$.
+
+\hwsolnhdr{inflection}
+
+The first derivative is $3t^2+2t$, and the second is $6t+2$. Setting this equal to zero
+and solving for $t$, we find $t=-1/3$. Looking at the graph, it does look like the concavity
+is down for $t<-1/3$, and up for $t>-1/3$.
+%
+%%graph%% soln-inflection func=x**3+x**2 format=eps xlo=-1 xhi=.5 ylo=0 yhi=0.5 x=t y=x ytic_spacing=.5 more_space_below=6 more_space_above=10
+\smallfig{soln-inflection}{Problem \ref{hw:inflection}.}
+
+\hwsolnhdr{neg-power-graph}
+
+I chose $k=-1$, and $t=1$. In other words, I'm going to check the slope of the function $x=t^{-1}=1/r$ at $t=1$, and
+see whether it really equals $kt^{k-1}=-1$. Before even doing the graph, I note that the sign makes sense: the function
+$1/t$ is decreasing for $t>0$, so its slope should indeed be negative.
+
+%%graph%% soln-neg-power-graph func=1/x format=eps xlo=0 xhi=3 ylo=0 yhi=3 x=t y=x ytic_spacing=1 more_space_below=6 more_space_above=10 ; func=-x+2
+\smallfig{soln-neg-power-graph}{Problem \ref{hw:neg-power-graph}.}
+
+The tangent line seems to connect the points (0,2) and (2,0), so its slope does indeed look like it's $-1$.
+
+The problem asked us to consider the logical meaning of the two possible outcomes. If the slope had been significantly
+different from $-1$ given the accuracy of our result, the conclusion would have been that it was incorrect to extend the
+rule to negative values of $k$. Although our example did come out consistent with the rule, that doesn't prove the rule
+in general. An example can disprove a conjecture, but can't prove it. Of course, if we tried lots and lots of examples,
+and they all worked, our confidence in the conjecture would be increased.
+
+\hwsolnhdr{limit-of-sum}
+
+(a) The Weierstrass definition requires that if we're given a particular $\epsilon$, and we be able to find a $\delta$ so small that $f(x)+g(x)$
+differs from $F+G$ by at most $\epsilon$ for $|x-a|<\delta$. But the Weierstrass definition also tells us that given $\epsilon/2$, we can find
+a $\delta$ such that $f$ differs from $F$ by at most $\epsilon/2$, and likewise for $g$ and $G$. The amount by which $f+g$ differs from $F+G$
+is then at most $\epsilon/2+\epsilon/2$, which completes the proof.
+
+(b) Let $\der x$ be infinitesimal. Then the definition of the limit in terms of infinitesimals says that the standard part of $f(a+\der x)$
+differs at most infinitesimally from $F$, and likewise for $g$ and $G$. This means that $f+g$ differs from $F+G$ by the sum of two infinitesimals,
+which is itself an infinitesimal, and therefore the standard part of $f+g$ evaluated at $x+\der x$ equals $F+G$, satisfying the definition.
+
+
+\hwsolnhdr{lennard-jones}
+
+A minimum would occur where the derivative was zero. First we rewrite the function in a form that we
+know how to differentiate:
+\begin{equation*}
+  E(r) = ka^{12}r^{-12}-2ka^6r^{-6}
+\end{equation*}
+We're told to have faith that the derivative of $t^k$ is $kt^{k-1}$ even for $k<0$, so
+\begin{align*}
+  0 &= \dot{E} \\
+    &= -12ka^{12}r^{-13}+12ka^6r^{-7} 
+\end{align*}
+To simplify, we divide both sides by $12k$. The left side was already zero, so it keeps being zero.
+\begin{gather*}
+  0  = -a^{12}r^{-13}+a^6r^{-7} \\
+  a^{12}r^{-13} = a^6r^{-7} \\
+  a^{12} = a^6r^6 \\
+  a^6 = r^6 \\
+  r = \pm a
+\end{gather*}
+
+To check that this is a minimum, not a maximum or a point of inflection, one method is to construct a graph. The constants
+$a$ and $k$ are irrelevant to this issue. Changing $a$ just rescales the horizontal $r$ axis, and changing $k$ does the
+same for the vertical $E$ axis. That means we can arbitrarily set $a=1$ and $k=1$, and construct the graph shown in the figure.
+The points $r = \pm a$ are now simply $r=\pm 1$. From the graph, we can see that they're clearly minima. Physically, the
+minimum at $r=-a$ can be interpreted as the same physical configuration of the molecule, but with the positions of the atoms
+reversed. It makes sense that $r=-a$ behaves the same as $r=a$, since physically the behavior of the system has to be symmetric,
+regardless of whether we view it from in front or from behind.
+
+%%graph%% soln-lennard-jones func=x**12-2*x**6 format=eps xlo=-1.3 xhi=1.3 ylo=-2 yhi=8 x=r y=E ytic_spacing=2 more_space_below=6 more_space_above=10
+\smallfig{soln-lennard-jones}{Problem \ref{hw:lennard-jones}.}
+
+The other method of checking that $r=a$ is a minimum is to take the second derivative. As before, the values of $a$ and
+$k$ are irrelevant, and can be set to 1. We then have
+\begin{align*}
+ \dot{E} &= -12r^{-13}+12r^{-7} \\
+ \ddot{E} &= 156r^{-14}-84r^{-8}  \qquad .
+\end{align*}
+Plugging in $r=\pm 1$, we get a positive result, which confirms that the concavity is upward.
+
+\hwsolnhdr{prove-n-extrema}
+Since polynomials don't have kinks or endpoints in their graphs, the maxima and minima must be points where the
+derivative is zero. Differentiation bumps down all the powers of a polynomial by one, so 
+the derivative of a third-order polynomial is a second-order polynomial. A second-order polynomial
+can have at most two real roots (values of $t$ for which it equals zero), which are given by the
+quadratic formula. (If the number inside the square root in the quadratic formula is zero or negative,
+there could be less than two real roots.) That means a third-order polynomial can have at most two
+maxima or minima.
+
+\beginsolutions{1}
+
+\hwsolnhdr{fourth-power}
+
+\begin{align*}
+  \frac{\der x}{\der t} &= \frac{(t+\der t)^4-t^4}{\der t} \\
+                        &= \frac{4t^3\:\der t + 6t^2\der t^2 + 4t\:\der t^3+\der t^4}{\der t} \\
+                        &= 4t^3 + \ldots \qquad ,
+\end{align*}
+where \ldots indicates infinitesimal terms.
+The derivative is the standard part of this, which is $4t^3$.
+
+\hwsolnhdr{derivative-of-cos}
+
+\begin{equation*}
+  \frac{\der x}{\der t} = \frac{\cos(t+\der t)-\cos t}{\der t}
+\end{equation*}
+The identity $\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$ then gives
+\begin{equation*}
+  \frac{\der x}{\der t} = \frac{\cos t \: \cos \der t - \sin t \: \sin \der t - \cos t}{\der t} \qquad .\\
+\end{equation*}
+The small-angle approximations  $\cos \der t\approx 1$ and $\sin \der t\approx \der t$
+result in
+\begin{align*}
+\frac{\der x}{\der t}   &= \frac{-\sin t \: \der t}{\der t} \\
+                        &= -\sin t \qquad .
+\end{align*}
+
+\hwsolnhdr{infinite-subtraction}
+
+\begin{tabular}{ll}
+$H$ & $\sqrt{H+1}-\sqrt{H-1}$ \\
+$1000$ & .032 \\
+$1000,000$ & 0.0010 \\
+$1000,000,000$ & 0.00032 
+\end{tabular}
+
+The result is getting smaller and smaller, so it seems reasonable to guess that if $H$ is infinite,
+the expression gives an infinitesimal result.
+
+\hwsolnhdr{infinitesimal-sqrt}
+
+\begin{tabular}{ll}
+$\der x$ & $\sqrt{\der x}$ \\
+.1 & .32 \\
+.001 & .032 \\
+.00001 & .0032
+\end{tabular}
+
+The square root is getting smaller, but is not getting smaller as fast as the number itself.
+In proportion to the original number, the square root is actually getting \emph{bigger}. It
+looks like $\sqrt{\der x}$ is infinitesimal, but it's still infinitely big compared to
+$\der x$. This makes sense, because $\sqrt{\der x}$ equals $\der x^{1/2}$.
+we already knew that $\der x^0$, which equals 1, was
+infinitely big compared to $\der x^1$, which equals $\der x$.
+In the hierarchy of infinitesimals, $\der x^{1/2}$ fits in between $\der x^0$
+and  $\der x^1$.
+
+\hwsolnhdr{transfer}\\*
+Statements (a)-(d), and (f)-(g) are all valid for the hyperreals, because they meet the test of being
+directly translatable, without having to interpret the meaning of things like particular
+subsets of the reals in the context of the hyperreals.
+
+Statement (e), however, refers to the
+rational numbers, a particular subset of the reals, that that means that it can't be
+mindlessly translated into a statement about the hyperreals, unless we had figured out
+a way to translate the set of rational numbers into some corresponding subset of the
+hyperreal numbers like the hyperrationals! This is not the type of statement that the
+transfer principle deals with. The statement is not true if we try to change ``real''
+to ``hyperreal'' while leaving ``rational'' alone; for example, it's not true that there's
+a rational number that lies between the hyperreal numbers 0 and $0+\der x$, where $\der x$
+is infinitesimal.
+
+\hwsolnhdr{hundredth}
+This would be a horrible problem if we had to expand this as a polynomial with 101 terms,
+as in chapter 1! But now we know the chain rule, so it's easy. The derivative is
+\begin{equation*}
+  \left[100(2x+3)^{99}\right][2] \qquad ,
+\end{equation*}
+where the first factor in brackets is the derivative of the function on the outside, and
+the second one is the derivative of the ``inside stuff.'' Simplifying a little, the
+answer is $200(2x+3)^{99}$.
+
+
+\hwsolnhdr{one-and-two-hundred}\\*
+Applying the product rule, we get
+\begin{equation*}
+  (x+1)^{99}(x+2)^{200}+  (x+1)^{100}(x+2)^{199} \qquad .
+\end{equation*}
+(The chain rule was also required, but in a trivial way --- for both of
+the factors, the derivative of the ``inside stuff'' was one.)
+
+\hwsolnhdr{ex-chain}\\*
+The derivative of $e^{7x}$ is $e^{7x}\cdot 7$, where the first factor is the
+derivative of the outside stuff (the derivative of a base-$e$ exponential is
+just the same thing), and the second factor is the derivative of the inside stuff.
+This would normally be written as $7e^{7x}$.
+
+The  derivative of the second function is $e^{e^x}e^x$, with the second exponential factor coming
+from the chain rule.
+
+\hwsolnhdr{sinusoidal}\\*
+We need to put together three different ideas here: (1) When a function to be
+differentiated is multiplied by a constant, the constant just comes along for the ride.
+(2) The derivative of the sine is the cosine. (3) We need to use the chain rule.
+The result is $-ab\cos(bx+c)$.
+
+\hwsolnhdr{integrate-sinusoidal}\\*
+If we just wanted to fine the integral of $\sin x$, the answer would be $-\cos x$ (or
+$-\cos x$ plus an arbitrary constant), since the derivative would be $-(-\sin x)$, which
+would take us back to the original function. The obvious thing to guess for the
+integral of $a\sin(bx+c)$ would therefore be $-a\cos(bx+c)$, which almost works,
+but not quite. The derivative of this function would be $ab\sin(bx+c)$, with the
+pesky factor of $b$ coming from the chain rule. Therefore what we really wanted was
+the function $-(a/b)\cos(bx+c)$.
+
+\hwsolnhdr{max-range}\\*
+To find a maximum, we take the derivative and set it equal to zero. The whole factor
+of $2v^2/g$ in front is just one big constant, so it comes along for the ride. To differentiate
+the factor of $\sin\theta\:\cos\theta$, we need to use the chain rule, plus the fact that
+the derivative of sin is cos, and the derivative of cos is $-\sin$.
+\begin{gather*}
+  0 = \frac{2v^2}{g} (\cos\theta\:\cos\theta+\sin\theta(-\sin\theta)) \\
+  0 = \cos^2\theta-\sin^2\theta \\
+  \cos\theta = \pm \sin\theta \\
+\intertext{We're interested in angles between, 0 and 90 degrees, for which both the sine and
+the cosine are positive, so}
+  \cos\theta = \sin\theta \\
+  \tan\theta = 1\\
+  \theta = 45\degunit \qquad .
+\end{gather*}
+To check that this is really a maximum, not a minimum or an inflection point, we could resort
+to the second derivative test, but we know the graph of $R(\theta)$ is zero at $\theta=0$
+and $\theta=90\degunit$, and positive in between, so this must be a maximum.
+
+\hwsolnhdr{cosh}\\*
+Taking the derivative and setting it equal to zero, we have $\left(e^x-e^{-x}\right)/2=0$, so $e^x=e^{-x}$, which
+occurs only at $x=0$. The second derivative is $\left(e^x+e^{-x}\right)/2$ (the same as the original function),
+which is positive for all $x$, so the function is everywhere concave up, and this is a minimum.
+
+\hwsolnhdr{air-res-v}\\*
+(a) As suggested, let $c=\sqrt{g/A}$, so that  $d = A \ln\cosh ct=A\ln\left(e^{ct}+e^{-ct}\right)$.
+Applying the chain rule, the velocity is
+\begin{equation*}
+  A\frac{ce^{ct}-ce^{-ct}}{\cosh ct} \qquad .
+\end{equation*}
+(b) The expression can be rewritten as $Ac\tanh ct$.\\
+(c) For large $t$, the $e^{-ct}$ terms become negligible, so the velocity is $Ace^{ct}/e^{ct}=Ac$.
+(d) From the original expression, $A$ must have units of distance, since the logarithm is unitless.
+Also, since $ct$ occurs inside a function, $ct$ must be unitless, which means that $c$ has units
+of inverse time. The answers to parts b and c get their units from the factors of $Ac$, which have
+units of distance multiplied by inverse time, or velocity.
+
+\hwsolnhdr{derivative-of-tan}\\*
+Since I've advocated not memorizing the quotient rule, I'll do this one from first principles,
+using the product rule.
+\begin{align*}
+  \frac{\der}{\der \theta}& \tan\theta \\
+        &=   \frac{\der}{\der \theta}\left(\frac{\sin\theta}{\cos\theta}\right) \\
+        &=   \frac{\der}{\der \theta}\left[\sin\theta\left(\cos\theta\right)^{-1}\right] \\
+        &=   \cos\theta\left(\cos\theta\right)^{-1}+(\sin\theta)(-1)(\cos\theta)^{-2}(-\sin\theta)\\
+        &=   1+\tan^2\theta
+\end{align*}
+(Using a trig identity, this can also be rewritten as $\sec^2\theta$.)
+
+\hwsolnhdr{cube-root}\\*
+Reexpressing $\sqrt[3]{x}$ as $x^{1/3}$, the derivative is $(1/3)x^{-2/3}$.
+
+\hwsolnhdr{thompson-sqrts}\\*
+(a) Using the chain rule, the derivative of $(x^2+1)^{1/2}$ is $(1/2)(x^2+1)^{-1/2}(2x)=x(x^2+1)^{-1/2}$.\\
+(b) This is the same as a, except that the 1 is replaced with an $a^2$, so the answer is $x(x^2+a^2)^{-1/2}$. The idea
+would be that $a$ has the same units as $x$.\\
+(c) This can be rewritten as $(a+x)^{-1/2}$, giving a derivative of $(-1/2)(a+x)^{-3/2}$.\\
+(d) This is similar to c, but we pick up a factor of $-2x$ from the chain rule, making the result
+$ax(a-x^2)^{-3/2}$.
+
+\hwsolnhdr{logarithmy}\\*
+By the chain rule, the result is $2/(2t+1)$.
+
+\pagebreak[4]
+
+\hwsolnhdr{unnecessary-prod}\\*
+Using the product rule, we have
+\begin{equation*}
+  \left(\frac{\der}{\der x}3\right)\sin x + 3\left(\frac{\der}{\der x}\sin x\right) \qquad ,
+\end{equation*}
+but the derivative of a constant is zero, so the first term goes away, and we get $3\cos x$, which
+is what we would have had just from the usual method of treating multiplicative constants.
+
+
+\hwsolnhdr{gamma}\\*
+\restartLineNumbers
+\begin{Code}
+  \ii N(Gamma(2))
+  \oo{1}
+  \ii N(Gamma(2.00001))
+  \oo{1.0000042278}
+  \ii N( (1.0000042278-1)/(.00001) )
+  \oo{0.4227799998}
+\end{Code}
+Probably only the first few digits of this are reliable.
+
+\hwsolnhdr{cylinder}\\*
+The area and volume are
+\begin{align*}
+  A &= 2\pi r \ell + 2 \pi r^2 \\
+\intertext{and}
+  V &= \pi r^2 \ell \qquad .
+\end{align*}
+The strategy is to use the equation for $A$, which is a constant,
+to eliminate the variable $\ell$, and then maximize $V$ in terms of $r$.
+\begin{gather*}
+  \ell = (A-2\pi r^2)/2\pi r \\
+\intertext{Substituting this expression for $\ell$ back into the equation for $V$,}
+  V = \frac{1}{2}rA-\pi r^3 \qquad .
+\intertext{To maximize this with respect to $r$, we take the derivative and set it
+equal to zero.}
+  0 = \frac{1}{2}A-3\pi r^2 \\
+  A = 6\pi r^2 \\
+  \ell = (6\pi r^2-2\pi r^2)/2\pi r \\
+  \ell = 2r
+\end{gather*}
+In other words, the length should be the same as the diameter.
+
+\hwsolnhdr{relativistic-ke}\\*
+(a) We can break the expression down into three factors: the constant $m/2$ in front,
+the nonrelativistic velocity dependence $v^2$, and the relativistic correction
+factor $(1-v^2/c^2)^{-1/2}$. Rather than substituting in $at$ for $v$, it's a little less
+messy to calculate $\der K/\der t=(\der K/\der v)(\der v/\der t)=a\der K/\der v$. Using the product rule, we have
+\begin{align*}
+  \frac{\der K}{\der t} &= a\cdot\frac{1}{2}m\left[2v\left(1-{\textstyle \frac{v^2}{c^2}}\right)^{-1/2}\right.\\
+                              &\left.+v^2\cdot{\textstyle \left(-\frac{1}{2}\right)}\left(1-{\textstyle \frac{v^2}{c^2}}\right)^{-3/2}
+                                        {\textstyle \left(-\frac{2v}{c^2}\right)}\right] \\
+             &=  ma^2t\left[\left(1-{\textstyle \frac{v^2}{c^2}}\right)^{-1/2}\right.\\
+                              &\left.+\frac{v^2}{2c^2}\left(1-{\textstyle \frac{v^2}{c^2}}\right)^{-3/2}\right]
+\end{align*}
+(b) The expression $ma^2t$ is the nonrelativistic (classical) result, and has the correct units of
+kinetic energy divided by time. The factor in square brackets is the relativistic correction,
+which is unitless.\\
+(c) As $v$ gets closer and closer to $c$, the expression $1-v^2/c^2$ approaches zero, so both the
+terms in the relativistic correction blow up to positive infinity.
+
+\hwsolnhdr{log-neg}\\*
+We already know it works for positive $x$, so we only need to check it for negative $x$.
+For negative values of $x$, the chain rule tells us that the derivative is $1/|x|$,
+multiplied by $-1$, since $\der|x|/\der x=-1$. This gives $-1/|x|$, which is the same
+as $1/x$, since $x$ is assumed negative.
+
+\pagebreak[4]\hwsolnhdr{neg-power-trick}\\*
+Let $f=\der x^k/\der x$ be the unknown function. Then
+\begin{align*}
+  1 &= \frac{\der x}{\der x} \\
+    &= \frac{\der }{\der x} \left(x^kx^{-k+1}\right) \\
+    &= fx^{-k+1}+x^k(-k+1)x^{-k} \qquad ,
+\end{align*}
+where we can use the ordinary rule for derivatives of powers on $x^{-k+1}$, since $-k+1$ is positive. Solving for
+$f$, we have the desired result.
+
+\beginsolutions{3}
+
+\hwsolnhdr{integrate-num}\\*
+\restartLineNumbers
+\begin{Code}
+  a := 0;
+  b := 1;
+  H := 1000;
+  dt := (b-a)/H;
+  sum := 0;
+  t := a;
+  While (t<=b) [
+    sum := N(sum+Exp(x^2)*dt);
+    t := N(t+dt);
+  ];
+  Echo(sum);
+\end{Code}
+The result is 1.46.
+
+%%graph%% soln-integrate-sin-cancel func=sin(x) format=eps xlo=0 xhi=6.282 ylo=-1 yhi=1 ytic_spacing=1 more_space_below=6 more_space_above=10
+\smallfig{soln-integrate-sin-cancel}{Problem \ref{hw:integrate-sin-cancel}.}
+
+\hwsolnhdr{integrate-sin-cancel}\\*
+The derivative of the cosine is minus the sine, so to get a function whose
+derivative is the sine, we need minus the cosine.
+\begin{align*}
+  \int_0^{2\pi} & \sin x \:\der x \\
+    &= \left.(-\cos x)\right|_0^{2\pi} \\
+    &= (-\cos 2\pi)-(-\cos 0) \\
+    &= (-1)-(-1) \\
+    &= 0
+\end{align*}
+
+As shown in  figure \figref{soln-integrate-sin-cancel}, the graph has equal amounts of area above and below the $x$ axis.
+The area below the axis counts as negative area, so the total is zero.
+
+\hwsolnhdr{estimate-then-integrate}\\*
+%%graph%% soln-estimate-then-integrate func=-x**2+2*x format=eps xlo=0 xhi=2 ylo=0 yhi=1 ytic_spacing=1 more_space_below=6 more_space_above=10
+\smallfig{soln-estimate-then-integrate}{Problem \ref{hw:estimate-then-integrate}.}
+
+The rectangular area of the graph is 2, and the area under the curve fills a little more than half of that, so let's guess 1.4.
+
+\begin{align*}
+  \int_0^2 -x^2+2x &= \left.\left(-\frac{1}{3}x^3+x^2\right)\right|_0^2 \\
+             &= (-8/3+4)-(0) \\
+             &= 4/3
+\end{align*}
+
+This is roughly what we were expecting from our visual estimate.
+
+\hwsolnhdr{average-sine}\\*
+Over this interval, the value of the $\sin$ function varies from 0 to 1, and
+it spends more time above 1/2 than below it, so we expect the average to be
+somewhat greater than 1/2.
+The exact result is
+\begin{align*}
+  \overline{\sin} &= \frac{1}{\pi-0}\int_0^\pi \sin x\:\der x \\
+             &= \frac{1}{\pi}\left.(- \cos x)\right|_0^\pi \\
+             &= \frac{1}{\pi}[-\cos\pi-(-\cos 0)] \\
+             &= \frac{2}{\pi} \qquad ,
+\end{align*}
+which is, as expected, somewhat more than 1/2.
+
+\hwsolnhdr{continuity-mean-value}\\*
+Consider a function $y(x)$ defined on the interval from $x=0$ to 2 like this:
+\begin{equation*}
+  y(x) = 
+    \begin{cases}
+      -1  & \text{if $0\le x \le 1$}\\
+      1  & \text{if $1< x \le 2$}
+    \end{cases}
+\end{equation*}
+The mean value of $y$ is zero, but $y$ never equals zero.
+
+\hwsolnhdr{fund-thm-assumption}\\*
+Let $\dot{x}$ be defined as
+\begin{equation*}
+  \dot{x}(t) = 
+    \begin{cases}
+      0  & \text{if $t < 0$}\\
+      1  & \text{if $t \ge 0$}
+    \end{cases}
+\end{equation*}
+Integrating this function up to $t$ gives
+\begin{equation*}
+  x(t) = 
+    \begin{cases}
+      0  & \text{if $t \le 0$}\\
+      t  & \text{if $t \ge 0$}
+    \end{cases}
+\end{equation*}
+The derivative of $x$ at $t=0$ is undefined, and therefore
+integration followed by differentiation doesn't recover
+the original function $\dot{x}$.

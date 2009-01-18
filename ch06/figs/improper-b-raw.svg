@@ -1,0 +1,79 @@
+<?xml version="1.0"  standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="600" height="480" viewBox="0 0 600 480"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+<desc>Produced by GNUPLOT 4.1 patchlevel 0 </desc>
+
+<defs>
+
+
+	<circle id='gpDot' r='1'/>
+	<path id='gpPt0' style='stroke-width:0.222' d='M-1,0 h2 M0,-1 v2'/>
+	<path id='gpPt1' style='stroke-width:0.222' d='M-1,-1 L1,1 M1,-1 L-1,1'/>
+	<path id='gpPt2' style='stroke-width:0.222' d='M-1,0 L1,0 M0,-1 L0,1 M-1,-1 L1,1 M-1,1 L1,-1'/>
+	<rect id='gpPt3' style='stroke-width:0.222' x='-1' y='-1' width='2' height='2'/>
+	<use xlink:href='#gpPt3' id='gpPt4' style='fill:currentColor; stroke:none'/>
+	<circle id='gpPt5' style='stroke-width:0.222' cx='0' cy='0' r='1'/>
+	<use xlink:href='#gpPt5' id='gpPt6' style='fill:currentColor; stroke:none'/>
+	<path id='gpPt7' style='stroke-width:0.222' d='M0,-1.33 L-1.33,0.67 L1.33,0.67 z'/>
+	<use xlink:href='#gpPt7' id='gpPt8' style='fill:currentColor; stroke:none'/>
+	<use xlink:href='#gpPt7' id='gpPt9' transform='rotate(180)'/>
+	<use xlink:href='#gpPt9' id='gpPt10' style='fill:currentColor; stroke:none'/>
+	<use xlink:href='#gpPt3' id='gpPt11' transform='rotate(45)'/>
+	<use xlink:href='#gpPt11' id='gpPt12' style='fill:currentColor; stroke:none'/>
+</defs>
+<g style="fill:none; color:white; stroke:currentColor; stroke-width:1.00">
+</g>
+<g style="fill:none; color:white; stroke:currentColor; stroke-width:0.50">
+</g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:0.50">
+	<path d='M60,369 L51,369 M60,369 L69,369 '></path>
+	<g transform="translate(52,373)" style="stroke:none; fill:black; font-family:Arial; font-size:12.00; text-anchor:end">
+		<text> 5</text>
+	</g>
+	<path d='M60,312 L51,312 M60,312 L69,312 '></path>
+	<g transform="translate(52,316)" style="stroke:none; fill:black; font-family:Arial; font-size:12.00; text-anchor:end">
+		<text> 10</text>
+	</g>
+	<path d='M164,426 L164,435 M164,426 L164,417 '></path>
+	<g transform="translate(164,457)" style="stroke:none; fill:black; font-family:Arial; font-size:12.00; text-anchor:middle">
+		<text> 1</text>
+	</g>
+	<path d='M60,426 L174,426 M60,426 L60,312 '></path>
+	<g transform="translate(180,430)" style="stroke:none; fill:black; font-family:Arial; font-size:12.00; text-anchor:start">
+		<text>x</text>
+	</g>
+	<g transform="translate(60,299)" style="stroke:none; fill:black; font-family:Arial; font-size:12.00; text-anchor:start">
+		<text>y</text>
+	</g>
+	<g style = 'stroke:none; shape-rendering:crispEdges'>
+		<polygon fill = 'currentColor' points = '168,426 168,423 177,426 168,429 168,426 '/>
+	</g>
+	<path d='M168,426 L168,423 L177,426 L168,429 L168,426 M60,426 L168,426 '></path>
+	<g style = 'stroke:none; shape-rendering:crispEdges'>
+		<polygon fill = 'currentColor' points = '60,310 57,310 60,301 63,310 60,310 '/>
+	</g>
+	<path d='M60,310 L57,310 L60,301 L63,310 L60,310 M60,426 L60,310 '></path>
+</g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:1.50">
+	<path d='M93,312 L93,315 L94,317 L94,320 L94,322 L95,324 L95,326 L95,329 L96,331 L96,333 
+		L97,335 L97,336 L97,338 L98,340 L98,342 L99,343 L99,345 L99,347 L100,348 L100,350 
+		L100,351 L101,352 L101,354 L102,355 L102,356 L102,358 L103,359 L103,360 L103,361 L104,362 
+		L104,363 L105,364 L105,366 L105,367 L106,368 L107,369 L107,370 L107,371 L108,372 L108,373 
+		L108,374 L109,375 L110,376 L110,377 L110,378 L111,378 L111,379 L111,380 L112,380 L112,381 
+		L113,382 L113,383 L114,384 L115,385 L115,386 L116,386 L116,387 L116,388 L117,388 L117,389 
+		L118,389 L118,390 L119,390 L119,391 L120,392 L121,393 L121,394 L122,394 L123,395 L124,396 
+		L124,397 L125,397 L126,398 L127,398 L127,399 L128,399 L128,400 L129,400 L129,401 L130,401 
+		L131,401 L131,402 L132,402 L132,403 L133,403 L134,403 L134,404 L135,404 L135,405 L136,405 
+		L137,405 L137,406 L138,406 L139,406 L139,407 L140,407 L141,407 L142,408 L143,408 L144,409 
+		L145,409 L146,409 L146,410 L147,410 L148,410 L149,410 L149,411 L150,411 L151,411 L152,411 
+		L152,412 L153,412 L154,412 L155,412 L155,413 L156,413 L157,413 L158,413 L159,413 L159,414 
+		L160,414 L161,414 L162,414 L163,414 L163,415 L164,415 L165,415 L166,415 L167,415 L168,415 
+		L168,416 L169,416 L170,416 L171,416 L172,416 L173,416 L174,417 '></path>
+</g>
+<g style="fill:none; color:black; stroke:currentColor; stroke-width:0.50">
+</g>
+</svg>
+

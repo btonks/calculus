@@ -1,0 +1,11 @@
+a := 1;
+b := 2;
+H := 1000;
+dt := (b-a)/H;
+sum := 0;
+t := a;
+While (t<=b) [
+  sum := N(sum+(1/t)*dt);
+  t := N(t+dt);
+];
+Echo(sum);

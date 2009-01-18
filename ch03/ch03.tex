@@ -1,0 +1,653 @@
+%%chapter%% 03
+\chapter{Integration}
+
+\section{Definite and indefinite integrals}
+
+Because any formula can be differentiated symbolically to find another formula,
+the main motivation for doing derivatives numerically would be if the function to be
+differentiated wasn't known in symbolic form.
+A typical example might be a two-person network computer game, in which player A's
+computer needs to figure out player B's velocity based on knowledge of how her
+position changes over time. But in most cases, it's numerical integration that's
+interesting, not numerical differentiation.
+
+As a warm-up, let's see how to do a running sum of a discrete function using Yacas.
+The following program computers the sum $1+2+\ldots+100$ discussed to on page
+\pageref{gauss-story}. Now that we're writing real computer programs with Yacas, it would be a good
+idea to enter each program into a file before trying to run it. In fact, some
+of these examples won't run properly if you just start up Yacas and type them in
+one line at a time. If you're using Adobe Reader to read this book, you can
+do \verb@Tools>Basic>Select@, select the program, copy it into a file,
+and then edit out the line numbers.
+
+\restartLineNumbers
+\begin{eg}
+\startcodeeg
+\begin{Code}
+  \nn n := 1;
+  \nn sum := 0;
+  \nn While (n<=100) [
+  \nn   sum := sum+n;
+  \nn   n := n+1;
+  \nn ];
+  \nn Echo(sum);
+\end{Code}
+\end{eg}
+
+The semicolons are to separate one instruction from the next, and they become necessary
+now that we're doing real programming.
+Line 1 of this program defines the variable \verb@n@, which will take on all the values
+from 1 to 100. Line 2 says that we haven't added anything up yet, so our running
+sum is zero do far. Line 3 says to keep on repeating the instructions inside the
+square brackets until \verb@n@ goes past 100. Line 4 updates the running sum, and
+line 5 updates the value of \verb@n@. If you've never done any programming before,
+a statement like \verb@n:=n+1@ might seem like nonsense --- how can a number equal
+itself plus one? But that's why we use the \verb@:=@ symbol; it says that we're redefining
+\verb@n@, not stating an equation. If \verb@n@ was previously 37, then after this statement is
+executed, \verb@n@ will be redefined as 38.
+To run the program on a Linux computer,
+do this (assuming you saved the program in a file named \verb@sum.yacas@):
+
+\begin{Code}
+  \ii % yacas -pc sum.yacas 
+  \oo{5050}
+\end{Code}
+
+Here the \verb@%@ symbol is the computer's prompt. The result is 5,050, as expected.
+One way of stating this result is
+\begin{equation*}
+  \sum_{n=1}^{100} n = 5050 \qquad .
+\end{equation*}
+The capital Greek letter $\Sigma$, sigma, is used because it makes the ``s'' sound, and
+that's the first sound in the word ``sum.'' The $n=1$ below the sigma says the sum starts
+at 1, and the 100 on top says it ends at 100. The $n$ is what's known as a dummy variable:
+it has no meaning outside the context of the sum. Figure \figref{discrete-sum} shows the
+graphical interpretation of the sum: we're adding up the areas of a series of rectangular
+strips. (For clarity, the figure only shows the sum going up to 7, rather than 100.)
+
+\smallfig{discrete-sum}{Graphical interpretation of the sum $1+2+\ldots+7$.}
+
+Now how about an integral? Figure \figref{integral-of-t} shows the graphical interpretation
+of what we're trying to do: find the area of the shaded triangle.
+This is an example we know how to do symbolically, so we can do it numerically as well,
+and check the answers against each other. Symbolically, the area is given by the integral.
+To integrate the function $\xdot(t)=t$, we know we need some function with a $t^2$ in it,
+since we want something whose derivative is $t$, and differentiation reduces the power
+by one. The derivative of $t^2$ would be $2t$ rather than $t$, so what we want is
+$x(t)=t^2/2$. Let's compute the area of the triangle that stretches along the $t$ axis
+from 0 to 100: $x(100)=100^/2=5000$.
+
+\smallfig{integral-of-t}{Graphical interpretation of the integral of the function $\xdot(t)=t$.}
+
+Figure \figref{riemann} shows how to accomplish the same thing numerically. We break up the area
+into a whole bunch of very skinny rectangles. Ideally, we'd like to make the width of each
+rectangle be an infinitesimal number $\der x$, so that we'd be adding up an infinite number of
+infinitesimal areas. In reality, a computer can't do that, so we divide up the interval from
+$t=0$ to $t=100$ into $H$ rectangles, each with finite width $\der t=100/H$. Instead of making
+$H$ infinite, we make it the largest number we can without making the computer take too
+long to add up the areas of the rectangles.\index{integration!computer-aided!numerical}
+
+\smallfig{riemann}{Approximating the integral numerically.}
+
+\restartLineNumbers
+\begin{eg}\label{eg:riemann}
+\startcodeeg
+\begin{Code}
+  \nn tmax := 100;
+  \nn H := 1000;
+  \nn dt := tmax/H;
+  \nn sum := 0;
+  \nn t := 0;
+  \nn While (t<=tmax) [
+  \nn   sum := N(sum+t*dt);
+  \nn   t := N(t+dt);
+  \nn ];
+  \nn Echo(sum);
+\end{Code}
+\end{eg}
+
+In example \ref{eg:riemann}, we split the interval from $t=0$ to 100 into $H=1000$ small
+intervals, each with width $\der t=0.1$. The result is 5,005, which agrees with the symbolic
+result to three digits of precision. Changing $H$ to 10,000 gives $5,000.5$, which is one
+more digit. Clearly as we make the number of rectangles greater and greater, we're converging
+to the correct result of 5,000.
+
+In the Leibniz notation,\index{Leibniz notation!integral}
+the thing we've just calculated, by two different techniques, is written like
+this:
+\begin{equation*}
+  \int_{0}^{100} t \:\der t = 5,000
+\end{equation*}
+It looks a lot like the $\Sigma$ notation, with the $\Sigma$ replaces by a flattened-out letter ``S.''
+The $t$ is a dummy variable. What I've been casually referring to as an integral is really two different
+but closely related things, known as the definite integral and the indefinite integral.
+
+\begin{important}[Definition of the indefinite integral]\index{integral!indefinite!definition}
+If $\xdot$ is a function, then a function $x$ is an indefinite integral of $\xdot$ if,
+as implied by the notation, $\der x/\der t=\xdot$.
+
+Interpretation: Doing an indefinite integral means doing the opposite of differentiation.
+All the possible indefinite integrals are the same function except for an additive constant.
+\end{important}
+
+\begin{eg}
+\egquestion Find the indefinite integral of the function $\xdot(t)=t$.
+
+\eganswer Any function of the form
+\begin{equation*}
+  x(t)=t^2/2+c \qquad ,
+\end{equation*}
+where $c$ is a constant, is an
+indefinite integral of this function, since its derivative is $t$.
+\end{eg}
+
+\begin{important}[Definition of the definite integral]\index{integral!definite!definition}
+If $\xdot$ is a function, then the definite integral of $\xdot$ from $a$ to $b$ is
+defined as
+\begin{multline*}
+  \int_{a}^{b} \xdot(t) \der t \\
+= \lim_{H\rightarrow\infty} \sum_{i=0}^{H} \xdot\left(a+i\Delta t\right) \qquad ,
+\end{multline*}
+where $\Delta t=(b-a)/H$.
+
+Interpretation: What we're calculating is
+the area under the graph of $\xdot$, from $a$ to $b$. (If the graph dips below the $t$ axis, we interpret the
+area between it and the axis as a negative area.)
+The thing inside the limit is a calculation like the one done in example \ref{eg:riemann},
+but generalized to $a\ne 0$.
+If $H$ was infinite, then $\Delta t$ would be an infinitesimal number $\der t$. 
+\end{important}
+
+\section{The fundamental theorem of calculus}\index{calculus!fundamental theorem of!statement}\index{fundamental theorem of calculus!statement}
+
+\begin{important}[The fundamental theorem of calculus]
+Let $x$ be an indefinite integral of $\xdot$, and let $\xdot$ be a continuous
+function (one whose graph is a single connected curve). Then
+
+\begin{equation*}
+  \int_{a}^{b} \xdot(t) \der t = x(b)-x(a) \qquad .
+\end{equation*}
+
+Interpretation: In the simple examples we've been doing so far,
+we were able to choose an indefinite integral such that $x(0)=0$.
+In that case, $x(t)$ is interpreted as the area from 0 to $t$,
+so in the expression $x(b)-x(a)$, we're taking the area from
+0 to $a$, but subtracting out the area from 0 to $b$, which gives
+the area from $a$ to $b$. If we choose an indefinite integral with
+a different $c$, the $c$'s will just cancel out anyway in the
+difference  $x(b)-x(a)$.
+\end{important}
+
+The fundamental theorem is proved on page \pageref{detour:fundamental-thm-proof}.
+
+\begin{eg}\label{eg:hyperbola}
+\egquestion Interpret the indefinite integral
+\begin{equation*}
+  \int_{1}^{2} \frac{1}{t}\:\der t \qquad .
+\end{equation*}
+graphically; then evaluate it it both symbolically and numerically, and check that the two results
+are consistent.
+
+\smallfig{hyperbola-area}{The indefinite integral $\int_1^2 (1/t)\der t$.}
+
+\eganswer Figure \figref{hyperbola-area} shows the graphical interpretation. The numerical calculation
+requires a trivial variation on the program from example \ref{eg:riemann}:
+
+\restartLineNumbers
+\begin{Code}
+  a := 1;
+  b := 2;
+  H := 1000;
+  dt := (b-a)/H;
+  sum := 0;
+  t := a;
+  While (t<=b) [
+    sum := N(sum+(1/t)*dt);
+    t := N(t+dt);
+  ];
+  Echo(sum);
+\end{Code}
+The result is $0.693897243$, and increasing $H$ to 10,000 gives $0.6932221811$, so we can be fairly confident that
+the result equals $0.693$, to 3 decimal places.
+
+Symbolically, the indefinite integral is $x=\ln t$. Using the fundamental theorem of calculus, the area
+is $\ln 2-\ln 1\approx 0.693147180559945$.
+
+Judging from the graph, it looks plausible that the shaded area is about 0.7.
+
+This is an interesting example, because the natural log blows up to negative infinity as $t$ approaches 0,
+so it's not possible to add a constant onto the indefinite integral and force it to be equal to
+0 at $t=0$. Nevertheless, the fundamental theorem of calculus still works.
+
+\end{eg}
+
+%%graph%% hyperbola-area-raw func=1/x format=svg xlo=0 xhi=3 ylo=0 yhi=1.5 with=lines x=t y=x xtic_spacing=1 ytic_spacing=1
+
+\section{Properties of the integral}\index{integral!properties of}
+
+Let $f$ and $g$ be two functions of $x$, and let $c$ be a constant. We already know that for derivatives,
+\begin{gather*}
+  \frac{\der}{\der x}(f+g) = \frac{\der f}{\der x} + \frac{\der g}{\der x} \\
+\intertext{and}
+  \frac{\der}{\der x}(cf) = c\frac{\der f}{\der x} \qquad .
+\end{gather*}
+But since the indefinite integral is just the operation of undoing a derivative, the
+same kind of rules must hold true for indefinite integrals as well:
+\begin{gather*}
+  \int(f+g)\der x =   \int f \der x +   \int g \der x \\
+\intertext{and}
+  \int(cf)\der x =   c \int f \der x \qquad .
+\end{gather*}
+And since a definite integral can be found by plugging in the upper and lower limits of integration
+into the indefinite integral, the same properties must be true of definite integrals as well.
+
+\begin{eg}
+\egquestion Evaluate the indefinite integral
+\begin{equation*}
+  \int (x+2\sin x) \der x \qquad .
+\end{equation*}
+
+\eganswer
+Using the additive property, the integral becomes
+\begin{equation*}
+ \int x \der x +   \int 2\sin x \der x \qquad .
+\end{equation*}
+Then the property of scaling by a constant lets us change this to
+\begin{equation*}
+                             \int x \der x +   2 \int \sin x \der x \qquad .\\
+\end{equation*}
+We need a function whose derivative is $x$, which would be $x^2/2$, and
+one whose derivative is $\sin x$, which must be $-\cos x$, so the result is
+\begin{equation*}
+                             \frac{1}{2}x^2 -   2 \cos x + c \qquad .
+\end{equation*}
+\end{eg}
+
+\section{Applications}
+
+\subsection{Averages}\index{average}
+
+In the story of Gauss's problem of adding up the numbers from 1 to 100, one interpretation of
+the result, 5,050, is that the average of all the numbers from 1 to 100 is 50.5. This is the
+ordinary definition of an average: add up all the things you have, and divide by the number
+of things. (The result in this example makes sense, because half the numbers
+are from 1 to 50, and half are from 51 to 100, so the average is half-way between 50 and 51.)
+
+Similarly, a definite integral can also be thought of as a kind of average. In general, if $y$ is
+a function of $x$, then the average, or mean, value of $y$ on the interval from $x=a$ to $b$ can be
+defined as
+\begin{equation*}
+  \bar{y} = \frac{1}{b-a} \int_a^b y\:\der x \qquad .
+\end{equation*}
+In the continuous case, dividing by $b-a$ accomplishes the same thing as dividing by the
+number of things in the discrete case.
+
+\begin{eg}
+\egquestion Show that the definition of the average makes sense in the case where the function
+is a constant.
+
+\eganswer If $y$ is a constant, then we can take it outside of the integral, so
+\begin{align*}
+  \bar{y} &= \frac{1}{b-a} y \int_a^b 1\:\der x \\
+                     &= \frac{1}{b-a} y \left.x\right|_a^b \\
+                     &= \frac{1}{b-a} y (b-a) \\
+                     &= y
+\end{align*}
+\end{eg}
+
+\begin{eg}\label{eg:mean-of-square}
+\egquestion Find the average value of the function $y=x^2$ for values of $x$ ranging from
+0 to 1.
+
+\begin{align*}
+  \bar{y} &= \frac{1}{1-0} \int_0^1 x^2\:\der x \\
+                     &= \left.\frac{1}{3}x^3\right|_0^1 \\
+                     &= \frac{1}{3}
+\end{align*}
+\end{eg}
+
+\begin{important}[The mean value theorem]\index{mean value theorem!statement}
+If the continuous function $y(x)$ has the average value $\bar{y}$ on the interval
+from $x=a$ to $b$, then $y$ attains its average value at least once in that interval,
+i.e., there exists $\xi$ with $a<\xi<b$ such that $y(\xi)=\bar{y}$.
+\end{important}
+
+The mean value theorem is proved on page \pageref{detour:mean-value-proof}.
+
+\begin{eg}
+\egquestion Verify the mean value theorem for $y=x^2$ on the interval from 0 to 1.
+
+\eganswer The mean value is 1/3, as shown in example \ref{eg:mean-of-square}. This value
+is achieved at $x=\sqrt{1/3}=1/\sqrt{3}$, which lies between 0 and 1.
+\end{eg}
+
+\subsection{Work}\index{work}
+In physics, work is a measure of the amount of energy transferred by a force; for example, if a horse
+sets a wagon in motion, the horse's force on the wagon is putting some energy of motion into the wagon.
+When a force $F$ acts on an object that moves in the direction of the force by an infinitesimal
+distance $\der x$, the infinitesimal work done is $\der W=F\der x$. Integrating both sides,
+we have $W=\int_a^b F\der x$, where the force may depend on $x$, and $a$ and $b$ represent the
+initial and final positions of the object. 
+
+\begin{eg}
+\egquestion A spring compressed by an amount $x$ relative to its relaxed length provides
+a force $F=kx$. Find the amount of work that must be done in order to compress the spring
+from $x=0$ to $x=a$. (This is the amount of energy stored in the spring, and that energy
+will later be released into the toy bullet.)
+
+\eganswer
+\begin{align*}
+  W &= \int_0^a F \der x \\
+    &= \int_0^a kx \der x
+\end{align*}
+\begin{align*}
+    &= \left.\frac{1}{2}kx^2\right|_0^a \\
+    &= \frac{1}{2}ka^2
+\end{align*}
+The reason $W$ grows like $a^2$, not just like $a$, is that as the spring is compressed
+more, more and more effort is required in order to compress it.
+\end{eg}
+
+\subsection{Probability}
+
+Mathematically, the probability that something will happen can be specified with a number
+ranging from 0 to 1, with 0 representing impossibility and 1 representing certainty.
+If you flip a coin, heads and tails both have probabilities of 1/2.
+The sum of the probabilities of all the possible outcomes has to have probability 1.
+This is called \emph{normalization}.\index{probability}\index{normalization}
+
+\smallfig{globe}{Normalization: the probability of picking land plus
+the probability of picking water adds up to 1.}
+
+So far we've discussed random processes having only two
+possible outcomes: yes or no, win or lose, on or off. More
+generally, a random process could have a result that is a
+number. Some processes yield integers, as when you roll a
+die and get a result from one to six, but some are not
+restricted to whole numbers, e.g., the height of a human being, or
+the amount of time that a uranium-238 atom will exist before undergoing radioactive decay.
+The key to handling these continuous random variables is the concept of the area
+under a curve, i.e., an integral.
+%
+\fig{single-die}{Probability distribution for the result of rolling a single die.}
+
+Consider a throw of a die. If the die is ``honest,'' then we
+expect all six values to be equally likely. Since all six
+probabilities must add up to 1, then probability of any
+particular value coming up must be 1/6. We can summarize
+this in a graph, \figref{single-die}. Areas under the curve can be
+interpreted as total probabilities. For instance, the area
+under the curve from 1 to 3 is $1/6+1/6+1/6=1/2$, so the
+probability of getting a result from 1 to 3 is 1/2. The
+function shown on the graph is called the probability distribution.
+%
+\fig{two-dice}{Rolling two dice and adding them up.}
+
+Figure \figref{two-dice} shows the probabilities of various results
+obtained by rolling two dice and adding them together, as in
+the game of craps. The probabilities are not all the same.
+There is a small probability of getting a two, for example,
+because there is only one way to do it, by rolling a one and
+then another one. The probability of rolling a seven is high
+because there are six different ways to do it: 1+6, 2+5, etc.
+
+If the number of possible outcomes is large but finite, for
+example the number of hairs on a dog, the graph would start
+to look like a smooth curve rather than a ziggurat.
+
+What about probability distributions for random numbers that
+are not integers? We can no longer make a graph with
+probability on the $y$ axis, because the probability of
+getting a given exact number is typically zero. For
+instance, there is zero probability that a person will be
+\emph{exactly} 200 cm tall, since there are
+infinitely many possible results that are close to 200 but not
+exactly two, for example 199.99999999687687658766.
+It doesn't usually make sense, therefore, to talk
+about the probability of a single numerical result, but it
+does make sense to talk about the probability of a certain
+range of results. For instance, the probability that a randomly
+chosen person will be more than 170 cm and less than 200 cm
+in height is a perfectly
+reasonable thing to discuss. We can still summarize the
+probability information on a graph, and we can still
+interpret areas under the curve as probabilities.
+%
+\fig{human-height}{A probability distribution for human height.}
+
+But the $y$ axis can no longer be a unitless probability
+scale. In the example of human height, we want the $x$
+axis to have units of meters, and we want areas under the
+curve to be unitless probabilities. The area of a single
+square on the graph paper is then
+\begin{align*}
+ (\text{unitless area of a square})\\
+         =  (\text{width of square}\\
+             \text{with distance units}) \\
+             \times (\text{height of square}) \qquad .
+\end{align*}
+If the units are to cancel out, then the height of the
+square must evidently be a quantity with units of inverse
+centimeters. In other words, the $y$ axis of the graph is to be
+interpreted as probability per unit height, not probability.
+
+Another way of looking at it is that the $y$ axis on the graph
+gives a derivative, $\der P/\der x$: the infinitesimally small
+probability that $x$ will lie in the infinitesimally small
+range covered by $\der x$.
+
+\begin{eg}\label{eg:random-diff}
+\egquestion A computer language will typically have a built-in
+subroutine that produces a fairly random number that is equally
+likely to take on any value in the range from 0 to 1. If you
+take the absolute value of the difference between two such
+numbers, the probability distribution is of the form
+$\der P/\der x=k(1-x)$. Find the value of the constant $k$
+that is required by normalization.
+
+\eganswer
+\begin{align*}
+  1 &= \int_0^1 k(1-x)\:\der x \\
+    &= \left.kx-\frac{1}{2}kx^2\right|_0^1 \\
+    &= k-k/2 \\
+  k &= 2
+\end{align*}
+\end{eg}
+
+\begin{selfcheck}{interpret-human-height}
+Compare the number of people with heights in the range of
+130-135 cm to the number in the range 135-140.
+\end{selfcheck}
+
+\fig{average}{The average can be interpreted as the balance point
+of the probability distribution.}
+
+When one random variable is related to another in some mathematical
+way, the chain rule can be used to relate their probability distributions.
+
+\pagebreak
+
+\fig{laser}{Example \ref{eg:laser}.}
+
+\begin{eg}\label{eg:laser}
+\egquestion A laser is placed one meter away from a wall, and spun
+on the ground to give it a random direction, but if the angle $u$ shown in figure
+\figref{laser} doesn't
+come out in the range from 0 to $\pi/2$, the laser is spun again until
+an angle in the desired range is obtained. Find the probability distribution
+of the distance $x$ shown in the figure. The derivative
+$\der\tan^{-1}z/\der z=1/(1+z^2)$ will be required (see example \ref{eg:arctan},
+page \pageref{eg:arctan}).
+
+\eganswer Since any angle between 0 and $\pi/2$ is equally likely, the
+probability distribution $\der P/\der u$ must be a constant, and normalization
+tells us that the constant must be $\der P/\der u=2/\pi$. 
+
+The laser is one meter from the wall, so the distance $x$, measured in
+meters, is given by $x=\tan u$. For the probability distribution of $x$, we have
+\begin{align*}
+  \frac{\der P}{\der x} &= \frac{\der P}{\der u}\cdot\frac{\der u}{\der x} \\
+        &= \frac{2}{\pi}\cdot\frac{\der \tan^{-1}x}{\der x} \\
+        &= \frac{2}{\pi(1+x^2)}
+\end{align*}
+
+Note that the range of possible values of $x$ theoretically extends from 0 to
+infinity. Problem \ref{hw:laser} on page \pageref{hw:laser} deals with this.
+\end{eg}
+
+If the next Martian you meet asks you, ``How tall is an
+adult human?,'' you will probably reply with a statement
+about the average human height, such as ``Oh, about 5 feet 6
+inches.'' If you wanted to explain a little more, you could
+say, ``But that's only an average. Most people are somewhere
+between 5 feet and 6 feet tall.'' Without bothering to draw
+the relevant bell curve for your new extraterrestrial
+acquaintance, you've summarized the relevant information by
+giving an average and a typical range of variation.
+The average of a probability distribution can be defined
+geometrically as the horizontal position at which it could
+be balanced if it was constructed out of cardboard, \figref{average}.
+This is a different way of working with averages than the one
+we did earlier. Before, had a graph of $y$ versus $x$, we implicitly
+assumed that all values of $x$ were equally likely, and we found an
+average value of $y$. In this new method using probability distributions,
+the variable we're averaging is on the $x$ axis, and the $y$ axis
+tells us the relative probabilities of the various $x$ values.
+
+For a discrete-valued variable with $n$ possible values, the average would be
+\begin{equation*}
+  \bar{x} = \sum_{i=0}^n x\:P(x) \qquad ,
+\end{equation*}
+and in the case of a continuous variable, this becomes an integral,
+\begin{equation*}
+  \bar{x} = \int_a^b x\:\frac{\der P}{\der x} \: \der x \qquad .
+\end{equation*}
+
+\begin{eg}
+\egquestion For the situation described in example \ref{eg:random-diff},
+find the average value of $x$.
+
+\eganswer
+\begin{align*}
+  \bar{x} &= \int_0^1 x\:\frac{\der P}{\der x} \: \der x \\
+          &= \int_0^1 x \cdot 2(1-x)\:\der x \\
+          &= 2\int_0^1 (x-x^2)\:\der x \\
+          &= 2\left. \left(\frac{1}{2}x^2-\frac{1}{3}x^3\right) \right|_0^1 \\
+          &= \frac{1}{3}
+\end{align*}
+\end{eg}
+
+Sometimes we don't just want to know the average value of a certain variable, we
+also want to have some idea of the amount of variation above and below the average.
+The most common way of measuring this is the \emph{standard deviation},\index{standard deviation}
+defined by
+\begin{equation*}
+  \sigma = \sqrt{\int_a^b (x-\bar{x})^2\:\frac{\der P}{\der x} \: \der x} \qquad .
+\end{equation*}
+The idea here is that if there was no variation at all above or below the average,
+then the quantity $(x-\bar{x})$ would be zero whenever $\der P/\der x$ was nonzero, and
+the standard deviation would be zero. The reason for taking the square root of the whole
+thing is so that the result will have the same units as $x$.
+
+\begin{eg}
+\egquestion For the situation described in example \ref{eg:random-diff},
+find the standard deviation of $x$.
+
+\eganswer The square of the standard deviation is
+\begin{align*}
+  \sigma^2 &= \int_0^1 (x-\bar{x})^2\:\frac{\der P}{\der x} \: \der x \\
+          &= \int_0^1 (x-1/3)^2\cdot2(1-x) \: \der x \\
+          &= 2 \int_0^1 \left(-x^3+\frac{5}{3}x^2-\frac{7}{9}x+\frac{1}{9}\right) \: \der x \\
+          &= \frac{1}{18} \qquad ,
+\intertext{so the standard deviation is}
+  \sigma &= \frac{1}{\sqrt{18}} \\
+         &\approx 0.236
+\end{align*}
+\end{eg}
+
+%---------------------------------------------------------------------------------
+
+\begin{hwsection}
+\begin{hwwithsoln}{integrate-num}
+Write a computer program similar to the one in example \ref{eg:hyperbola} on page \pageref{eg:hyperbola}
+to evaluate the definite integral
+\begin{equation*}
+  \int_0^1 e^{x^2} \qquad .
+\end{equation*}
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{integrate-sin-cancel}
+Evaluate the integral
+\begin{equation*}
+  \int_0^{2\pi} \sin x \:\der x \qquad ,
+\end{equation*}
+and draw a sketch to explain why your result comes out the way it does.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{estimate-then-integrate}
+Sketch the graph that represents the definite integral
+\begin{equation*}
+  \int_0^2 -x^2+2x \qquad ,
+\end{equation*}
+and estimate the result roughly from the graph. Then evaluate the
+integral exactly, and check against your estimate.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{average-sine}
+Make a rough guess as to the average value of $\sin x$ for $0<x<\pi$, and then
+find the exact result and check it against your guess.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{continuity-mean-value}
+Show that the mean value theorem's assumption of continuity is necessary, by exhibiting
+a discontinuous function for which the theorem fails.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{fund-thm-assumption}
+Show that the fundamental theorem of calculus's assumption of continuity for $\xdot$ is necessary, by exhibiting
+a discontinuous function for which the theorem fails.
+\end{hwwithsoln}
+
+\begin{hw}
+Sketch the graphs of $y=x^2$ and $y=\sqrt{x}$ for $0\le x\le 1$. Graphically, what relationship
+should exist between the integrals $\int_0^1 x^2\:\der x$ and $\int_0^1 \sqrt{x}\:\der x$? Compute both
+integrals, and verify that the results are related in the expected way.
+\end{hw}
+
+\begin{hw}\label{hw:piston}
+In a gasoline-burning car engine, the exploding air-gas
+mixture makes a force on the piston, and the force tapers off as the piston expands, allowing the
+gas to expand. (a) In the approximation $F=k/x$, where $x$ is the position of the piston, find the
+work done on the piston as it travels from $x=a$ to $x=b$, and show that the result only depends
+on the ratio $b/a$. This ratio is known as the compression ratio of the engine. (b) A better
+approximation, which takes into account the cooling of the air-gas mixture as it expands, is
+$F=kx^{-1.4}$. Compute the work done in this case.
+\end{hw}
+
+\smallfig{hw-piston}{Problem \ref{hw:piston}.}
+
+\begin{hw}
+A certain variable $x$ varies randomly from -1 to 1, with probability distribution
+$\der P/\der x=k\left(1-x^2\right)$.\\
+(a) Determine $k$ from the requirement of normalization.\\
+(b) Find the average value of $x$.\\
+(c) Find its standard deviation.
+\end{hw}
+
+\begin{hw}[2]
+A perfectly elastic ball bounces up and down forever, always coming back up to the same height $h$. Find
+its average height.
+\end{hw}
+
+\fig{hw-holditch}{Problem \ref{hw:holditch}.}
+
+\begin{hw}[2]\label{hw:holditch}
+The figure shows a curve with a tangent line segment of length 1 that sweeps around it, forming a new curve
+that is usually outside the old one.
+Prove Holditch's theorem, which states that the  new curve's area differs from the old one's
+by $\pi$.\index{Holditch's theorem}
+(This is an example of a result that is much more
+difficult to prove without making use of infinitesimals.)
+\end{hw}
+
+\end{hwsection}

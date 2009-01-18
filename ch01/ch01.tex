@@ -1,0 +1,589 @@
+%%chapter%% 01
+\chapter{Rates of Change}
+
+\section{Change in discrete steps}
+
+Toward the end of the eighteenth century, a German elementary school teacher
+decided to keep his pupils busy by assigning them a long, boring arithmetic
+problem. To oversimplify a little bit (which is what textbook authors always do when
+they tell you about history), I'll say that the assignment was to add up all the numbers
+from one to a hundred. The children set to work on their slates, and the teacher
+lit his pipe, confident of a long break. But almost immediately, a boy named
+Carl Friedrich Gauss brought up his answer: 5,050.\label{gauss-story}\index{Gauss, Carl Friedrich}
+%
+\smallfig{gauss-square}{Adding the numbers from 1 to 7.}
+%
+\smallfig[h]{gauss-solution}{A trick for finding the sum.}
+
+Figure \figref{gauss-square} suggests one way of solving this type of problem.
+The filled-in columns of the graph represent the numbers from 1 to 7, and
+adding them up means finding the area of the shaded region. Roughly half the
+square is shaded in, so if we want only an approximate solution, we can
+simply calculate $7^2/2=24.5$.
+
+But, as suggested in figure \figref{gauss-solution}, it's not much more work to
+get an exact result. There are seven sawteeth sticking out out above the diagonal,
+with a total area of $7/2$, so the total shaded area is $(7^2+7)/2=28$.
+In general, the sum of the first $n$ numbers will be $(n^2+n)/2$, which explains
+Gauss's result: $(100^2+100)/2=5,050$.
+%
+\smallfig{gauss}{Carl Friedrich Gauss (1777-1855), a long time after graduating
+from elementary school.}\index{Gauss, Carl Friedrich!portrait}
+%
+\subsection{Two sides of the same coin}
+
+Problems like this come up frequently. Imagine that each household in a certain
+small town sends a total of one ton of garbage to the dump every year. Over
+time, the garbage accumulates in the dump, taking up more and more space.
+Let's label the years as $n=1,$ 2, $3,\ldots$, and let the
+function\footnote{Recall that when $x$ is a function, the notation $x(n)$ means
+the output of the function when the input is $n$. It doesn't represent
+multiplication of a number $x$ by a number $n$.}
+$x(n)$ represent the amount of garbage that has accumulated by the end
+of year $n$.
+If the population is constant, say 13 households, then
+garbage accumulates at a constant rate, and we have $x(n)=13n$. 
+
+But maybe the town's population is growing. If the population starts out
+as 1 household in year 1, and then grows to 2 in year 2, and so on, then
+we have the same kind of problem that the young Gauss solved. After 100
+years, the accumulated amount of garbage will be 5,050 tons. The pile of
+refuse grows more and more every year; the rate of change of $x$ is not
+constant. Tabulating the examples we've done so far, we have this:
+
+\noindent\begin{tabular}{p{23mm}p{23mm}}
+\emph{rate of change} & \emph{accumulated result} \\
+13             & $13n$ \\
+$n$            & $(n^2+n)/2$
+\end{tabular}
+
+\newcommand{\xdot}{\dot{x}}
+
+The rate of change of the function $x$ can be notated as $\xdot$.
+Given the function $\xdot$, we can always determine the function $x$
+for any value of $n$ by doing a running sum.
+
+Likewise, if we know
+$x$, we can determine $\xdot$ by subtraction. In the example
+where $x=13n$, we can find $\xdot=x(n)-x(n-1)=13n-13(n-1)=13$.
+Or if we knew that the accumulated amount of garbage was given by
+$(n^2+n)/2$, we could calculate the town's population like
+this:
+
+\begin{align*}
+  & \frac{n^2+n}{2} - \frac{(n-1)^2+(n-1)}{2}\\
+   &= \frac{n^2+n-\left(n^2+2n-1-n+1\right)}{2} \\
+   &= n
+\end{align*}
+%%graph%% slope-interpretation func=(x**2+x)/2 format=eps xlo=0 xhi=7 ylo=0 yhi=30 with=points x=n y=x samples=8 ytic_spacing=10 ; func=4*x-6 with=lines
+\smallfig[h]{slope-interpretation}{$\xdot$ is the slope of $x$.}
+
+The graphical interpretation of this is shown in figure
+\figref{slope-interpretation}: on a graph of $x=(n^2+n)/2$, the slope of the line connecting two successive points is the value of the function $\xdot$.
+
+In other words, the functions $x$ and $\xdot$ are like different
+sides of the same coin. If you know one, you can find the other
+--- with two caveats.
+
+First, we've been assuming implicitly
+that the function $x$ starts out at $x(0)=0$. That might not be
+true in general. For instance, if we're adding water to a reservoir
+over a certain period of time, the reservoir probably didn't start
+out completely empty. Thus, if we know $\xdot$, we can't
+find out everything about $x$ without some further information:
+the starting value of $x$. If someone tells you $\xdot=13$,
+you can't conclude $x=13n$, but only $x=13n+c$, where $c$ is
+some constant. There's no such ambiguity if you're going the
+opposite way, from $x$ to $\xdot$. Even if $x(0)\ne 0$, we
+still have $\xdot=13n+c-[13(n-1)+c]=13$.
+
+Second, it may be difficult, or even impossible, to find
+a \emph{formula} for the answer when we want to determine
+the running sum $x$ given a formula for the rate of change
+$\xdot$. Gauss had a flash of insight that led him to
+the result $(n^2+n)/2$, but in general we might only be
+able to use a computer spreadsheet to calculate a number
+for the running sum, rather than an
+equation that would be valid for all values of $n$.
+%
+\subsection{Some guesses}
+%
+Even though we lack Gauss's genius, we can recognize
+certain patterns. One pattern is that if $\xdot$ is
+a function that gets bigger and bigger, it seems like
+$x$ will be a function that grows even faster than $\xdot$.
+In the example of $\xdot=n$ and $x=(n^2+n)/2$, consider
+what happens for a large value of $n$, like 100. At this value of $n$,
+$\xdot=100$, which is pretty big, but even without pawing around for
+a calculator, we know that $x$ is going to turn out really \emph{really} big. Since $n$ is
+large, $n^2$ is quite a bit bigger than $n$, so roughly speaking,
+we can approximate $x\approx n^2/2=5,000$. 100 may be a big number,
+but 5,000 is a lot bigger. Continuing in this way, for $n=1000$ we
+have $\xdot=1000$, but $x\approx 500,000$ --- now $x$ has far
+outstripped $\xdot$. This can be a fun game to play with a calculator:
+look at which functions grow the fastest. For instance, your calculator
+might have an $x^2$ button, an $e^x$ button, and a button for $x!$ (the
+factorial function,\index{factorial} defined
+as $x!=1\cdot 2\cdot\ldots\cdot x$, e.g., $4!=1 \cdot 2 \cdot 3 \cdot 4=24$). You'll find
+that $50^2$ is pretty big, but $e^{50}$ is incomparably greater, and $50!$
+is so big that it causes an error.
+
+All the $x$ and $\xdot$ functions we've
+seen so far have been polynomials. If $x$ is a polynomial,
+then of course we can find a polynomial for $\xdot$ as well,
+because if $x$ is a polynomial, then $x(n)-x(n-1)$ will be one too.
+It also looks like every polynomial we could choose
+for $\xdot$ might also correspond to an $x$ that's a polynomial.
+And not only that, but it looks as though there's a pattern in the
+power of $n$. Suppose $x$ is a polynomial, and the highest power of $n$ it contains is
+a certain number --- the ``order'' of the polynomial. Then $\xdot$ is a polynomial
+of that order minus one. Again, it's fairly easy to prove this going one
+way, passing from $x$ to $\xdot$, but more difficult to prove the opposite
+relationship: that if $\xdot$ is a polynomial of a certain order, then
+$x$ must be a polynomial with an order that's greater by one.
+
+We'd imagine, then, that the running sum of $\xdot=n^2$ would
+be a polynomial of order 3. If we calculate
+$x(100)=1^2+2^2+\ldots+100^2$ on a computer spreadsheet, we
+get 338,350, which looks suspiciously close to $1,000,000/3$.
+It looks like $x(n)=n^3/3+\ldots$, where
+the dots represent terms involving lower powers of $n$
+such as $n^2$.
+%interp as slope, figure showing x, x', area->, slope<-
+%self-check: visualize for x=13n, x'=13
+
+\section{Continuous change}
+
+\smallfig{newton}{Isaac Newton (1643-1727)}\index{Newton, Isaac}
+%
+Did you notice that I sneaked something past you in the example
+of water filling up a reservoir? The $x$ and $\xdot$ functions I've
+been using as examples have all been functions defined on the integers,
+so they represent change that happens in discrete steps, but the flow
+of water into a reservoir is smooth and continuous. Or is it? Water is
+made out of molecules, after all. It's just that water molecules are so small that
+we don't notice them as individuals. Figure \figref{nearly-continuous} shows
+a graph that is discrete, but almost appears continuous because the scale has
+been chosen so that the points blend together visually.
+
+%%graph%% nearly-continuous func=(x**2+x)/2 format=eps xlo=0 xhi=30 ylo=0 yhi=500 with=points x=n y=x samples=31 ytic_spacing=100 xtic_spacing=10
+\smallfig[h]{nearly-continuous}{On this scale, the graph of $(n^2+n)/2$ appears almost continuous.}
+
+The physicist Isaac Newton started
+thinking along these lines in the 1660's, and figured out ways of analyzing
+$x$ and $\xdot$ functions that were truly continuous. The notation $\xdot$
+is due to him (and he only used it for continuous functions). Because he was
+dealing with the continuous \emph{flow} of change, he called his new set of mathematical
+techniques the method of \emph{fluxions}, but nowadays it's known as the calculus.
+%%graph%% tangent-line func=x**2/2 format=eps xlo=0 xhi=2 ylo=0 yhi=2 with=lines x=t y=x samples=300 ytic_spacing=1 ; func=x-.5 with=lines
+\smallfig{tangent-line}{The function $x(t)=t^2/2$, and its tangent line at the point $(1,1/2)$.}
+
+Newton was a physicist, and he needed to invent the calculus as part of his study
+of how objects move. If an object is moving in one dimension, we can specify its
+position with a variable $x$, and $x$ will then be a function of time, $t$.
+The rate of change of its position, $\xdot$, is its speed, or velocity.
+Earlier experiments by Galileo\index{Galileo}
+had established that when a ball rolled down
+a slope, its position was proportional to $t^2$, so Newton inferred that
+a graph like figure \figref{tangent-line} would be typical for any object
+moving under the influence of a constant force. (It could be $7t^2$, or
+$t^2/42$, or anything else proportional to $t^2$, depending on the force
+acting on the object and the object's mass.)
+
+Because the functions are continuous, not discrete, we can no longer define
+the relationship between $x$ and $\xdot$ by saying $x$ is a running sum of
+$\xdot$'s, or that $\xdot$ is the difference between two successive $x$'s.
+But we already found a geometrical relationship between the two functions
+in the discrete case, and that can serve as our definition for the continuous
+case: $x$ is the area under the graph of $\xdot$, or, if you like,
+$\xdot$ is the slope of the tangent line on the graph of $x$. For now
+we'll concentrate on the slope idea.
+
+%%graph%% not-a-tangent-line func=x**2/2 format=eps xlo=0 xhi=2 ylo=0 yhi=2 with=lines x=t y=x samples=300 ytic_spacing=1 ; func=1.75*x-1.25 with=lines
+\smallfig[t]{not-a-tangent-line}{This line isn't a tangent line: it crosses the graph.}%
+The tangent\index{tangent line!informal definition}
+line is defined as the line that passes through the graph at a certain point,
+but, unlike the one in figure \figref{not-a-tangent-line}, doesn't cut across the graph.\footnote{For a more formal definition, see
+page \pageref{detour:def-tangent}.} By measuring with a ruler on figure
+\figref{tangent-line}, we find that the slope is very close to 1, so evidently
+$\xdot(1)=1$.
+To prove this, we construct the function representing the line: $\ell(t)=t-1/2$. 
+We want to prove that this line doesn't cross the graph of $x(t)=t^2/2$. The difference between the
+two functions, $x-\ell$, is the polynomial $t^2/2-t+1/2$, and this polynomial will be zero for any
+value of $t$ where the line touches or crosses the curve. We can use the quadratic formula
+to find these points, and the result is that there is only one of them, which is $t=1$.
+Since $x-\ell$ is positive for at least some points to the left and right of $t=1$, and
+it only equals zero at $t=1$, it must never be negative, which means that the line
+always lies below the curve, never crossing it.
+
+\subsection{A derivative}\label{scaling}\index{derivative!definition using tangent line}
+That proves that $\xdot(1)=1$, but it was a lot of work, and we don't want to do
+that much work to evaluate $\xdot$ at every value of $t$. There's a way to
+avoid all that, and find a formula for $\xdot$. Compare figures \figref{tangent-line}
+and \figref{scaling}. They're both graphs of the same function, and they both look the same.
+What's different? The only difference is the scales: in figure \figref{scaling}, the $t$ axis
+has been shrunk by a factor of 2, and the $x$ axis by a factor of 4. The graph looks the same,
+because doubling $t$ quadruples $t^2/2$. The tangent line here is the tangent line at $t=2$,
+not $t=1$, and although it looks like the same line as the one in figure \figref{tangent-line},
+it isn't, because the scales are different. The line in figure \figref{tangent-line} had a slope
+of $\text{rise}/\text{run}=1/1=1$, but this one's slope is $4/2=2$. That means $\xdot(2)=2$.
+In general, this scaling argument shows that $\xdot(t)=t$ for any $t$.
+%%graph%% scaling func=x**2/2 format=eps xlo=0 xhi=4 ylo=0 yhi=8 with=lines x=t y=x samples=300 ytic_spacing=1 ; func=2*x-2 with=lines
+\smallfig{scaling}{The function $t^2/2$ again. How is this different from figure \figref{tangent-line}?}
+
+This is called \emph{differentiating}: finding a formula for the function $\xdot$, given a formula
+for the function $x$. The term comes from the idea that for a discrete function, the slope is
+the difference between two successive values of the function. The function $\xdot$ is referred to as
+the \emph{derivative} of the function $x$, and the art of differentiating is differential
+calculus.\index{calculus!differential}
+The opposite process, computing a formula for $x$ when given $\xdot$,  is called integrating,\index{integral}
+and makes up the field of integral calculus;\index{calculus!integral}
+this terminology is based on the idea that computing
+a running sum is like putting together (integrating) many little pieces.
+
+Note the similarity between this result for continuous functions,
+\begin{equation*}
+  x=t^2/2 \qquad \xdot=t \qquad ,
+\end{equation*}
+and our earlier result for discrete ones,
+\begin{equation*}
+  x=(n^2+n)/2 \qquad \xdot=n \qquad .
+\end{equation*}
+The similarity is no coincidence. A continuous function is just a smoothed-out version of
+a discrete one. For instance, the continuous version of the staircase function shown in figure
+\figref{gauss-solution} on page \pageref{fig:gauss-solution} would simply be a triangle
+without the saw teeth sticking out; the area of those ugly sawteeth is what's represented
+by the $n/2$ term in the discrete result $x=(n^2+n)/2$, which is the only thing that makes
+it different from the continuous result $x=t^2/2$.
+
+\subsection{Properties of the derivative}\index{derivative!properties of}
+
+It follows immediately from the definition of the derivative that multiplying a function by
+a constant multiplies its derivative by the same constant, so for example since we know
+that the derivative of $t^2/2$ is $t$, we can immediately tell that the derivative of
+$t^2$ is $2t$, and the derivative of $t^2/17$ is $2t/17$.
+
+Also, if we add two functions, their derivatives add. To give a good example of this, we
+need to have another function that we can differentiate, one that isn't just some multiple
+of $t^2$. An easy one is $t$: the derivative of $t$ is 1, since the graph
+of $x=t$ is a line with a slope of 1, and the tangent line lies right on top of the
+original line.
+
+The derivative of a constant is zero, since a constant function's graph is a
+horizontal line, with a slope of zero. We now know enough to differentiate a second-order
+polynomial.\index{derivative!of a second-order polynomial}
+
+\begin{eg}\label{eg:diff-quadratic}
+The derivative of $5t^2+2t$ is the derivative of $5t^2$ plus the derivative of
+$2t$, since derivatives add. The derivative of $5t^2$ is 5 times the derivative
+of $t^2$, and the derivative of $2t$ is 2 times the derivative of $t$, so
+putting everything together, we find that the derivative of $5t^2+2t$
+is $(5)(2t)+(2)(1)=10t+2$.
+\end{eg}
+
+\begin{eg}\label{pest}
+\egquestion An insect pest from the United States is inadvertently released in
+a village in rural China. The pests spread outward at a rate of $s$ kilometers
+per year, forming a widening circle of contagion. Find the number of square
+kilometers per year that become newly infested. Check that the units of the result
+make sense. Interpret the result.
+
+\eganswer Let $t$ be the time, in years, since the pest was introduced.
+The radius of the circle is $r=st$, and its area is $a=\pi r^2=\pi(st)^2$.
+To make this look like a polynomial, we have to rewrite this as
+$a=(\pi s^2)t^2$. The derivative is
+\begin{align*}
+  \dot{a} &= (\pi s^2)(2t) \\
+  \dot{a} &= (2\pi s^2) t
+\end{align*}
+
+The units of $s$ are km/year, so squaring it gives $\zu{km}^2/\zu{year}^2$.
+The 2 and the $\pi$ are unitless, and multiplying by $t$ gives units
+of $\zu{km}^2/\zu{year}$, which is what we expect for $\dot{a}$, since
+it represents the number of square kilometers per year that become infested.
+
+Interpreting the result, we notice a couple of things. First, the rate
+of infestation isn't constant; it's proportional to $t$, so people might not
+pay so much attention at first, but later on the effort required to combat the
+problem will grow more and more quickly. Second, we notice that the
+result is proportional to $s^2$. This suggests that anything that could be
+done to reduce $s$ would be very helpful. For instance, a measure that cut
+$s$ in half would reduce $\dot{a}$ by a factor of four.
+\end{eg}
+
+\subsection{Higher-order polynomials}\index{derivative!of a polynomial}
+
+So far, we have the following results for polynomials up to order 2:
+
+\begin{tabular}{ll}
+\emph{function} & \emph{derivative} \\
+1 & 0 \\
+$t$ & 1 \\
+$t^2$ & $2t$
+\end{tabular}
+
+Interpreting 1 as $t^0$, we detect what seems to be a general
+rule, which is that the derivative of $t^k$ is $kt^{k-1}$. The proof is straightforward
+but not very illuminating if carried out with the methods developed in this chapter,
+so I've relegated it to page \pageref{detour:polynomial-proof}. It can be proved
+much more easily using the methods of chapter 2.
+
+\begin{eg}
+\egquestion If $x=2t^7-4t+1$, find $\xdot$.
+
+\eganswer This is similar to example \ref{eg:diff-quadratic}, the only difference being
+that we can now handle higher powers of $t$. The derivative of $t^7$ is $7t^6$, so
+we have
+\begin{align*}
+  \xdot &= (2)(7t^6)+(-4)(1)+0 \\
+        &= 14t^6+-4
+\end{align*}
+\end{eg}
+
+\subsection{The second derivative}\index{derivative!second}
+
+I described how Galileo and Newton found that an object subject to
+an external force, starting from rest, would have a velocity $\xdot$ that was
+proportional to $t$, and a position $x$ that varied like $t^2$. The proportionality
+constant for the velocity is called the acceleration, $a$, so that
+$\xdot=at$ and $x=at^2/2$. For example, a sports car accelerating from
+a stop sign would have a large acceleration, and its velocity $at$ at a given
+time would therefore be a large number. The acceleration can be thought of
+as the derivative of the derivative of $x$, written $\Ddot{x}$, with two
+dots. In our example, $\Ddot{x}=a$. In general, the acceleration doesn't need
+to be constant. For example, the sports car will eventually have to stop
+accelerating, perhaps because the backward force of air friction becomes as
+great as the force pushing it forward. The total force acting on the car would
+then be zero, and the car would continue in motion at a constant speed.
+
+\begin{eg}
+Suppose the pilot of a blimp has just turned on the motor that runs its propeller, and
+the propeller is spinning up. The resulting force on the blimp is therefore increasing
+steadily, and let's say that this causes the blimp to have an acceleration
+$\Ddot{x}=3t$, which increases steadily with time. We want to find the blimp's
+velocity and position as functions of time.
+
+For the velocity, we need a polynomial
+whose derivative is $3t$. We know that the derivative of $t^2$ is $2t$, so we need
+to use a function that's bigger by a factor of $3/2$: $\xdot=(3/2)t^2$. In fact,
+we could add any constant to this, and make it $\xdot=(3/2)t^2+14$, for example,
+where the 14 would represent the blimp's initial velocity. But since the blimp has
+been sitting dead in the air until the motor started working, we can assume
+the initial velocity was zero. Remember, any time you're working backwards
+like this to find a function whose derivative is some other function (integrating,
+in other words), there is the possibility of adding on a constant like this.
+
+Finally, for the position, we need something whose derivative is $(3/2)t^2$.
+The derivative of $t^3$ would be $3t^2$, so we need something half as big
+as this: $x=t^3/2$.
+\end{eg}
+
+%%graph%% curvature func=x**2 format=eps xlo=-2 xhi=2 ylo=-1 yhi=8 with=lines x=t y=x samples=300 ytic_spacing=1 ; func=7*x**2 ; func=2*x
+\smallfig{curvature}{The functions $2t$, $t^2$ and $7t^2$.}
+%
+The second derivative can be interpreted as a measure of the curvature of the graph,
+as shown in figure \figref{curvature}. The graph of the function $x=2t$ is a line,
+with no curvature. Its first derivative is 2, and its second derivative is zero.
+The function $t^2$ has a second derivative of $2$, and the more tightly curved
+function $7t^2$ has a bigger second derivative, $14$.
+
+%%graph%% concavity func=x**2 format=eps xlo=-2 xhi=2 ylo=-1 yhi=4 with=lines x=t y=x samples=300 ytic_spacing=1 ; func=3-x**2
+\smallfig{concavity}{The functions $t^2$ and $3-t^2$.}
+
+Positive and negative signs of the second derivative indicate concavity.\index{concavity}
+In figure \figref{concavity},
+the function $t^2$ is like a cup with its mouth pointing up. We say that it's ``concave up,'' and this
+corresponds to its positive second derivative. The function $3-t^2$, with a second derivative less than
+zero, is concave down. Another way of saying it is that if you're driving along a road shaped like $t^2$,
+going in the direction of increasing $t$, then your steering wheel is turned to the left, whereas on
+a road shaped like $3-t^2$ it's turned to the right.
+
+%%graph%% inflection func=x**3 format=eps xlo=-2 xhi=2 ylo=-8 yhi=8 with=lines x=t y=x samples=300 ytic_spacing=2
+\smallfig{inflection}{The functions $t^3$ has an inflection point at $t=0$.}
+
+Figure \figref{inflection} shows a third possibility. The function $t^3$ has a derivative $3t^2$, which equals
+zero at $t=0$. This called a point of inflection. The concavity of the graph is down on the left, up on the right.
+The inflection point is where it switches from one concavity to the other. In the alternative description in
+terms of the steering wheel, the inflection point is where your steering wheel is crossing from left to right.\index{inflection point}\label{inflection}
+
+\subsection{Maxima and minima}\index{maximum of a function}\index{minimum of a function}
+
+When a function goes up and then smoothly turns around and comes back down again,
+it has zero slope at the top. A place where $\xdot=0$, then, could represent
+a place where $x$ was at a maximum. On the other hand, it could be concave up,
+in which case we'd have a minimum.
+
+\begin{eg}
+\egquestion Fred receives a mysterious e-mail tip telling him that his investment in a certain stock will
+have a value given by $x=-2t^4+(6.4577\times10^{10})t$, where $t\ge 2005$ is the year. Should he sell at some point? If so, when?
+
+\eganswer If the value reaches a maximum at some time, then the derivative should be zero then. Taking the
+derivative and setting it equal to zero, we have
+\begin{align*}
+  0 &= -8t^3+6.4577\times10^{10}\\
+  t &= \left(\frac{6.4577\times10^{10}}{8}\right)^{1/3} \\
+  t &= \pm 2006.0 \qquad .
+\end{align*}
+Obviously the solution at $t=-2006.0$ is bogus, since the stock market didn't exist four thousand years ago, and
+the tip only claimed the function would be valid for $t\ge 2005$.
+
+Should Fred sell on New Year's eve of 2006?
+
+But this could be a maximum, a minimum, or an inflection point. Fred definitely does \emph{not} want to
+sell at $t=2006$ if it's a minimum! To check which of the three possibilities hold, Fred takes the
+second derivative:
+\begin{align*}
+ \Ddot{x} &= -24t^2 \qquad .
+\end{align*}
+Plugging in $t=2006.0$, we find that the second derivative is negative at that time, so it is indeed a
+maximum.
+\end{eg}
+
+Implicit in this whole discussion was the assumption that the maximum or minimum where the function was
+smooth. There are some other possibilities.
+
+In figure \figref{endpoint-min}, the function's minimum occurs at an end-point of its domain.
+%
+%%graph%% endpoint-min func=sqrt(x) format=eps xlo=-1 xhi=2 ylo=-.1 yhi=1.5 with=lines x=t y=x samples=300 ytic_spacing=1
+\smallfig{endpoint-min}{The function $x=\sqrt t$ has a minimum at $t=0$, which is not a place where $\xdot=0$. This
+point is the edge of the function's domain.}
+%
+%%graph%% kink-min func=abs(x) format=eps xlo=-1 xhi=1 ylo=0 yhi=2 with=lines x=t y=x samples=300 ytic_spacing=1
+\smallfig{kink-min}{The function $x=|t|$ has a minimum at $t=0$, which is not a place where $\xdot=0$. This
+is a point where the function isn't differentiable.}
+
+Another possibility is that the function can have a minimum or maximum at some point where its derivative
+isn't well defined. Figure \figref{kink-min} shows such a situation. There is a kink in the function at $t=0$,
+so a wide variety of lines could be placed through the graph there, all with different slopes and all staying
+on one side of the graph. There is no uniquely defined tangent line, so the derivative is undefined.\index{derivative!undefined}
+
+\begin{eg}
+\egquestion Rancher Rick has a length of cyclone fence $L$ with which to enclose a rectangular pasture.
+Show that he can enclose the greatest possible area by forming a square with sides of length $L/4$.
+
+\eganswer If the width and length of the rectangle are $t$ and $u$, and Rick is going to use up
+all his fencing material, then the perimeter of the rectangle, $2t+2u$, equals $L$, so for a given
+width, $t$, the length is $u=L/2-t$. The area is $a=tu=t(L/2-t)$. The function only means anything realistic
+for $0\le t\le L/2$, since for values of $t$ outside this region either the width or the height of the
+rectangle would be negative. The function $a(t)$ could therefore have a maximum either at a place
+where $\dot{a}=0$, or at the endpoints of the function's domain. We can eliminate the latter possibility,
+because the area is zero at the endpoints.
+
+To evaluate the derivative, we first need to reexpress $a$ as a polynomial:
+\begin{equation*}
+  a=-t^2+\frac{L}{2}t \qquad .
+\end{equation*}
+The derivative is
+\begin{equation*}
+  \dot{a}=-2t+\frac{L}{2} \qquad .
+\end{equation*}
+Setting this equal to zero, we find $t=L/4$, as claimed. This is a maximum, not a minimum or an
+inflection point, because the second derivative is the constant $\ddot{a}=-2$, which is negative
+for all $t$, including $t=L/4$.
+\end{eg}
+
+\begin{hwsection}
+
+\begin{hwwithsoln}{check-twot-graph}
+Graph the function $t^2$ in the neighborhood of $t=3$, draw a tangent line, and use its slope
+to verify that the derivative equals $2t$ at this point.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{graph-sin-et}
+Graph the function $\sin e^t$ in the neighborhood of $t=0$, draw a tangent line, and use its slope
+to estimate the derivative. Answer: 0.5403023058. (You will of course not get an answer this precise
+using this technique.)
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{diff-monomials}
+Differentiate the following functions with respect to $t$: $1,\ 7,\ t,\ 7t,\ t^2,\ 7t^2,\ t^3,\ 7t^3$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{diff-polynomial}
+Differentiate $3t^7-4t^2+6$ with respect to $t$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{diff-symbolic-const}
+Differentiate $at^2+bt+c$ with respect to $t$.\thompson
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{same-deriv}
+Find two different functions whose derivatives are the constant 3, and give a geometrical
+interpretation.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{integ-monomial}
+Find a function $x$ whose derivative is $\xdot=t^7$. In other words, integrate the given function.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{integ-monomial-const}
+Find a function $x$ whose derivative is $\xdot=3t^7$. In other words, integrate the given function.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{integ-polynomial}
+Find a function $x$ whose derivative is $\xdot=3t^7-4t^2+6$. In other words, integrate the given function.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{observable-universe}
+Let $t$ be the time that has elapsed since the Big Bang. In that time, light, traveling at speed
+$c$, has been able to travel a maximum distance $ct$. The portion of the universe that we can observe
+is therefore a sphere of radius $ct$, with volume $v=(4/3)\pi r^3=(4/3)\pi(ct)^3$. Compute the rate
+$\dot{v}$ at which the observable universe is expanding, and check that your answer has the right units,
+as in example \ref{pest} on page \pageref{pest}.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{ke}
+Kinetic energy is a measure of an object's quantity of motion; when you buy gasoline,  the
+energy you're paying for will be converted into the car's kinetic energy (actually only some of
+it, since the engine isn't perfectly efficient). The kinetic energy of an object with mass
+$m$ and velocity $v$ is given by $K=(1/2)mv^2$. For a car accelerating at a steady rate, with
+$v=at$, find the rate $\dot{K}$ at which the engine is required to put out kinetic energy.
+$\dot{K}$, with units of energy over time, is known as the \emph{power}.
+Check that your answer has the right units, as in example \ref{pest} on page \pageref{pest}.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{expanding-square}
+A metal square expands and contracts with temperature, the lengths of its sides varying according to the
+equation $\ell=(1+\alpha T)\ell_\zu{o}$. Find the rate of change of its surface area with respect to
+temperature. That is, find $\dot{\ell}$, where the variable with respect to which you're differentiating
+is the temperature, $T$.  
+Check that your answer has the right units, as in example \ref{pest} on page \pageref{pest}.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{second-deriv}
+Find the second derivative of $2t^3-t$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{inflection}
+Locate any points of inflection of the function $t^3+t^2$. Verify by graphing that the concavity
+of the function reverses itself at this point.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{neg-power-graph}
+Let's see if the rule that the derivative of $t^k$ is $kt^{k-1}$ also works for $k<0$.
+Use a graph to test one particular case, choosing one particular negative value of $k$, and one 
+particular value of $t$. If it works, what does that tell you about the rule? If it
+doesn't work?
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{lennard-jones}
+Two atoms will interact via electrical forces between
+their protons and electrons. To put them at a distance $r$ from one another (measured from
+nucleus to nucleus), a certain amount of energy $E$ is required, and the minimum energy
+occurs when the atoms are in equilibrium, forming a molecule. Often a fairly good approximation
+to the energy is the Lennard-Jones expression
+\begin{equation*}
+  E(r) = k\left[\left(\frac{a}{r}\right)^{12}-2\left(\frac{a}{r}\right)^6\right] \qquad ,
+\end{equation*}
+where $k$ and $a$ are constants. Note that, as proved in chapter 2, the rule that
+the derivative of $t^k$ is $kt^{k-1}$ also works for $k<0$.
+Show that there is an equilibrium at $r=a$. Verify (either by graphing or by testing
+the second derivative) that this is a minimum, not a maximum or a point of inflection.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{prove-n-extrema}
+Prove that the total number of maxima and minima possessed by a third-order polynomial
+is at most two.
+\end{hwwithsoln}
+
+\end{hwsection}

@@ -1,0 +1,127 @@
+\twocolumn\chapter{Reference}
+
+\section{Review}
+
+\newcommand{\mathsummaryfont}{\normalsize\normalfont\small}
+\newenvironment{ind}
+	{%
+	  	%\setlength{\saveleftskip}{\leftskip}%
+  		%\addtolength{\leftskip}{10mm}%
+                %\noindent%
+	}
+	{%
+		%\par\setlength{\leftskip}{\saveleftskip} \par\myeqnspacing%
+                %\indentedcorrend%
+	}
+
+\mathsummaryfont
+
+\subsection{Algebra}
+
+\noindent Quadratic equation:
+
+\begin{ind}
+  The solutions of $ax^2+bx+c=0$ \\
+  are $x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$ \quad .
+\end{ind}
+
+\noindent Logarithms and exponentials:
+
+\begin{ind}
+  \begin{equation*}   \ln(ab)=\ln a + \ln b    \end{equation*}
+  \begin{equation*}   e^{a+b} = e^ae^b    \end{equation*}
+  \begin{equation*}   \ln e^x = e^{\ln x} = x    \end{equation*}
+  \begin{equation*}   \ln(a^b) = b \ln a    \end{equation*}
+\end{ind}
+
+\subsection{Geometry, area, and volume}
+
+\noindent\begin{tabular}{p{30mm}l}
+  area of a triangle of base $b$ and height $h$     & = $\frac{1}{2}bh$ \\
+  circumference of a circle of radius $r$           &= $2\pi r$ \\
+  area of a circle of radius $r$                    &= $\pi r^2$ \\
+  surface area of a sphere of radius $r$            &= $4\pi r^2$ \\
+  volume of a sphere of radius $r$                  &= $\frac{4}{3}\pi r^3$
+\end{tabular}
+
+\subsection{Trigonometry with a right triangle}
+
+\noindent\anonymousinlinefig{trig}\\
+  \begin{equation*}
+ \sin\theta  = o/h \quad
+ \cos\theta = a/h \quad
+ \tan\theta = o/a
+ \end{equation*}
+
+Pythagorean theorem: $h^2=a^2+o^2$
+
+\subsection{Trigonometry with any triangle}
+
+\anonymousinlinefig{trig-any-triangle}\\
+Law of Sines:
+  \begin{equation*} \frac{\sin\alpha}{A}=\frac{\sin\beta}{B}=\frac{\sin\gamma}{C} \end{equation*}
+
+\noindent Law of Cosines:
+  \begin{equation*} C^2 = A^2 + B^2 - 2AB \cos \gamma \end{equation*}
+
+\section{Hyperbolic functions}
+
+\begin{align*}
+  \sinh x &= \frac{e^x-e^{-x}}{2} \\
+  \cosh x &= \frac{e^x+e^{-x}}{2} \\
+  \tanh x &= \frac{\sinh x}{\cosh x}
+\end{align*}
+
+\section{Calculus}
+
+\noindent Let $f$ and $g$ be functions of $x$, and let $c$ be a constant.
+
+\noindent Linearity of the derivative:
+
+\begin{equation*} \frac{\der}{\der x}(cf)=c \frac{\der f}{\der x} \end{equation*}
+
+\begin{equation*} \frac{\der}{\der x}(f+g)=\frac{\der f}{\der x} + \frac{\der g}{\der x} \end{equation*}
+
+\subsection{Rules for differentiation}
+
+\noindent The chain rule:
+
+\begin{equation*} \frac{\der}{\der x}f(g(x)) = f'(g(x))g'(x) \end{equation*}
+
+\noindent Derivatives of products and quotients:
+
+\begin{equation*} \frac{\der}{\der x} (fg) = \frac{\der f}{\der x} g + \frac{\der g}{\der x} f\end{equation*}
+
+\begin{equation*} \frac{\der}{\der x}\left(\frac{f}{g}\right) = \frac{f'}{g}-\frac{fg'}{g^2}\end{equation*}
+
+\subsection{Integral calculus}
+
+\noindent The fundamental theorem of calculus:
+\begin{equation*} \int \frac{\der f}{\der x}\der x = f \end{equation*}
+
+\noindent Linearity of the integral:
+\begin{equation*} \int cf(x)\der x = c\int f(x)\der x\end{equation*}
+\begin{equation*} \int\left[f(x)+g(x)\right] = \int f(x) \der x + \int g(x) \der x \end{equation*}
+
+\noindent Integration by parts:
+\begin{equation*} \int f \der g = fg - \int g \der f \end{equation*}
+
+\subsection{Table of integrals}
+
+\begin{align*}
+&\int x^m\:\der x = \frac{1}{m+1}x^{m+1}+c,\ m\ne -1\\
+&\int \frac{\der x}{x} = \ln |x|+c\\
+&\int \sin x\:\der x = -\cos x+c\\
+&\int \cos x\:\der x = \sin x+c\\
+&\int e^x\:\der x = e^x +c\\
+&\int \ln x \:\der x = x \ln x - x+c\\
+&\int \frac{\der x}{1+x^2}  = \tan^{-1} x+c\\
+&\int \frac{\der x}{\sqrt{1-x^2}}  = \sin^{-1} x+c\\
+&\int \cosh x \:\der x = \sinh x+c\\
+&\int \sinh x \:\der x = \cosh x+c\\
+&\int \tan x\:\der x = -\ln|\cos x|+c\\
+&\int \cot x\:\der x = \ln|\sin x|+c\\
+&\int \sec x\:\der x = \ln|\sec x +\tan x| +c\\
+&\int \sec ^2 x\:\der x = \tan x +c\\
+&\int \csc ^2 x\:\der x = -\cot x +c
+\end{align*}
