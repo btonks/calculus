@@ -74,4 +74,5 @@ prepress:
 
 
 post_source:
-	cd .. && tar -zcf ~/Lightandmatter/calc/calc.tar.gz calc && cd -
+	# don't forget to commit first
+	git push
