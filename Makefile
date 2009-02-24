@@ -63,6 +63,8 @@ clean:
 	rm -f junk
 	rm -f err
 	# ... done.
+	rm -f calc_lulu.pdf
+	rm -f calc.pdf
 
 post:
 	cp calc.pdf /home/bcrowell/Lightandmatter/calc
@@ -74,5 +76,6 @@ prepress:
 
 
 post_source:
-	# don't forget to commit first
+	# don't forget to commit first, git commit -a -m "comment"
+	# repo is hosted on github, see book's web page
 	git push
