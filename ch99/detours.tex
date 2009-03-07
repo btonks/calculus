@@ -213,9 +213,86 @@ But the only continuous function with a derivative of zero is a constant, so $f$
 3. I've established that the derivatives with respect to $b$ of $x(b)-x(a)$ and $\int_a^b \xdot \der t$ are the same, so they differ by
 at most an additive constant. But at $b=a$, they're both zero, so the constant must be zero.
 
+\pagebreak
+
+\detour{intermediate-value}{The intermediate value theorem}\index{intermediate value theorem}
+
+On page \pageref{intermediate-value-ref-to-detour} I asserted that the intermediate value theorem was
+really more a statement about the (real or hyperreal) number system than about functions. For insight,
+consider figure \figref{euclid}, which is a geometrical construction that constitutes the proof of the
+very first proposition in Euclid's celebrated \emph{Elements}. The proposition to be proved is that given
+a line segment AB, it is possible to construct an equilateral triangle with AB as its base. The proof is
+by construction; that is, Euclid doesn't just give a logical argument that convinces us the triangle must
+exist, he actually demonstrates how to construct it. First we draw a circle with center
+A and radius AB, which his third postulate says we can do. Then we draw another circle with the same radius,
+but centered at B. Pick one of the intersections of the circles and call it C. Construct the line segments
+AC and BC (postulate 1). Then AC equals AB by the definition of the
+circle, and likewise BC equals AB. Euclid also has an axiom that things equal
+to the same thing are equal to one another, so it follows that AC equals BC, and therefore the triangle is equilateral.
+
+\fig{euclid}{A proof from Euclid's \emph{Elements}.}
+
+It seems like a model of mathematical rigor, but there's a flaw in the reasoning, which is that he assumes
+without justififcation that the circles do have a point in common. To see that this is not as secure an assumption as it seems, consider
+the usual Cartesian representation of plane geometry in terms of coordinates $(x,y)$.
+Usually we assume that $x$ and $y$ are real numbers. What if we instead do our Cartesian geometry
+using rational numbers as coordinates? Euclid's five postulates are all consistent with this.
+For example, circles do exist. Let $\zu{A}=(0,0)$ and $\zu{B}=(1,0)$. Then there are infinitely
+many pairs of rational numbers in the set that satisfies the definition of the circle centered at A. Examples include $(3/5,4/5)$
+and $(-7/25,24/25)$. The circle is also continuous in the sense that if I specify a point on it such
+as $(-7/25,24/25)$, and a distance that I'm allowed to make as small as I please, say $10^{-6}$, then other
+points exist on the circle within that distance of the given point. However, the intersection
+assumed by Euclid's proof doesn't exist. It would lie at $(1/2,\sqrt{3}/2)$, but $\sqrt{3}$ doesn't
+exist in the rational number system.
+
+In exactly the same way, we can construct counterexamples to the intermediate value theorem if
+the underlying system of numbers doesn't have the same properties as the real numbers. For example,
+let $y=x^2$. Then $y$ is a continuous function, on the interval from 0 to 1, but if we take the rational
+numbers as our foundation, then there is no $x$ for which $y=1/2$. The solution would be $x=1/\sqrt{2}$, which
+doesn't exist in the rational number system. Notice the similarity between this problem and the one in
+Euclid's proof. In both cases we have curves that cut one another without having an intersection.
+In the present example, the curves are the graphs of the functions $y=x^2$ and $y=1/2$.
+
+The interpretation is that the real numbers are in some sense more densely packed than the rationals,
+and with two thousand years worth of hindsight, we can see that Euclid should have included a
+sixth postulate that expressed this density property. One possible way of stating such a postulate
+is the following, which is due to Tarski.\index{Tarski, Alfred} Let L be a ray, and O its endpoint. We think of O as the
+origin of the positive number line.
+Let P and Q be sets of points on L such that every point in P is closer to O than every point in Q.
+Then there exists some point Z on L such that Z lies at least as far from O as every point in P,
+but no farther than any point in Q. Technically this property is known as \emph{completeness}.\index{completeness}
+As an example, let $\zu{P}=\{x|x^2<2\}$ and $\zu{Q}=\{x|x^2 \ge 2\}$. Then the point Z would have to be $\sqrt{2}$,
+which shows that the rationals are not complete. The reals are complete, and Tarski's completeness
+axiom can serve as one of the fundamental axioms of the real numbers.
+Note that the axiom
+refers to \emph{sets} P and Q, and says that a certain fact is true for any choice of those sets;
+it therefore isn't the type of proposition that is covered by the transfer principle, and we're
+not guaranteed that it holds for the hyperreals.
+
+Here is a skeletal proof of the intermediate value theorem, in which I'll make some simplifying
+assumptions and leave out some cases. We want to prove that if $y$ is a continuous real-valued function on the real interval from $a$ to $b$,
+and if $y$ takes on values $y_1$ and $y_2$ at certain points within this interval, then for any $y_3$ between $y_1$ and
+$y_2$, there is some real $x$ in the interval for which $y(x)=y_3$.
+I'll assume the case in which $x_1<x_2$ and $y_1<y_2$.
+Let $\zu{P}=\{x|y \le y_3\}$, and let $\zu{Q}=\{x|y \ge y_3\}$. Then $\zu{P} \cup \zu{Q} = [a,b]$.
+For simplicity, I'll assume that every member of P is less than
+every member of Q, which amounts to an assumption that there is only one place where the function crosses
+through $y_3$. Using Tarski's completeness axiom, there exists some real $x$ which is greater than or equal
+to every element of P and less than or equal to every element of Q. Now $x$ is either in P or in Q, and
+likewise for $x+\der x$ and $x-\der x$, where $\der x$ is some infinitesimal. If all three were in P, or
+all three in Q, then Tarski's axiom would be violated. Assume the representative case in which $x$ is in
+P, but $x+\der x$ is in Q. Then by continuity, $y(x)-y(x+\der x)$ is infinitesimal. But $y(x)<y_3$ and
+$y(x+\der x)>y_3$, so the standard part of $y(x)$ must equal $y_3$. By assumption $y$ takes on real values
+for real arguments, so $y(x)=y_3$.
+
+For an alternative proof of the
+intermediate value theorem by an entirely different technique, see Keisler's
+\emph{Elementary Calculus: An Approach Using Infinitesimals}, p. 162, available online at
+\verb@http://www.math.wisc.edu/~keisler/calc.html@.
+
 \detour{mean-value-proof}{Proof of the mean value theorem}\index{mean value theorem!proof}
 
-Suppose that the mean value theorem is violated. Let $L$ by the set of all $x$ in the interval from $a$ to $b$
+Suppose that the mean value theorem is violated. Let $L$ be the set of all $x$ in the interval from $a$ to $b$
 such that $y(x)<\bar{y}$, and likewise let $M$ be the set with $y(x)>\bar{y}$. If the theorem is violated, then
 the union of these two sets covers the entire interval from $a$ to $b$. Neither one can be empty; if, for example, $M$ was
 empty, then we would have $y<\bar{y}$ everywhere and also $\int_a^b y=\int_a^b\bar{y}$, but it follows directly from

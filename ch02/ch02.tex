@@ -815,7 +815,7 @@ computation, as in the bogus result generated on line 9 of the example.
 \section{Continuity}
 
 Intuitively, a continuous function is one whose graph
-has no sudden jumps in it; the graph is all a single connected piece. Formally, $f(x)$ is defined to
+has no sudden jumps in it; the graph is all a single connected piece. Formally, a function $f(x)$ is defined to
 be continuous if for any real $x$ and any infinitesimal $\der x$, $f(x+\der x)-f(x)$ is infinitesimal.\index{continuous function}
 
 \begin{eg}
@@ -827,18 +827,38 @@ If a function is discontinuous at a given point, then it is not differentiable a
 On the other hand, a function like $y=|x|$ shows that a function can be continuous without
 being differentiable.
 
+In most cases, there is no need to invoke the definition explicitly in order to check whether
+a function is continuous. Most of the functions we work with are defined by putting together
+simpler functions as building blocks. For example, let's say we're already convinced that the
+functions defined by $g(x)=3x$ and $h(x)=\sin x$ are both continuous. Then if we encounter the
+function $f(x)=\sin(3x)$, we can tell that it's continuous because its definition corresponds
+to $f(x)=h(g(x))$. The functions $g$ and $h$ have been set up like a bucket brigade, so that
+$g$ takes the input, calculates the output, and then hands it off to $h$ for the final step
+of the calculation. This method of combining functions is called \emph{composition}.\index{composition}
+The composition of two continuous functions is also continuous. Just watch out for division.
+The function $f(x)=1/x$ is continuous everywhere except at $x=0$, so for example $1/\sin(x)$
+is continuous everywhere except at multiples of $\pi$, where the sine has zeroes.
+
 Another way of thinking about continuous functions is given by the
 \emph{intermediate value theorem}.\index{intermediate value theorem}
 Intuitively, it says that if you are moving continuously along a road, 
 and you get from point A to point B, then you must also visit every other point
 along the road; only by teleporting (by moving discontinuously) could you
 avoid doing so. More formally, the theorem states
-that if $y$ is a continuous function on the interval from $a$ to $b$,
+that if $y$ is a continuous real-valued function on the real interval from $a$ to $b$,
 and if $y$ takes on values $y_1$ and $y_2$ at certain points within this interval, then for any $y_3$ between $y_1$ and
-$y_2$, there is some $x$ in the interval for which $y(x)=y_3$.\footnote{For a proof of the
-intermediate value theorem starting from our definition of continuity, see Keisler's
-\emph{Elementary Calculus: An Approach Using Infinitesimals}, p. 162, available online at
-\verb@http://www.math.wisc.edu/~keisler/@ \verb@calc.html@.}
+$y_2$, there is some real $x$ in the interval for which $y(x)=y_3$.
+
+The intermediate value theorem seems so intuitively appealing that if we want to
+set out to prove it, we may feel as though we're being asked to prove a proposition such as, ``a number greater than 10 exists.''
+If a friend wanted to bet you a six-pack that you couldn't prove this with complete mathematical rigor, you would have to
+get your friend to spell out very explicitly what she thought were the facts about
+integers that you were allowed to start with as initial assumptions. Are you allowed to assume that 1 exists?
+Will she grant you that if a number $n$ exists, so does $n+1$?
+The intermediate value theorem is similar. It's stated as a theorem about certain types
+of functions, but its truth isn't so much a matter of the properties of functions as
+the properties of the underlying number system. For the reader with a interest in pure
+mathematics, I've discussed this in more detail on page \pageref{detour:intermediate-value}.\label{intermediate-value-ref-to-detour}
 
 \section{Limits}\label{sec:limits}
 
@@ -1080,8 +1100,6 @@ the limit is undefined, and undefine because it blows up to infinity, we write
   \lim_{x\rightarrow 1} \frac{x-1}{x^2-2x+1} = \infty
 \end{equation*}
 \end{eg}
-
-\pagebreak[4]
 
 In the following example, we have to use L'H\^{o}pital's rule twice before we get an answer.
 
