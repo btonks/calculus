@@ -256,13 +256,13 @@ In the present example, the curves are the graphs of the functions $y=x^2$ and $
 The interpretation is that the real numbers are in some sense more densely packed than the rationals,
 and with two thousand years worth of hindsight, we can see that Euclid should have included a
 sixth postulate that expressed this density property. One possible way of stating such a postulate
-is the following, which is due to Tarski.\index{Tarski, Alfred} Let L be a ray, and O its endpoint. We think of O as the
+is the following. Let L be a ray, and O its endpoint. We think of O as the
 origin of the positive number line.
 Let P and Q be sets of points on L such that every point in P is closer to O than every point in Q.
 Then there exists some point Z on L such that Z lies at least as far from O as every point in P,
 but no farther than any point in Q. Technically this property is known as \emph{completeness}.\index{completeness}
 As an example, let $\zu{P}=\{x|x^2<2\}$ and $\zu{Q}=\{x|x^2 \ge 2\}$. Then the point Z would have to be $\sqrt{2}$,
-which shows that the rationals are not complete. The reals are complete, and Tarski's completeness
+which shows that the rationals are not complete. The reals are complete, and the completeness
 axiom can serve as one of the fundamental axioms of the real numbers.
 
 Note that the axiom
@@ -276,16 +276,20 @@ assumptions and leave out some cases. We want to prove that if $y$ is a continuo
 and if $y$ takes on values $y_1$ and $y_2$ at certain points within this interval, then for any $y_3$ between $y_1$ and
 $y_2$, there is some real $x$ in the interval for which $y(x)=y_3$.
 I'll assume the case in which $x_1<x_2$ and $y_1<y_2$.
-Let $\zu{P}=\{x|y \le y_3\}$, and let $\zu{Q}=\{x|y \ge y_3\}$. Then $\zu{P} \cup \zu{Q} = [a,b]$.
+Define sets of real numbers $\zu{P}=\{x|y \le y_3\}$, and let $\zu{Q}=\{x|y \ge y_3\}$.
 For simplicity, I'll assume that every member of P is less than
-every member of Q, which amounts to an assumption that there is only one place where the function crosses
-through $y_3$. Using Tarski's completeness axiom, there exists some real $x$ which is greater than or equal
-to every element of P and less than or equal to every element of Q. Now $x$ is either in P or in Q, and
-likewise for $x+\der x$ and $x-\der x$, where $\der x$ is some infinitesimal. If all three were in P, or
-all three in Q, then Tarski's axiom would be violated. Assume the representative case in which $x$ is in
-P, but $x+\der x$ is in Q. Then by continuity, $y(x)-y(x+\der x)$ is infinitesimal. But $y(x)<y_3$ and
+every member of Q, which amounts to an assumption that the function only crosses
+through $y_3$ once. Using the completeness axiom, there exists some real $x$ which is greater than or equal
+to every element of P and less than or equal to every element of Q.
+Now $x$ must belong either to P or to Q, or both. Suppose it belongs to P.
+Then the following
+statement is in the right form for the transfer principle to apply to it: for any number
+$x'>x$, $y(x')>y_3$. We can conclude that the statement is also true for the hyperreals,
+so that if $\der x$ is infinitesimal and $x'=x+\der x$, we have $y(x)<y_3$, but $y(x+\der x)>y_3$.
+Then by continuity, $y(x)-y(x+\der x)$ is infinitesimal. But $y(x)<y_3$ and
 $y(x+\der x)>y_3$, so the standard part of $y(x)$ must equal $y_3$. By assumption $y$ takes on real values
-for real arguments, so $y(x)=y_3$.
+for real arguments, so $y(x)=y_3$. The same reasoning applies if $x$ belongs to Q, and since
+$x$ must belong either to P or to Q, the result is proved.
 
 For an alternative proof of the
 intermediate value theorem by an entirely different technique, see Keisler's
