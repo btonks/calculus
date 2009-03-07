@@ -277,15 +277,17 @@ and if $y$ takes on values $y_1$ and $y_2$ at certain points within this interva
 $y_2$, there is some real $x$ in the interval for which $y(x)=y_3$.
 I'll assume the case in which $x_1<x_2$ and $y_1<y_2$.
 Define sets of real numbers $\zu{P}=\{x|y \le y_3\}$, and let $\zu{Q}=\{x|y \ge y_3\}$.
-For simplicity, I'll assume that every member of P is less than
-every member of Q, which amounts to an assumption that the function only crosses
-through $y_3$ once. Using the completeness axiom, there exists some real $x$ which is greater than or equal
+For simplicity, I'll assume that every member of P is less than or equal to
+every member of Q, which happens, for example, if the function $y(x)$ is always increasing
+on the interval $[a,b]$. If P and Q intersect, then the theorem holds.
+Suppose instead that P and Q do not intersect.
+Using the completeness axiom, there exists some real $x$ which is greater than or equal
 to every element of P and less than or equal to every element of Q.
-Now $x$ must belong either to P or to Q, or both. Suppose it belongs to P.
+Suppose $x$ belongs to P.
 Then the following
 statement is in the right form for the transfer principle to apply to it: for any number
 $x'>x$, $y(x')>y_3$. We can conclude that the statement is also true for the hyperreals,
-so that if $\der x$ is infinitesimal and $x'=x+\der x$, we have $y(x)<y_3$, but $y(x+\der x)>y_3$.
+so that if $\der x$ is a positive infinitesimal and $x'=x+\der x$, we have $y(x)<y_3$, but $y(x+\der x)>y_3$.
 Then by continuity, $y(x)-y(x+\der x)$ is infinitesimal. But $y(x)<y_3$ and
 $y(x+\der x)>y_3$, so the standard part of $y(x)$ must equal $y_3$. By assumption $y$ takes on real values
 for real arguments, so $y(x)=y_3$. The same reasoning applies if $x$ belongs to Q, and since
@@ -295,6 +297,22 @@ For an alternative proof of the
 intermediate value theorem by an entirely different technique, see Keisler's
 \emph{Elementary Calculus: An Approach Using Infinitesimals}, p. 162, available online at
 \verb@http://www.math.wisc.edu/~keisler/calc.html@.
+
+As a side issue, we could ask whether there is anything like the intermediate value theorem
+that can be applied to functions on the hyperreals. Our definition of continuity on page \pageref{def-continuity}
+explicitly states that it only applies to real functions.
+Even if we could apply the definition to a function on the hyperreals, the proof given above would fail, since the hyperreals lack the completeness
+property. As a counterexample, let $\epsilon$ be some positive infinitesimal, and define
+a function $y$ such that $y=-\epsilon$ when $\zu{st}(x) \le 0$ and $y=\epsilon$ everywhere else.
+If we insist on applying the definition of continuity to this function, it appears to be continuous,
+so it violates the intermediate value theorem. Note, however, that the way this function is defined
+is different from the way we usually define functions on the hyperreals. Usually we define a function
+on the reals, say $y=x^2$, in language to which the transfer principle applies, and then we use the
+transfer principle to reason about the function's analog on the hyperreals. For instance, the function
+$y=x^2$ has the property that $y \ge 0$ everywhere, and the transfer principle guarantees that that's
+also true if we take $y=x^2$ as the definition of a function on the hyperreals. For functions defined
+in this way, the intermediate value theorem makes a statement that the transfer principle applies
+to, and it is therefore true for the hyperreal version of the function as well.
 
 \detour{mean-value-proof}{Proof of the mean value theorem}\index{mean value theorem!proof}
 

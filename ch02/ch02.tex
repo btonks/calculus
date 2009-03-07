@@ -815,16 +815,19 @@ computation, as in the bogus result generated on line 9 of the example.
 \section{Continuity}
 
 Intuitively, a continuous function is one whose graph
-has no sudden jumps in it; the graph is all a single connected piece. Formally, a function $f(x)$ is defined to
-be continuous if for any real $x$ and any infinitesimal $\der x$, $f(x+\der x)-f(x)$ is infinitesimal.\index{continuous function}
+has no sudden jumps in it; the graph is all a single connected piece. Formally, a function real function $f(x)$ is defined to
+be continuous if for any real $x$ and any infinitesimal $\der x$, $f(x+\der x)-f(x)$ is infinitesimal.\label{def-continuity}\index{continuous function}
 
-\begin{eg}
+\begin{eg}\label{eg:discontinuous}
 Let the function $f$ be defined by $f(x)=0$ for $x\le 0$, and $f(x)=1$ for $x>0$. Then $f(x)$ is
 discontinuous, since for $\der x>0$, $f(0+\der x)-f(0)=1$, which isn't infinitesimal.
 \end{eg}
 
+\smallfig{discontinuous}{Example \ref{eg:discontinuous}. The black dot indicates that the endpoint
+of the lower ray is part of the ray, while the white one shows the contrary for the ray on the top.}
+
 If a function is discontinuous at a given point, then it is not differentiable at that point.
-On the other hand, a function like $y=|x|$ shows that a function can be continuous without
+On the other hand, the example $y=|x|$ shows that a function can be continuous without
 being differentiable.
 
 In most cases, there is no need to invoke the definition explicitly in order to check whether
@@ -849,6 +852,8 @@ that if $y$ is a continuous real-valued function on the real interval from $a$ t
 and if $y$ takes on values $y_1$ and $y_2$ at certain points within this interval, then for any $y_3$ between $y_1$ and
 $y_2$, there is some real $x$ in the interval for which $y(x)=y_3$.
 
+\fig{intermediate-value-theorem}{The intermediate value theorem states that if the function is continuous, it must pass through $y_3$.}
+
 The intermediate value theorem seems so intuitively appealing that if we want to
 set out to prove it, we may feel as though we're being asked to prove a proposition such as, ``a number greater than 10 exists.''
 If a friend wanted to bet you a six-pack that you couldn't prove this with complete mathematical rigor, you would have to
@@ -858,7 +863,8 @@ Will she grant you that if a number $n$ exists, so does $n+1$?
 The intermediate value theorem is similar. It's stated as a theorem about certain types
 of functions, but its truth isn't so much a matter of the properties of functions as
 the properties of the underlying number system. For the reader with a interest in pure
-mathematics, I've discussed this in more detail on page \pageref{detour:intermediate-value}.\label{intermediate-value-ref-to-detour}
+mathematics, I've discussed this in more detail on page \pageref{detour:intermediate-value} and given
+an abbreviated proof.\label{intermediate-value-ref-to-detour}
 
 \section{Limits}\label{sec:limits}
 
@@ -890,6 +896,8 @@ the value of $f$ lies within the range from $\ell-\epsilon$ to $\ell+\epsilon$.
 Intuitively, the idea is that if I want you to make $f(x)$ close to $\ell$, I just have
 to tell you how close, and you can tell me that it will be that close as long as
 $x$ is within a certain distance of $a$.
+
+\pagebreak
 
 In terms of infinitesimals, we have:\index{limit!definition!infinitesimals}
 \begin{important}[Definition of the limit]
@@ -950,11 +958,14 @@ This is an example in which the function was not well defined at a certain point
 yet the limit of the function was well defined as we approached that point. In a case like
 this, where there is only one point missing from the domain of the function, it is natural
 to extend the definition of the function by filling in the ``gap tooth.'' Example \ref{eg:limit-two-sides}
-shows that this kind of filling-in procedure is not always possible.
+below shows that this kind of filling-in procedure is not always possible.
 \end{eg}
+
+\pagebreak
 
 %%graph%% no-limit func=x**-2 format=eps xlo=-2 xhi=2 ylo=0 yhi=4 with=lines xtic_spacing=1 ytic_spacing=1 more_space_below=5
 \smallfig{no-limit}{Example \ref{eg:no-limit}, the function $1/x^2$.}
+
 
 \begin{eg}\label{eg:no-limit}
 \egquestion Investigate the limiting behavior of $1/x^2$ as $x$ approaches 0, and 1.
