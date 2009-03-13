@@ -6,7 +6,7 @@ Little kids readily pick up the idea of infinity.\index{infinity}
 gonna have a million Barbies.'' ``Oh yeah? Well, I'm gonna have a billion.''
 ``Well, I'm gonna have infinity Barbies.'' ``So what? I'll have two infinity of them.''
 Adults laugh, convinced that infinity, $\infty$, is the biggest number, so $2\infty$
-can't be any bigger. This is the idea behind the joke in the movie Toy Story. Buzz
+can't be any bigger. This is the idea behind a joke in the movie Toy Story. Buzz
 Lightyear's slogan is ``To infinity --- and beyond!'' We assume there \emph{isn't}
 any beyond. Infinity is supposed to be the biggest there is, so by definition there
 can't be anything bigger, right?
@@ -143,12 +143,12 @@ for their proper use, and couldn't prove that a self-consistent system could be 
 
 By the twentieth century, when I learned calculus, a clear consensus had formed that infinite and infinitesimal
 numbers weren't numbers at all. A notation like $\der x/\der t$, my calculus teacher told me, wasn't really
-one number divided by another, it was merely a symbol for the limit\index{derivative!defined using a limit}\index{limit}
+one number divided by another, it was merely a symbol for something called a limit,\index{derivative!defined using a limit}\index{limit}
 \begin{equation*}
 \lim_{\Delta t\rightarrow 0} \frac{\Delta x}{\Delta t} \qquad ,
 \end{equation*}
 where $\Delta x$ and $\Delta t$ represented finite changes. I'll give a formal definition (actually two different formal
-definitions) of the term ``limit'' in section \ref{sec:limits}, but intuitively the concept is that is that we can good
+definitions) of the term ``limit'' in section \ref{sec:limits}, but intuitively the concept is that is that we can get as good
 an approximation to the derivative as we like, provided that we make $\Delta t$ small enough.
 
 That satisfied me until we got to a certain topic
@@ -165,8 +165,11 @@ But unknown to me and my teacher, mathematician Abraham Robinson\index{Robinson,
 had already shown in the 1960's that it
 was possible to construct a self-consistent number system that included infinite and infinitesimal numbers.
 He called it the hyperreal number system,\index{hyperreal number}
-and it included the real numbers as a subset.\footnote{The reader who
-wants to learn more about the hyperreal system might want to start
+and it included the real numbers as a subset.\footnote{The main text of this book treats infinitesimals
+with the minimum fuss necessary in order to avoid the common goofs. More detailed
+discussions are often relegated to the back of the book, as in example \ref{eg:derivative-of-sin}.
+The reader who
+wants to learn even more about the hyperreal system might want to start
 by reading K. Stroyan's articles at 
 \verb@http://www.math.uiowa.edu/~stroyan/@\\
 \verb@InfsmlCalculus/InfsmlCalc.htm@.
@@ -199,7 +202,7 @@ For any hyperreal numbers $a$, $b$, and $c$, if $a=b$, then $ac=bc$.
 
 However, what about the statement that both $1/\der u$ and $1/(2\der u)$ equal infinity, so they're
 equal to each other? This isn't the translation of a statement that's true about the reals, so there's
-no reason to believe it's true --- and in fact it's false.
+no reason to believe it's true when applied to the hyperreals --- and in fact it's false.
 
 What the transfer principle tells us is that the real numbers as we normally
 think of them are not unique in obeying the ordinary rules of algebra. There are completely different
@@ -348,7 +351,6 @@ because in our example $y$ isn't as big as $x$.
 %
 \fig{product-rule}{A geometrical interpretation of the product rule.}
 
-\pagebreak[4]
 A helpful feature of the Leibniz notation is that one can easily use it to check whether the units of an
 answer make sense. If we measure distances in meters and time in seconds, then $xy$ has units of
 square meters (area), and so does the change in the area, $\der(xy)$. Dividing by $\der t$ gives the
@@ -360,7 +362,6 @@ guess that the product rule would be $\der(xy)/\der t=(\der x/\der t)(\der y/\de
 notation instantly reveals that this can't be the case, because then the units on the left,
 $\munit^2/\sunit$, wouldn't match the ones on the right, $\munit^2/\sunit^2$.
 
-\pagebreak[4]
 Because this unit-checking feature is so helpful, there is a special way of writing a second
 derivative in the Leibniz notation. What Newton called $\Ddot{x}$, Leibniz wrote as
 \begin{equation*}
@@ -377,8 +378,6 @@ while the bottom of the fraction looks like it has units of seconds, because it 
 squaring $\der t$. Therefore the units come out right. It's important to realize, however, that
 the symbol $\der$ isn't a number (not a real one, and not a hyperreal one, either), so we can't really
 square it; the notation is not to be taken as a literal statement about infinitesimals.
-
-\vfill\pagebreak[4]
 
 \begin{eg}\label{eg:derivative-of-sqrt}\index{derivative!of square root}
 A tricky use of the product rule is to find the derivative of $\sqrt{t}$. Since $\sqrt{t}$ can be
@@ -401,7 +400,6 @@ The trick used in example \ref{eg:derivative-of-sqrt} can also be used to prove 
 rule $\der(x^n)/\der x=nx^{n-1}$ applies to cases where $n$ is an integer less than 0, but
 I'll instead prove this on page \pageref{eg:der-x-to-any-k} by a technique that doesn't depend on
 a trick, and also applies to values of $n$ that aren't integers.\label{coy-der-x-to-neg-k}
-\vfill
 
 \widefig[t]{clowns}{Three clowns on seesaws demonstrate the chain rule.}
 
@@ -488,7 +486,7 @@ liter, as a function of time, in hours.}
 \egquestion Find the derivative of the function $y=10^x$.
 
 \eganswer In general, one of the tricks to doing calculus is to rewrite functions in forms that
-you know how to handle. This one can be rewritten as a base-10 logarithm:
+you know how to handle. This one can be rewritten as a base-$e$ exponent:
 \begin{align*}
   y &= 10^x \\
   \ln y &= \ln\left(10^x\right) \\
@@ -842,6 +840,8 @@ The composition of two continuous functions is also continuous. Just watch out f
 The function $f(x)=1/x$ is continuous everywhere except at $x=0$, so for example $1/\sin(x)$
 is continuous everywhere except at multiples of $\pi$, where the sine has zeroes.
 
+\subsection{The intermediate value theorem}
+
 Another way of thinking about continuous functions is given by the
 \emph{intermediate value theorem}.\index{intermediate value theorem}
 Intuitively, it says that if you are moving continuously along a road, 
@@ -865,12 +865,45 @@ of functions, but its truth isn't so much a matter of the properties of function
 the properties of the underlying number system. For the reader with a interest in pure
 mathematics, I've discussed this in more detail on page \pageref{detour:intermediate-value} and given
 an abbreviated proof.\label{intermediate-value-ref-to-detour}
+(Most introductory calculus texts do not prove it at all.)
+
+\begin{eg}
+\egquestion Show that there is a solution to the equation $10^x+x=1000$.
+
+\eganswer We expect there to be a solution near $x=3$, where the function $f(x)=10^x+x=1003$ is just a little too big.
+On the other hand, $f(2)=102$ is much too small. Since $f$ has values above and below 1000 on the interval from
+2 to 3, and $f$ is continuous, the intermediate value theorem proves that a solution exists between 2 and 3.
+If we wanted to find a better numerical approximation to the solution, we could do it using Newton's
+method, which is introduced in section \ref{sec:newtons-method}.
+\end{eg}
+
+\begin{eg}\label{eg:x-minus-cos-x}
+\egquestion Show that there is at least one solution to the equation $\cos x=x$, and give bounds on its location.
+
+\eganswer This is a transcendental equation, and no amount of fiddling with algebra and trig identities will
+ever give a closed-form solution, i.e., one that can be written down with a finite number of arithmetic
+operations to give an exact result. However, we can easily prove that at least one solution exists, by
+applying the intermediate value theorem to the function $x-\cos x$. The cosine function is bounded between
+$-1$ and 1, so this function must be negative for $x<-1$ and positive for $x>1$. By the intermediate value
+theorem, there must be a solution in the interval $-1 \le x \le 1$. The graph, \figref{x-minus-cos-x}, verifies
+this, and shows that there is only one solution.
+\end{eg}
+
+%%graph%% x-minus-cos-x func=(x-cos(x)) format=eps xlo=-8 xhi=8 ylo=-8 yhi=8 xtic_spacing=4 ytic_spacing=4
+\smallfig{x-minus-cos-x}{The function $x-\cos x$ constructed in example \ref{eg:x-minus-cos-x}.}
+
+
 
 \begin{eg}
 \egquestion Prove that every odd-order polynomial $P$ with real coefficients has at least one real root $x$, i.e., a
 point at which $P(x)=0$.
 
 \eganswer
+Example \ref{eg:x-minus-cos-x} might have given the impression that there was nothing
+to be learned from the intermediate value theorem that couldn't be determined by graphing,
+but this example clearly can't be solved by graphing, because we're trying to prove
+a general result for all polynomials.
+
 To see that the restriction to odd orders is necessary, consider the polynomial $x^2+1$, which has no real roots
 because $x^2>0$ for any real number $x$.
 
@@ -889,6 +922,30 @@ Since $P$ is sometimes negative and sometimes positive, we conclude by the inter
 it is zero somewhere.
 \end{eg}
 
+\begin{eg}\label{eg:x-minus-sin-1-over-x}
+\egquestion Show that the equation $x=\sin 1/x$ has infinitely many solutions.
+
+\eganswer  This is another example that can't be solved by graphing; there is
+clearly no way to prove, just by looking at a graph like \figref{x-minus-sin-1-over-x}, that it crosses the
+$x$ axis \emph{infinitely} many times. The graph does, however, help us to gain intuition for what's
+going on. As $x$ gets smaller and smaller, $1/x$ blows up, and $\sin 1/x$ oscillates more and more
+rapidly. The function $f$ is undefined at 0, but it's continuous everywhere else, so we can apply the
+intermediate value theorem to any interval that doesn't include 0.
+
+We want to prove that for any positive $u$, there exists an $x$ with $0<x<u$ for which $f(x)$ has
+either desired sign. Suppose that this fails for some real $u$. Then by the transfer principle the nonexistence
+of any real $x$ with the desired property also implies the nonexistence of any such hyperreal $x$.
+But for an infinitesimal $x$ the sign of $f$ is determined entirely by the sine term, since the sine
+term is finite and the linear term infinitesimal. Clearly $\sin 1/x$ can't have a single sign for
+all values of $x$ less than $u$, so this is a contradiction, and the proposition succeeds for any $u$.
+It follows from the intermediate value theorem that there are infinitely many solutions to the equation.
+\end{eg}
+
+%%graph%% x-minus-sin-1-over-x func=(x-sin(1/x)) format=eps xlo=-2 xhi=2 ylo=-2 yhi=2 xtic_spacing=1 ytic_spacing=1
+\smallfig{x-minus-sin-1-over-x}{The function $x-\sin 1/x$.}
+
+\subsection{The extreme value theorem}
+
 In chapter \ref{ch:rates-of-change}, we saw that locating maxima and minima of functions may in general
 be fairly difficult, because there are so many different ways in which a function can attain an extremum:
 e.g., at an endpoint, at a place where its derivative is zero, or at a nondifferentiable point. The following
@@ -904,7 +961,24 @@ $y=x$ would be a counterexample, because it's continuous and doesn't have any ma
 If we didn't assume continuity, then we could have a function defined as $y=x$ for $x < 1$, and $y=0$ for
 $x \ge 1$; this function never gets bigger than 1, but it never attains a value of 1 for any specific value of $x$.
 
-The extreme value theorem is proved, and generalized somewhat, on page \pageref{detour:extreme-value}.
+The extreme value theorem is proved, in a somewhat more general form, on page \pageref{detour:extreme-value}.
+
+\pagebreak
+
+\begin{eg}
+\egquestion Find the maximum value of the polynomial $P(x)=x^3+x^2+x+1$ for $-5 \le x \le 5$.
+
+\eganswer Polynomials are continuous, so the extreme value theorem guarantees that such a
+maximum exists. Suppose we try to find it by looking for a place where the derivative is zero.
+The derivative is $3x^2+2x+1$, and setting it equal to zero gives a quadratic equation, but application of the
+quadratic formula shows that it has no real solutions. It appears that the function doesn't have a maximum
+anywhere (even outside the interval of interest) that looks like a smooth peak. Since it doesn't have kinks or
+discontinuities, there is only one other type of maximum it could have, which is a maximum at one
+of its endpoints. Plugging in the limits, we find $P(-5)=-104$ and $P(5)=156$, so we conclude that
+the maximum value on this interval is 156.
+\end{eg}
+
+\vfill\pagebreak
 
 \section{Limits}\label{sec:limits}
 
@@ -936,8 +1010,6 @@ the value of $f$ lies within the range from $\ell-\epsilon$ to $\ell+\epsilon$.
 Intuitively, the idea is that if I want you to make $f(x)$ close to $\ell$, I just have
 to tell you how close, and you can tell me that it will be that close as long as
 $x$ is within a certain distance of $a$.
-
-\pagebreak
 
 In terms of infinitesimals, we have:\index{limit!definition!infinitesimals}
 \begin{important}[Definition of the limit]
@@ -1000,8 +1072,6 @@ this, where there is only one point missing from the domain of the function, it 
 to extend the definition of the function by filling in the ``gap tooth.'' Example \ref{eg:limit-two-sides}
 below shows that this kind of filling-in procedure is not always possible.
 \end{eg}
-
-\pagebreak
 
 %%graph%% no-limit func=x**-2 format=eps xlo=-2 xhi=2 ylo=0 yhi=4 with=lines xtic_spacing=1 ytic_spacing=1 more_space_below=5
 \smallfig{no-limit}{Example \ref{eg:no-limit}, the function $1/x^2$.}
