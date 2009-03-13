@@ -65,6 +65,7 @@ clean:
 	# ... done.
 	rm -f calc_lulu.pdf
 	rm -f calc.pdf
+	rm -f temp.pdf
 
 post:
 	cp calc.pdf /home/bcrowell/Lightandmatter/calc

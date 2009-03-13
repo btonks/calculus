@@ -815,7 +815,7 @@ computation, as in the bogus result generated on line 9 of the example.
 \section{Continuity}
 
 Intuitively, a continuous function is one whose graph
-has no sudden jumps in it; the graph is all a single connected piece. Formally, a function real function $f(x)$ is defined to
+has no sudden jumps in it; the graph is all a single connected piece. Formally, a function $f(x)$ is defined to
 be continuous if for any real $x$ and any infinitesimal $\der x$, $f(x+\der x)-f(x)$ is infinitesimal.\label{def-continuity}\index{continuous function}
 
 \begin{eg}\label{eg:discontinuous}
@@ -865,6 +865,46 @@ of functions, but its truth isn't so much a matter of the properties of function
 the properties of the underlying number system. For the reader with a interest in pure
 mathematics, I've discussed this in more detail on page \pageref{detour:intermediate-value} and given
 an abbreviated proof.\label{intermediate-value-ref-to-detour}
+
+\begin{eg}
+\egquestion Prove that every odd-order polynomial $P$ with real coefficients has at least one real root $x$, i.e., a
+point at which $P(x)=0$.
+
+\eganswer
+To see that the restriction to odd orders is necessary, consider the polynomial $x^2+1$, which has no real roots
+because $x^2>0$ for any real number $x$.
+
+To fix our minds on a concrete example for the odd case, consider the polynomial $P(x)=x^3-x+17$.
+For large values of $x$, the linear and constant terms will be negligible compared to the $x^3$ term,
+and since $x^3$ is positive for large values of $x$ and negative for large negative ones, it follows
+that $P$ is sometimes positive and sometimes negative.
+
+Making this argument more general and rigorous,
+suppose we had a polynomial of odd order $n$ that always had the same sign for real $x$. Then by the transfer principle
+the same would hold for any hyperreal value of $x$. Now if $x$ is infinite then the lower-order terms
+are infinitesimal compared to the $x^n$ term, and the sign of the result is determined entirely by the
+$x^n$ term, but $x^n$ and $(-x)^n$ have opposite signs, and therefore $P(x)$ and $P(-x)$ have opposite signs.
+This is a contradiction, so we have disproved the assumption that $P$ always had the same sign for real $x$.
+Since $P$ is sometimes negative and sometimes positive, we conclude by the intermediate value theorem that
+it is zero somewhere.
+\end{eg}
+
+In chapter \ref{ch:rates-of-change}, we saw that locating maxima and minima of functions may in general
+be fairly difficult, because there are so many different ways in which a function can attain an extremum:
+e.g., at an endpoint, at a place where its derivative is zero, or at a nondifferentiable point. The following
+theorem allows us to make a very general statement about all these possible cases, assuming only continuity.
+
+The \emph{extreme value theorem}\label{extreme-value-theorem}
+states that if $f$ is a continuous real-valued function on the real-number
+interval defined by $a \le x \le b$, then $f$ has maximum and minimum values on that interval, which are
+attained at specific points in the interval.\index{extreme value theorem}
+
+Let's first see why the assumptions are necessary. If we weren't combined to a finite interval, then
+$y=x$ would be a counterexample, because it's continuous and doesn't have any maximum or minimum value.
+If we didn't assume continuity, then we could have a function defined as $y=x$ for $x < 1$, and $y=0$ for
+$x \ge 1$; this function never gets bigger than 1, but it never attains a value of 1 for any specific value of $x$.
+
+The extreme value theorem is proved, and generalized somewhat, on page \pageref{detour:extreme-value}.
 
 \section{Limits}\label{sec:limits}
 

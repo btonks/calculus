@@ -314,6 +314,102 @@ also true if we take $y=x^2$ as the definition of a function on the hyperreals. 
 in this way, the intermediate value theorem makes a statement that the transfer principle applies
 to, and it is therefore true for the hyperreal version of the function as well.
 
+\detour{extreme-value}{Proof of the extreme value theorem}\index{extreme value theorem!proof}
+
+The extreme value theorem was stated on page \pageref{extreme-value-theorem}. Before we can prove
+it, we need to establish some preliminaries, which turn out to be interesting for their own sake.
+
+Definition: Let $C$ be a subset of the real numbers whose definition can be expressed
+in the type of language to which the transfer principle applies. Then $C$ is \emph{compact}\index{compact set}
+if for every hyperreal number $x$ satisfying the definition of $C$, the standard part of $x$ exists
+and is a member of $C$.
+
+To understand the content of this definition, we need to look at the two ways in which a set could
+fail to satisfy it. 
+
+First, suppose $U$ is defined by $x \ge 0$. Then there are positive infinite
+hyperreal numbers that satisfy the definition, and their standard part is not defined, so $U$ is not
+compact. The reason $U$ is not compact is that it is unbounded.
+
+Second, let $V$ be defined by $0 \le x < 1$. Then if $dx$ is a positive infinitesimal,
+$1-dx$ satisfies the definition of $V$, but its standard part is 1, which is not in $V$, so $V$
+is not compact. The set $V$ has boundary points at 0 and 1, and the reason it is not compact
+is that it doesn't contain its right-hand boundary point. A boundary point\index{boundary point}
+is a real number which is infinitesimally close to some points inside the set, and also to some
+other points that are on the outside.
+
+We therefore arrive at the following alternative characterization of the notion of a compact
+set, whose proof is straightforward.
+
+Theorem: A set is compact if and only if it is bounded and contains all of its boundary points.
+
+Intuitively, the reason compact sets are interesting is that if you're standing inside a compact
+set and start taking steps in a certain direction, without ever turning around, you're guaranteed to
+approach some point in the set as a limit. (You might step over some gaps that aren't included in the set.)
+If the set was unbounded, you could just walk forever at a constant speed.
+If the set didn't contain its boundary point, then you could asymptotically approach the boundary, but
+the goal you were approaching wouldn't be a member of the set. In other words, every increasing
+sequence of numbers within a compact set approaches a limit within that set, and similarly for every
+decreasing sequence.
+
+The following theorem turns out to be the most difficult part of the discussion.
+
+Theorem: A compact set contains its maximum and minimum.\\
+Proof: Let $C$ be a compact set. We know it's bounded, so let $M$ be the set of all real numbers
+that are greater than any member of $C$. By the completeness property of the real
+numbers, there is some real number $x$ between $C$ and $M$. Let $^{*}C$ be the set of hyperreal numbers that satisfies the same
+definition that $C$ does.
+
+Every real $x'$ greater than $x$ fails
+to satisfy the condition that defines $C$, and by the transfer principle the same must be true if $x'$ is any hyperreal,
+so if $dx$ is a positive infinitesimal, $x+dx$ must be outside of $^{*}C$. 
+
+But now consider $x-dx$.
+The following statement holds for the reals: there is no number $x'<x$ that is greater than every
+member of $C$. By the transfer principle, we find that there is some hyperreal number $q$ in $^{*}C$
+that is greater than $x-dx$. But the standard part of $q$ must equal $x$, for otherwise $\zu{st} q$ would
+be a member of $C$ that was greater than $x$.
+Therefore $x$ is a boundary point of $C$, and since
+$C$ is compact, $x$ is a member of $C$. We conclude $C$ contains its maximum. A similar argument shows that
+$C$ contains its minimum, so the theorem is proved.
+
+There were two subtle things about this proof. The first was that we ended up constructing the
+set of hyperreals $^{*}C$, which was the hyperreal ``big brother'' of the real set $C$. This
+is exactly the sort of thing that the transfer principle does \emph{not} guarantee we can do.
+However, if you look back through the proof, you can see that $^{*}C$ is used only as a notational
+convenience. Rather than talking about whether a certain number was a member of $^{*}C$, we could
+have referred, more cumbersomely, to whether or not it satisfied the condition that had originally
+been used to define $C$. The price we paid for this was a slight loss of generality. There are so
+many different sets of real numbers that they can't possibly all have explicit definitions that can
+be written down on a piece of paper. However, there is very little reason to be interested in
+studying the properties of a set that we were never able to define in the first place. The
+other subtlety was that we had to construct the auxiliary
+point $x-dx$, but there was not much we could actually say about $x-dx$ itself. In particular, it
+might or might not have been a member of $C$. For example, if $C$ is defined by the condition $x=0$, then
+$^{*}C$ likewise contains only the single element 0, and $x-dx$ is not a member of $^{*}C$.
+But if $C$ is defined by $0 \le x \le 1$, then $x-dx$ is a member of $^{*}C$.
+
+The original goal was to prove the extreme value theorem, which is a statement about continuous functions, but so far we haven't said anything about functions.
+
+Lemma: Let $f$ be a real function defined on a set of points $C$. Let $D$ be the image of $C$, i.e.,
+the set of all values $f(x)$ that occur for some $x$ in $C$. Then if $f$ is continous and $C$ is
+compact, $D$ is compact as well. In other words, continuous functions take compact sets to compact sets.\\
+Proof: Let $y=f(x)$ be any hyperreal output corresponding to a hyperreal input $x$ in $^{*}C$.
+We need to prove that the standard part of $y$ exists, and is a member of $D$. Since $C$ is compact,
+the standard part of $x$ exists and is a member of $C$. But then by continuity $y$ differs only
+infinitesimally from $f(\zu{st} x)$, which is real, so $\zu{st} y=f(\zu{st} x)$ is defined and is a member
+of $D$.
+
+We are now ready to prove the extreme value theorem, in a version slightly more general than the one
+originally given on page \pageref{extreme-value-theorem}.
+
+The extreme value theorem: Any continuous function on a compact set achieves a maximum and minimum value,
+and does so at specific points in the set.
+
+Proof: Let $f$ be continuous, and let $C$ be the compact set on which we seek its maximum and minimum.
+Then the image $D$ as defined in the lemma above is compact. Therefore $D$ contains its maximum and
+minimum values.
+
 \detour{mean-value-proof}{Proof of the mean value theorem}\index{mean value theorem!proof}
 
 Suppose that the mean value theorem is violated. Let $L$ be the set of all $x$ in the interval from $a$ to $b$
@@ -324,9 +420,17 @@ the definition of the definite integral that when one function is less than anot
 than the other's. Since $y$ takes on values less than and greater than $\bar{y}$, it follows from the intermediate value theorem
 that $y$ takes on the value $\bar{y}$ somewhere (intuitively, at a boundary between $L$ and $M$).
 
+\pagebreak
+
 \detour{fn-thm-alg-proof}{Proof of the fundamental theorem of algebra}\index{fundamental theorem of algebra!proof}
 
-Theorem: In the complex number system, an nth-order polynomial has exactly $n$
+We start with the following lemma, which is intuitively obvious, because polynomials don't have asymptotes.
+Its proof is given after the proof of the main theorem.
+
+Lemma: For any polynomial $P(z)$ in the complex plane, its magnitude $|P(z)|$ achieves its minimum
+value at some specific point $z_\zu{o}$.
+
+The fundamental theorem of algebra: In the complex number system, a nonzero nth-order polynomial has exactly $n$
 roots, i.e., it can be factored into the form $P(z)=(z-a_1)(z-a_2)\ldots(z-a_n)$,
 where the $a_i$ are complex numbers.
 
@@ -338,9 +442,8 @@ we can show that every polynomial of degree greater than zero has at least one
 root.
 
 Suppose, on the contrary, that there is an nth order polynomial $P(z)$, with $n>0$, that has
-no roots at all. Then $|P(z)|$ must have some minimum value, which is achieved
-at $z=z_\zu{o}$. (Polynomials don't have asymptotes, so the minimum really does
-have to occur for some specific, finite $z_\zu{o}$.) To make things more
+no roots at all. Then by the lemma $|P|$ achieves its minimum value
+at some point $z_\zu{o}$. To make things more
 simple and concrete, we can construct another polynomial $Q(z)=P(z+z_\zu{o})/P(z_\zu{o})$,
 so that $|Q|$ has a minimum value of 1, achieved at $Q(0)=1$. This means that
 $Q$'s constant term is 1. What about its other terms? Let $Q(z)=1+c_1z+\ldots+c_nz^n$.
@@ -354,3 +457,17 @@ less than one for appropriately chosen values of $z$. Continuing this process, w
 find that $Q(z)$ has no terms at all beyond the constant term, i.e., $Q(z)=1$. This
 contradicts the assumption that $n$ was greater than zero, so we've proved by
 contradiction that there is no $P$ with the properties claimed.
+
+Uninteresting proof of the lemma: Let $M(r)$ be the minimum value of $|P(z)|$ on the disk defined by $|z| \le r$.
+We first prove that $M(r)$ can't asymptotically approach a minimum as $r$ approaches infinity.
+Suppose to the contrary: for every $r$, there is some $r'>r$ with $M(r')<M(r)$.
+Then by the transfer principle, the same would have to be true for
+hyperreal values of $r$. But it's clear that if $r$ is infinite, the lower-order terms of $P$
+will be infinitesimally small compared to the highest-order term, and therefore $M(r)$ is
+infinite for infinite values of $r$, which is a contradiction, since by construction $M$ is
+decreasing, and finite for finite $r$. We can therefore conclude
+by the extreme value theorem that $M$ achieves its minimum for some specific value of $r$.
+The least such $r$ describes a circle $|z|=r$ in the complex plane, and the minimum of $|P|$
+on this circle must be the same as its global minimum. Applying the extreme value function
+to $|P(z)|$ as a function of arg $z$ on the interval $0 \le \zu{arg} z \le 2\pi$, we establish
+the desired result.
