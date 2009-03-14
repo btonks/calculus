@@ -1,7 +1,10 @@
+%%chapter%% 99
 \chapter{Detours}
 
 %\newcommand{\detour}[2]{\textbf{#2}\label{detour:#1}}
 \newcommand{\detour}[2]{\subsection{#2}\label{detour:#1}}
+
+\vfill
 
 \detour{def-tangent}{Formal definition of the tangent line}\index{tangent line!formal definition}
 
@@ -10,47 +13,65 @@ A line $\ell(t)$ through this point is said not to cut through the graph
 if there exists some real number $d>0$ such that
 $x(t)-\ell(t)$ has the same sign for all $t$ between $a-d$ and $a+d$.
 The line is said to be the tangent line at this point if it is the
-only line through this point that doesn't cut through the graph.\footnote{As an exception,
+only line through this point that doesn't cut through the graph.
+
+As an exception,
 there are cases in which the function is smooth and well-behaved throughout a certain
 region, but has no tangent line according to this definition at one particular point.
 For example, the function $x(t)=t^3$ has tangent lines everywhere except at $t=0$,
 which is an inflection point (p. \pageref{inflection}). In such cases, we fill in the
-``gap tooth'' in the derivative function in the obvious way.}
+``gap tooth'' in the derivative function in the obvious way.
+
+
+\pagebreak
 
 \detour{polynomial-proof}{Derivatives of polynomials}\index{derivative!of a polynomial}
+
+Some ideas in this proof are due to Michael Livshits.
 
 We want to prove that the derivative of $t^k$ is $kt^{k-1}$. It suffices to
 prove that the derivative equals $k$ when evaluated at $t=1$, since we can
 then apply the kind of scaling argument\footnote{In the special case of $t=0$,
 the scaling argument doesn't work. For even $k$, it can be easily verified that
 the derivative at $t=0$ equals zero. For odd $k$, we have to fill in the ``gap tooth''
-as described in the preceding footnote.} used on page \pageref{scaling} to
+as mentioned in the preceding section.} used on page \pageref{scaling} to
 show that the derivative of $t^2/2$ was $t$. The proposed tangent line at $(1,1)$
 has the equation $\ell=k(t-1)+1$, so what we need to prove is that
-the polynomial $t^k-[k(t-1)+1]$ is greater than or equal to zero in some
-finite region around $t=1$.
+the polynomial $t^k-[k(t-1)+1]$ is greater than or equal to zero throughout some
+region around $t=1$.
 
-First, let's change variables to $u=t-1$. Then the polynomial in question becomes
-$P(u)=(u+1)^k-(ku+1)$, and we want to prove that it's nonnegative in some region
-around $u=0$. (We assume $k\ge 2$, since we've already found the derivatives in the
-cases of $k=0$ and 1, and in those cases $P(u)$ is identically zero.)
+Figure \figref{polyn-derivative-proof-secant} shows a typical case. 
+The graph of $3(t-1)+1$ lies entirely below the graph of $t^3$ in a large region.
+It does pop back up above it at $t=-2$, but that's far away, and the definition of
+the tangent line only requires that some region around $(1,1)$ be free of such
+crossing points. In fact, a little experimentation shows that these crossings occur
+only for odd $k$, and always for $t<0$. This suggests that we ought to aim for
+a general proof that there are no crossings for $t \ge 0$.
 
-Now the last two terms in the binomial series for $(u+1)^k$ are just $ku$ and 1,
-so $P(u)$ is a polynomial whose lowest-order term is a $u^2$ term. Also, all the
-nonzero coefficients of the polynomial are positive, so $P$ is positive for
-$u\ge 0$.
+%%graph%% polyn-derivative-proof-secant func=x**3 format=eps xlo=-3 xhi=2 ylo=-15 yhi=10 with=lines x=t y=x ytic_spacing=5 ; func=3*(x-1)+1 with=lines
+\smallfig{polyn-derivative-proof-secant}{The graphs of $t^3$ and $3(t-1)+1$.}
 
-To complete the proof we only need to establish that $P$ is also positive for sufficiently small
-negative values of $u$.
-For negative $u$, the even-order terms of $P$ are positive, and the odd-order
-terms negative. To make the idea clear, consider the $k=5$ case,
-where $P(u)=u^5+5u^4+10u^3+10u^2$. The idea is to pair off each positive
-term with the negative one immediately to its left. Although the coefficient
-of the negative term may, in general, be greater than the coefficient of
-the positive term with which we've paired it, a property of the binomial coefficients
-is that the ratio of successive coefficients is never greater than $k$. Thus for
-$-1/k<u<0$, each positive term is guaranteed to dominate the negative term
-immediately to its left.
+Suppose that such a crossing happens at the point $(t,t^k)$. Then the slope of the
+line $\ell(t)$ is $k$, so we must have
+\begin{equation*}
+  \frac{t^k-1}{t-1} = k \qquad .
+\end{equation*}
+The left-hand side is the quotient of two polynomials, and if we try the example
+of $k=3$, we find that the division comes out with a remainder of zero, and
+is in the very simple form $t^2+t+1$, i.e., a polynomial of order $k-1$ whose
+coefficients are all equal to 1. We can easily verify that this works for
+all $k$, by checking the multiplication
+\begin{equation*}
+  t^k-1 = (t-1)(t^k+t^{k-1}+\ldots+1) \qquad ,
+\end{equation*}
+in which all the terms in the expansion of the right-hand side cancel except for $t^k$ and $-1$.
+Let's refer to the quotient as $Q(t)=t^k+t^{k-1}+\ldots+1$.
+How can we get $Q(t)=k$? Clearly we have a solution for $t=1$, since there are $k$ terms,
+each equal to 1. For $t>1$, all the terms except the constant one are greater than 1, so
+there can't be any solution. For $0 \le t < 1$, all the terms except the constant
+one are positive and less than 1, so again there can't be any solution.
+This completes the proof that there are no crossings for $t \ge 0$, which establishes
+the desired result.
 
 \detour{sin-rigor}{Details of the proof of the derivative of the sine function}\index{derivative!of the sine}
 

@@ -24,7 +24,7 @@ EPSTOPDF = "/usr/bin/epstopdf"
 
 def main()
 n=0
-chapter = 0
+chapter = -1
 # If wildcards are used, the shell expands ARGV before it comes to us.
 ARGV.each { |file_name|
 print "file #{file_name}\n"
@@ -34,6 +34,7 @@ IO.foreach(file_name) {
     chapter = $1
   end
   if line =~ /^%%graph%%\s*([^\s]+)\s((([^\s]+)\s+)*)/
+    if chapter == -1 then print "error, no %%chapter%% in this file\n" end
     fig = $1;
     option_string = $2;
     print "  #{line}"
