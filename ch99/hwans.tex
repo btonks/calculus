@@ -386,6 +386,34 @@ Taking the derivative and setting it equal to zero, we have $\left(e^x-e^{-x}\ri
 occurs only at $x=0$. The second derivative is $\left(e^x+e^{-x}\right)/2$ (the same as the original function),
 which is positive for all $x$, so the function is everywhere concave up, and this is a minimum.
 
+\hwsolnhdr{sin-sin-sin}\\*
+There are no kinks, endpoints, etc., so
+extrema will occur only in places where the derivative is zero.
+Applying the chain rule, we find the derivative to be $\cos(\sin(\sin x))\cos(\sin x)\cos x$.
+This will be zero if any of the three factors is zero. We have $\cos u=0$ only when $|u| \ge \pi/2$,
+and $\pi/2$ is greater than 1, so it's not possible for either of the first two factors to equal zero.
+The derivative will therefore equal zero if and only if $\cos x=0$, which happens in the same places
+where the derivative of $\sin x$ is zero, at $x=\pi/2+\pi n$, where $n$ is an integer.
+%
+%%graph%% soln-sin-sin-sin func=sin(sin(sin(x))) format=eps xlo=-10 xhi=10 ylo=-1 yhi=1 ytic_spacing=1 xtic_spacing=10
+\smallfig{soln-sin-sin-sin}{Problem \ref{hw:sin-sin-sin}.}
+
+This essentially completes the required demonstration, but there is one more technical issue, which
+is that it's conceivable that some of these could
+be points of inflection. Constructing a graph of $\sin(\sin(\sin x))$ gives us the necessary
+insight to see that this can't be the case. The function essentially looks like the sine function, but
+its extrema have been ``shaved down'' a little, giving them slightly flatter tips that don't quite extend
+out to $\pm 1$. It's therefore fairly clear that these aren't points of inflection.
+To prove this more rigorously, we could take the second derivative and show that it was
+nonzero at the places where the first derivative is zero. That would be messy. A less tedious argument is
+as follows. We can tell from its formula that the function is \emph{periodic},\index{periodic function} i.e., it has the property that
+$f(x+\ell)=f(x)$, for $\ell=2\pi$. This follows because the innermost sine function is periodic, and the outer layers only
+depend on the result of the inner layer. Therefore all the points of the form $\pi/2+2\pi n$
+have the same behavior. Either they're all maxima or they're all points of inflection. But clearly a
+function can't oscillate back and forth without having any maxima at all, so they must all be maxima. A
+similar argument applies to the minima.
+
+
 \hwsolnhdr{air-res-v}\\*
 (a) As suggested, let $c=\sqrt{g/A}$, so that  $d = A \ln\cosh ct=A\ln\left(e^{ct}+e^{-ct}\right)$.
 Applying the chain rule, the velocity is
@@ -424,8 +452,6 @@ $ax(a-x^2)^{-3/2}$.
 
 \hwsolnhdr{logarithmy}\\*
 By the chain rule, the result is $2/(2t+1)$.
-
-\pagebreak[4]
 
 \hwsolnhdr{unnecessary-prod}\\*
 Using the product rule, we have

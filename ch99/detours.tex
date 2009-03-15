@@ -22,6 +22,9 @@ For example, the function $x(t)=t^3$ has tangent lines everywhere except at $t=0
 which is an inflection point (p. \pageref{inflection}). In such cases, we fill in the
 ``gap tooth'' in the derivative function in the obvious way.
 
+For an alternative definition that avoids the ``gap tooth'' issue, at the expense
+of some complication in the definition, see \emph{Calculus Unlimited}, by Jerrold
+Marsden and Alan Weinstein, \verb@http://resolver.caltech.edu/CaltechBOOK:1981.001@.
 
 \pagebreak
 
@@ -31,9 +34,8 @@ Some ideas in this proof are due to Michael Livshits.
 
 We want to prove that the derivative of $t^k$ is $kt^{k-1}$. It suffices to
 prove that the derivative equals $k$ when evaluated at $t=1$, since we can
-then apply the kind of scaling argument\footnote{In the special case of $t=0$,
-the scaling argument doesn't work. For even $k$, it can be easily verified that
-the derivative at $t=0$ equals zero. For odd $k$, we have to fill in the ``gap tooth''
+then apply the kind of scaling argument\footnote{Scaling fails in the special case of $t=0$ and odd $k$,
+so we have to fill in the ``gap tooth''
 as mentioned in the preceding section.} used on page \pageref{scaling} to
 show that the derivative of $t^2/2$ was $t$. The proposed tangent line at $(1,1)$
 has the equation $\ell=k(t-1)+1$, so what we need to prove is that
@@ -56,9 +58,11 @@ line $\ell(t)$ is $k$, so we must have
 \begin{equation*}
   \frac{t^k-1}{t-1} = k \qquad .
 \end{equation*}
-The left-hand side is the quotient of two polynomials, and if we try the example
-of $k=3$, we find that the division comes out with a remainder of zero, and
-is in the very simple form $t^2+t+1$, i.e., a polynomial of order $k-1$ whose
+The left-hand side is the quotient of two polynomials, and we expect it to divide without
+a remainder, because $t^k-1$ equals zero at $t=1$, and therefore it must have $t-1$ as a factor.
+If we try the example
+of $k=3$, we find that the quotient has
+the very simple form $t^2+t+1$, i.e., a polynomial of order $k-1$ whose
 coefficients are all equal to 1. We can easily verify that this works for
 all $k$, by checking the multiplication
 \begin{equation*}
@@ -96,7 +100,6 @@ where the error $E$ introduced by the approximations is
 \end{align*}
 
 \smallfig{sin-rigor}{Geometrical interpretation of the error term.}
-
 Let the radius of the circle in figure \figref{sin-rigor} be one, so AD
 is $\cos \der t$ and CD is $\sin \der t$. The area of the shaded pie slice
 is $\der t/2$, and the area of triangle ABC is $\sin\der t/2$, so the

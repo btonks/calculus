@@ -70,7 +70,8 @@
 \setlength{\myfooterspace}{5mm}
 
 %============================= homework ==================================================
-\newcommand{\thompson}{\hwaddtrailingstuff{\footnotesize{[Thompson, 1919]}}}
+\newcommand{\givecredit}[1]{\hwaddtrailingstuff{\footnotesize{[#1]}}}
+\newcommand{\thompson}{\givecredit{Thompson, 1919}}
 \newcommand{\granville}{\hwaddtrailingstuff{\footnotesize{[Granville, 1911]}}}
 \newcounter{hwctr}[chapter]
 \newenvironment{hwsection}{
