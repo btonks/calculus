@@ -79,7 +79,7 @@ the desired result.
 
 \detour{sin-rigor}{Details of the proof of the derivative of the sine function}\index{derivative!of the sine}
 
-Some ideas in this proof are due to Jerome Keisler.
+Some ideas in this proof are due to Jerome Keisler (see references, p. \pageref{references}).
 
 On page \pageref{eg:derivative-of-sin}, I computed
 \begin{align*}
@@ -113,6 +113,248 @@ For the approximation $\cos\der t\approx 1$, the error (represented
 by BD) is $1-\cos\der t=1-\sqrt{1-\sin^2\der t}$, which is less
 than $1-\sqrt{1-\der t^2}$, since $\sin \der t<\der t$. Therefore
 this error is of order $\der t^2$.
+
+\detour{transfer}{Formal statement of the transfer principle}\label{transfer}
+On page \pageref{backref-transfer}, I gave an informal description of the transfer principle.
+The idea being expressed was that the phrases ``for any'' and
+``there exists'' can only be used in phrases like ``for any real number $x$'' and ``there exists
+a real number $y$ such that\ldots'' The transfer principle does not apply to statements like ``there exists
+an integer $x$ such that\ldots'' or even ``there exists a subset of the real numbers such that\ldots''
+
+The way to state the transfer principle more rigorously is to get rid of the ambiguities of
+the English language by restricting ourselves to a well-defined language of mathematical symbols.
+This language has symbols $\forall$ and $\exists$, meaning "for all" and "there exists," and these
+are called quantifiers.\index{quantifier} A quantifier is always immediately followed by a variable, and
+then by a statement involving that variable.
+For example, suppose we want to say that a number greater than 1 exists. We can write the statement $\exists x \; x>1$,
+read as ``there exists a number $x$ such that $x$ is greater than 1.'' We don't actually need to say
+``there exists a number $x$ \emph{in the set of real numbers} such that \ldots,'' because our intention here is to make statements
+that can be translated back and forth between the reals and the hyperreals. In fact, we forbid this
+type of explicit reference to the domain to which the quantifiers apply. This restriction is described
+technically by saying that we're only allowing \emph{first-order logic}.
+
+Quantifiers can be nested. For example, I can state the commutativity of addition as
+$\forall x \forall y \; x+y=y+x$, and the existence of additive inverses as $\forall x \exists y \; x+y=0$.
+
+After the quantifier and the variable, we have some mathematical assertion, in which we're allowed to use the symbols
+$=$, $>$, $\times$ and $+$ for the basic operations of arithmetic, and also parentheses and the logical
+operators $\neg$, $\wedge$ and $\vee$ for ``not,'' ``and,'' and ``or.''
+Although we will often find it convenient to use other symbols, such as 0, 1,
+$-$, $/$, $\le$, $\ne$, etc., these are not strictly necesary. We use them only as a way of making the formulas more
+readable, with the understanding that they could be translated into the more basic symbols.
+For instance, I can restate $\exists x \; x>1$ as $\exists x \exists y \forall z \; yz=z \wedge x>y$.
+The number $y$ ends up just being a name for 1, because it's the only number that will always satisfy
+$yz=z$.
+
+Finally, these statements need to satisfy certain syntactic rules. For example, we can't have a string of
+symbols like $x+\times y$, because the operators $+$ and $\times$ are supposed to have numbers on both sides.
+
+A finite string of symbols satisfying all the above rules is called a well-formed formula (wff)\index{well-formed formula}
+in first-order logic.
+
+The transfer principle states that a wff is true on the real numbers if and only if it is true on the hyperreal numbers.
+
+If you look in an elementary algebra textbook at  the statement of all the elementary axioms of the real number system, such
+as commutativity of multiplication, associativity of addition, and so on, you'll see that they can all
+be expressed in terms of first-order logic, and therefore you can use them when manipulating hyperreal numbers.
+However, it's not possible to fully characterize the real number system without giving at least some further
+axioms that cannot be expressed in first order. There is more than one way to set up these additional axioms,
+but for example one common axiom to use is the Archimedean principle,\index{Archimedean principle}
+which states that there is no number that is greater than 1, greater than $1+1$, greater than $1+1+1$, and so on.
+If we try to express this as a well-formed formula in first order logic, one attempt would be
+$\neg \exists x \; x>1 \;\wedge\; x>1+1  \;\wedge\; x>1+1+1 \ldots$, where the $\dots$ indicates that the string of
+symbols would have to go on forever. This doesn't work because a well-formed formula has to be a \emph{finite}
+string of symbols. Another attempt would be $\exists x \forall n \in \mathbb{N} \; x>n$, where $\mathbb{N}$ means
+the set of integers. This one also fails to be a wff in first-order logic, because in first-order logic
+we're not allowed to explicitly refer to the domain of a quantifier. We conclude that the transfer principle
+does not necessarily apply to the Archimedean principle, and in fact the Archimedean principle is not
+true on the hyperreals, because they include numbers that are infinite.
+
+Now that we have a thorough and rigorous understanding of what the transfer principle says, the next obvious
+question is why we should believe that it's true. This is discussed in the following section.
+
+\detour{transfer-true}{Is the transfer principle true?}
+
+The preceding section stated the transfer principle in rigorous language. But why should we believe that it's
+true?
+
+One approach would be to begin deducing things about the hyperreals, and see if we can deduce a contradiction.
+As a starting point, we can use the axioms of elementary algebra, because the transfer principle tells us that
+those apply to the hyperreals as well. Since we also assume that the Archimedean principle does \emph{not} hold
+for the hyperreals, we can also base our reasoning on that, and therefore many of the things we can prove
+will be things that are true for the hyperreals, but false for the reals. This is essentially what mathematicians
+started doing immediately after Newton and Leibniz invented the calculus, and they were immediately successful
+in producing contradictions. However, they weren't using formally defined logical systems, and they hadn't
+stated anything as specific and rigorous as the transfer principle. In particular, they didn't understand
+the need for anything like our restriction of the transfer principle to first-order logic. If we could
+reach a contradiction based on the more modern, rigorous statement of the transfer principle, that would
+be a different matter. It would tell us that one of two things was true: either (1) the hyperreal number system lacks logical self-consistency,
+or (2) both the hyperreals and the reals lack self-consistency.
+
+Abraham Robinson proved, however, around 1960 that the reals and the hyperreals have the same level of
+consistency: one is self-consistent if and only if the other is. In other words, if the hyperreals harbor
+a ticking logical time bomb, so do the reals. Since most mathematicians don't lose much sleep worrying
+about a lack of self-consistency in the real number system, this is generally taken as meaning that
+infinitesimals have been rehabilitated. In fact, it gives them an even higher level of respectability than
+they had in the era of Gauss and Euler, when they were widely used, but mathematicians knew a valid
+style of proof involving infinitesimals only because they'd slowly developed the right ``Spidey sense.''
+
+But how in the world could Robinson have proved such a thing? It seems like a daunting task. There is
+an infinite number of possible logical trains of argument in mathematics. How could he have demonstrated, with
+a stroke of a pen, that \emph{none} of them could ever lead to a contradiction (unless it indicated
+a contradiction lurking in the real number system as well)? Obviously it's not possible to check
+them all explicitly.
+
+The way modern logicians prove such things is usually by using \emph{models}.\index{model}
+For an easy example of a model, consider Euclidean geometry. Euclid believed that the following four
+postulates\footnote{modified slightly by me from a translation by T.L. Heath, 1925} were all self-evident:
+
+\begin{enumerate}
+\item Let the following be postulated: to draw a straight line from any point to any point.
+\item To extend a finite straight line continuously in a straight line.
+\item To describe a circle with any center and radius.
+\item That all right angles are equal to one another.
+\end{enumerate}
+
+These postulates, which today we would call ``axioms,'' played the same role with respect to Euclidean geometry that the elementary axioms of arithmetic
+play for the real number system.
+
+Euclid also found that he needed a fifth postulate in order to prove many of his most important
+theorems, such as the Pythagorean theorem. I'll state a different axiom that turns out to be
+equivalent to it:
+
+\qquad 5. \emph{Playfair's version of the parallel postulate:} Given any infinite line L, and any point P not on that line,
+there exists a unique infinite line through P that never crosses L.
+
+The ancients believed this to be less obviously self-evident than the first four, partly because
+if you were given the two lines, it could theoretically take an infinite amount of time to inspect
+them and verify that they never crossed, even at some very distant point. Euclid avoided even mentioning
+infinite lines in postulates 1-4, and he considered postulate 5 to be so much less intuitively appealing in comparison that
+he organized the \emph{Elements} so that the first 28 propositions were those that could be proved
+without resorting to it. Continuing the analogy with the reals and hyperreals, the parallel postulate
+plays the role of the Archimedean principle: a statement about infinity that we don't feel quite so sure about.
+
+For centuries, geometers tried to prove the parallel postulate from the first five. The trouble with
+this kind of thing was that it could be difficult to tell what was a valid proof and what wasn't.
+The postulates were written in an ambiguous human language, not a formal logical system.
+As an example of the kind of confusion that could result,
+suppose we assume the following postulate, $5'$, in place of 5:
+
+\qquad $5'$: Given any infinite line L, and any point P not on that line,
+every infinite line through P crosses L.
+
+Postulate $5'$ plays the role for noneuclidean geometry that the negation of the Archimedean principle
+plays for the hyperreals. It tells us we're not in Kansas anymore. If a geometer can start from
+postulates 1-4 and $5'$ and arrive at a contradiction, then he's made significant progress toward
+proving that postulate 5 has to be true based on postulates 1-4. (He would also have to disprove
+another version of the postulate, in which there is more than one parallel through P.) For centuries,
+there have been reasonable-sounding arguments that seemed to give such a contradiction. For instance,
+it was proved that a geometry with $5'$ in it was one in which distances were limited to some finite
+maximum. This would appear to contradict postulate 3, since there would be a limit on the radius
+of a circle. But there's plenty of room for disagreement here, because the ancient Greeks didn't
+have any notion of a set of real numbers. For them, the thing we would call a number was simply a
+finite straight line (line segment) with a certain length. If postulate 3 says that we can make a circle given any radius,
+it's reasonable to interpret that as a statement that \emph{given any finite straight line} as the
+specification of the radius, we can make the circle. There is then no contradiction, because the too-long
+radius can't be specified in the first place. This muddle is similar to the kind of confusion that
+reigned for centuries after Newton: did infinitesimals lead to contradictions?
+
+In the 19th century, Lobachevsky and Bolyai came up with a version of Euclid's axioms
+that was more rigorously defined, and that was carefully engineered to avoid the kinds of
+contradictions that had previously been discovered in noneuclidean geometry. This is analogous
+to the invention of the transfer principle and the realization that the restriction to first-order
+logic was necessary. Lobachevsky and Bolyai slaved away for year after year proving new results
+in noneuclidean geometry, wondering whether they would ever reach a contradiction. Eventually they
+started to doubt that there were ever going to be contradictions, and finally they proved that
+the contradictions didn't exist.
+
+The technique for proving consistency was to make a \emph{model} of the noneuclidean
+system. Consider geometry done on the surface of a sphere. The word ``line'' in the axioms now
+has to be understood as referring to a great circle, i.e., one with the same radius as the sphere.
+The parallel postulate fails, because parallels don't exist: every great circle intersects every other great circle.
+One modification has to be made to the model in order to make it consistent with the first postulate.
+The constructions described in Euclid's postulates are tacitly assumed to be unique (and in more
+rigorous formulations are explicitly stated to be so). We want there to be a unique line defined by
+any two distinct points. This works fine on the sphere as long as the points aren't too far apart, but
+it fails if the points are antipodes, i.e., they lie at opposite sides of the sphere. For example, every line of longitude on the
+Earth's surface passes through both poles.
+The solution to this problem is to modify what we mean by ``point.'' Points at each
+other's antipodes are considered to be the \emph{same point}. (Or, equivalently, we can do geometry on
+a hemisphere, but agree that when we go off one edge, we ``wrap around'' to the opposite side.)
+
+This spherical model obeys all the postulates of this particular system of noneuclidean
+geometry. But consider now that we constructed it \emph{inside} a surrounding three-dimensional
+space in which the parallel postulate does hold. Now suppose we keep on proving theorems in this
+system of noneuclidean geometry, filling up page after page with proofs using words like ``line,''
+which we mentally associate with great circles on a certain sphere --- and eventually we reach a
+contradiction. But now we can go back through our proofs, and in every place where the word
+``line'' occurs we can cross it out with a red pencil and put in ``great circle on this particular
+sphere.'' It would now be a proof about \emph{Euclidean} geometry, and the contradiction would
+prove that \emph{Euclidean} geometry lacked self-consistency. We therefore arrive at the result
+that if noneuclidean geometry is inconsistent, so is Euclidean geometry. Since nobody believes
+that Euclidean geometry is inconsistent, this is considered the moral equivalent of proving
+noneuclidean geometry to be consistent.
+
+If you've been keeping the system of analogies in mind as you read this story, it should be clear
+what's coming next. If we want to prove that the hyperreals have the same consistency as the
+reals, we just have to construct a \emph{model} of the hyperreals using the reals. This is done
+in detail elsewhere (see Stroyan and Mathforum.org in the references, p. \pageref{references}).
+I'll just sketch
+the general idea. A hyperreal number is represented by an infinite sequence of real numbers.
+For example, the sequence
+\begin{equation*}
+  7, 7, 7, 7, \ldots
+\end{equation*}
+would be the hyperreal version of the number 7.
+A sequence like
+\begin{equation*}
+  1, 2, 3, \ldots
+\end{equation*}
+represents an infinite number, while
+\begin{equation*}
+  1, \frac{1}{2}, \frac{1}{3}, \ldots
+\end{equation*}
+is infinitesimal. All the arithmetic operations are defined by applying them to the corresponding
+members of the sequences. For example, the sum of the 7, 7, 7, \ldots sequence and the
+1, 2, 3, \ldots sequence would be 8, 9, 10, \ldots, which we interpret as a somewhat larger
+infinite number.
+
+The big problem in this approach is how to compare hyperreals, because a comparison like $<$
+is supposed to give an answer that is either true or false. It's not supposed to give a hyperreal
+number as the result.
+
+It's clear that 8, 9, 10, \ldots is greater than 1, 1, 1, \ldots, because
+every member of the first sequence is greater than every member of the second one.
+But is 8, 9, 10, \ldots greater than 9, 9, 9, \ldots? We want the answer to be ``yes,'' because
+we're thinking of the first one as an infinite number and the second one as the ordinary finite
+number 9. The first sequence is indeed greater than the second at almost every one of the infinite number
+of places at which they could be compared. The only place where it loses the contest is at the
+very first position, and the only spot where we get a tie is the second one. Essentially the idea is
+that we want to define a concept of what happens ``almost everywhere'' on some infinite list.
+If one thing happens in an infinite number of places and something else only happens at
+some finite number of spots, then the definition of ``almost everywhere'' is clear. What's harder
+is a comparison of something like these two sequences:
+\begin{equation*}
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \ldots
+\end{equation*}
+and
+\begin{equation*}
+  1, 3, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 3, \ldots
+\end{equation*}
+where the second sequence has longer and longer runs of ones interspersed between the threes.
+The two sequences are never equal at any position, so clearly they can't be considered to be
+equal as hyperreal numbers. But there is an infinite number of spots in which the first
+sequence is greater than the second, and likewise an infinite number in which it's less.
+It seems as though there are more in which it's greater, so we probably want to define the
+second sequence as being a hyperreal number that's less than 2. The problem is that it can
+be very difficult to write down an acceptable definition of this ``almost everywhere''
+notion. The answer is very technical, and I won't go into it here, but it can be done.
+Because two sequences could be equal almost everywhere, we end up having to define a hyperreal number not
+as a particular sequence but as a \emph{set} of sequences that are equal
+to each other almost everywhere.
+
+With the construction of this model, it is possible to prove that the hyperreals have the same level
+of consistency as the reals.
 
 \detour{transcendentals}{The transfer principle applied to functions}
 
@@ -160,11 +402,11 @@ can be extended to the hyperreals, and that means that we can define
 the \emph{hyperintegers},\index{hyperinteger}
 the set of hyperreals that satisfy $[x]=x$. The hyperintegers include the integers as a subset,
 but they also include infinite numbers. This is likely to seem magical, or even unreasonable, if we come
-at the hyperreals from the axiomatic point of view,
-as in this book and Keisler's more detailed treatment in
-\emph{Elementary Calculus: An Approach Using Infinitesimals}, \url{http://www.math.wisc.edu/~keisler/calc.html}.
-The extension of functions to the hyperreals seems much more natural in an alternative,
-constructive approach, which is explained admirably in an online article at \url{http://mathforum.org/dr.math/faq/analysis_hyperreals.html}.
+at the hyperreals from a purely axiomatic point of view.
+The extension of functions to the hyperreals seems much more natural in view of the
+construction of the hyperreals in terms of sequences given in the preceding section. For example,
+the sequence $1.3, 2.3, 3.3, 4.3, 5.3, \ldots$ represents an infinite number. If we apply the $[x]$
+function to it, we get $1, 2, 3, 4, 5, \ldots$, which is an infinite integer.
 
 \detour{chain-rule}{Proof of the chain rule}
 
@@ -319,9 +561,7 @@ for real arguments, so $y(x)=y_3$. The same reasoning applies if $x$ belongs to 
 $x$ must belong either to P or to Q, the result is proved.
 
 For an alternative proof of the
-intermediate value theorem by an entirely different technique, see Keisler's
-\emph{Elementary Calculus: An Approach Using Infinitesimals}, p. 162, available online at
-\verb@http://www.math.wisc.edu/~keisler/calc.html@.
+intermediate value theorem by an entirely different technique, see Keisler (references, p. \pageref{references}).
 
 As a side issue, we could ask whether there is anything like the intermediate value theorem
 that can be applied to functions on the hyperreals. Our definition of continuity on page \pageref{def-continuity}
@@ -373,9 +613,7 @@ set and start taking steps in a certain direction, without ever turning around, 
 approach some point in the set as a limit. (You might step over some gaps that aren't included in the set.)
 If the set was unbounded, you could just walk forever at a constant speed.
 If the set didn't contain its boundary point, then you could asymptotically approach the boundary, but
-the goal you were approaching wouldn't be a member of the set. In other words, every increasing
-sequence of numbers within a compact set approaches a limit within that set, and similarly for every
-decreasing sequence.
+the goal you were approaching wouldn't be a member of the set.
 
 The following theorem turns out to be the most difficult part of the discussion.
 
