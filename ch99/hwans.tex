@@ -185,48 +185,6 @@ rule to negative values of $k$. Although our example did come out consistent wit
 in general. An example can disprove a conjecture, but can't prove it. Of course, if we tried lots and lots of examples,
 and they all worked, our confidence in the conjecture would be increased.
 
-\hwsolnhdr{limit-of-sum}
-
-(a) The Weierstrass definition requires that if we're given a particular $\epsilon$, and we be able to find a $\delta$ so small that $f(x)+g(x)$
-differs from $F+G$ by at most $\epsilon$ for $|x-a|<\delta$. But the Weierstrass definition also tells us that given $\epsilon/2$, we can find
-a $\delta$ such that $f$ differs from $F$ by at most $\epsilon/2$, and likewise for $g$ and $G$. The amount by which $f+g$ differs from $F+G$
-is then at most $\epsilon/2+\epsilon/2$, which completes the proof.
-
-(b) Let $\der x$ be infinitesimal. Then the definition of the limit in terms of infinitesimals says that the standard part of $f(a+\der x)$
-differs at most infinitesimally from $F$, and likewise for $g$ and $G$. This means that $f+g$ differs from $F+G$ by the sum of two infinitesimals,
-which is itself an infinitesimal, and therefore the standard part of $f+g$ evaluated at $x+\der x$ equals $F+G$, satisfying the definition.
-
-\hwsolnhdr{nines-forever}
-
-The normal definition of a repeating decimal such as $0.999\ldots$ is that it is the \emph{limit} of the sequence
-$0.9$, $0.99$, $\ldots$, and the limit is a real number, by definition. $0.999\ldots$ equals 1.
-However, there is an intuition that the limiting process $0.9$, $0.99$, $\ldots$ ``never quite gets
-there.'' This intuition can, in fact, be formalized in the construction described beginning on
-page \pageref{detour:transfer-true}; we can define a hyperreal number based on the sequence
-$0.9$, $0.99$, $\ldots$, and it is a number infinitesimally less than one. This is not, however,
-the normal way of defining the symbol $0.999\ldots$, and we probably wouldn't want to change the
-definition so that it was. If it was, then $0.333\ldots$ would not equal $1/3$.
-
-\hwsolnhdr{chain-rule-units}
-
-Converting these into Leibniz notation, we find
-\begin{align*}
-  \frac{\der f}{\der x} &=   \frac{\der g}{\der h}
-\intertext{and}
-  \frac{\der f}{\der x} &=   \frac{\der g}{\der h}\cdot h  \qquad .
-\end{align*}
-To prove something is not true in general, it suffices to find one counterexample. Suppose
-that $g$ and $h$ are both unitless, and $x$ has units of seconds. The value of $f$ is defined by
-the output of $g$, so $f$ must also be unitless. Since $f$ is unitless, $\der f/\der x$ has units
-of inverse seconds (``per second''). But this doesn't match the units of either of the proposed expressions,
-because they're both unitless.
-The correct chain rule, however, works. In the equation
-\begin{equation*}
-  \frac{\der f}{\der x} =   \frac{\der g}{\der h}\cdot \frac{\der h}{\der x}  \qquad ,
-\end{equation*}
-the right-hand side consists of a unitless factor multiplied by a factor with units of
-inverse seconds, so its units are inverse seconds, matching the left-hand side.
-
 \hwsolnhdr{lennard-jones}
 
 A minimum would occur where the derivative was zero. First we rewrite the function in a form that we
@@ -267,6 +225,71 @@ $k$ are irrelevant, and can be set to 1. We then have
 \end{align*}
 Plugging in $r=\pm 1$, we get a positive result, which confirms that the concavity is upward.
 
+\hwsolnhdr{nines-forever}
+
+The normal definition of a repeating decimal such as $0.999\ldots$ is that it is the \emph{limit} of the sequence
+$0.9$, $0.99$, $\ldots$, and the limit is a real number, by definition. $0.999\ldots$ equals 1.
+However, there is an intuition that the limiting process $0.9$, $0.99$, $\ldots$ ``never quite gets
+there.'' This intuition can, in fact, be formalized in the construction described beginning on
+page \pageref{detour:transfer-true}; we can define a hyperreal number based on the sequence
+$0.9$, $0.99$, $\ldots$, and it is a number infinitesimally less than one. This is not, however,
+the normal way of defining the symbol $0.999\ldots$, and we probably wouldn't want to change the
+definition so that it was. If it was, then $0.333\ldots$ would not equal $1/3$.
+
+\hwsolnhdr{chain-rule-units}
+
+Converting these into Leibniz notation, we find
+\begin{align*}
+  \frac{\der f}{\der x} &=   \frac{\der g}{\der h}
+\intertext{and}
+  \frac{\der f}{\der x} &=   \frac{\der g}{\der h}\cdot h  \qquad .
+\end{align*}
+To prove something is not true in general, it suffices to find one counterexample. Suppose
+that $g$ and $h$ are both unitless, and $x$ has units of seconds. The value of $f$ is defined by
+the output of $g$, so $f$ must also be unitless. Since $f$ is unitless, $\der f/\der x$ has units
+of inverse seconds (``per second''). But this doesn't match the units of either of the proposed expressions,
+because they're both unitless.
+The correct chain rule, however, works. In the equation
+\begin{equation*}
+  \frac{\der f}{\der x} =   \frac{\der g}{\der h}\cdot \frac{\der h}{\der x}  \qquad ,
+\end{equation*}
+the right-hand side consists of a unitless factor multiplied by a factor with units of
+inverse seconds, so its units are inverse seconds, matching the left-hand side.
+
+\hwsolnhdr{resonance}
+
+We can make life a lot easier by observing that the function $s(f)$ will be maximized when the
+expression inside the square root is minimized. Also, since $f$ is squared every time it occurs,
+we can change to a variable $x=f^2$,
+and then once the optimal value of $x$ is found we can take its square root in order to find
+the optimal $f$. The function to be optimized is then
+\begin{equation*}
+  a(x-f_\zu{o}^2)^2+bx \qquad .
+\end{equation*}
+Differentiating this and setting the derivative equal to zero, we find
+\begin{equation*}
+  2a(x-f_\zu{o}^2)+b = 0 \qquad,
+\end{equation*}
+which results in $x=f_\zu{o}^2-b/2a$, or
+\begin{equation*}
+  f = \sqrt{f_\zu{o}^2-b/2a} \qquad,
+\end{equation*}
+(choosing the positive root, since $f$ represents a frequencies, and frequencies are positive by definition).
+Note that the quantity inside the square root involves the square of a frequency, but then we take its
+square root, so the units of the result turn out to be frequency, which makes sense. We can see that
+if $b$ is small, the second term is small, and the maximum occurs very nearly at
+$f_\zu{o}$. 
+
+There is one subtle issue that was glossed over above, which is that the graph on page \pageref{fig:resonance}
+shows \emph{two} extrema: a minimum at $f=0$ and a maximum at $f>0$. What happened to the $f=0$ minimum?
+The issue is that I was a little sloppy with the change of variables. Let $I$ stand for the quantity inside
+the square root in the original expression for $s$. Then by the chain rule,
+\begin{equation*}
+  \frac{\der s}{\der f} =   \frac{\der s}{\der I} \cdot \frac{\der I}{\der x} \cdot \frac{\der x}{\der f} .
+\end{equation*}
+We looked for the place where $\der I/\der x$ was zero, but $\der s/\der f$ could also be zero if one of the
+other factors was zero. This is what happens at $f=0$, where $\der x/\der f=0$.
+
 \hwsolnhdr{prove-n-extrema}
 Since polynomials don't have kinks or endpoints in their graphs, the maxima and minima must be points where the
 derivative is zero. Differentiation bumps down all the powers of a polynomial by one, so 
@@ -276,7 +299,7 @@ quadratic formula. (If the number inside the square root in the quadratic formul
 there could be less than two real roots.) That means a third-order polynomial can have at most two
 maxima or minima.
 
-\beginsolutions{1}
+\beginsolutions{2}
 
 \hwsolnhdr{fourth-power}
 
@@ -559,6 +582,17 @@ Let $f=\der x^k/\der x$ be the unknown function. Then
 \end{align*}
 where we can use the ordinary rule for derivatives of powers on $x^{-k+1}$, since $-k+1$ is positive. Solving for
 $f$, we have the desired result.
+
+\hwsolnhdr{limit-of-sum}
+
+(a) The Weierstrass definition requires that if we're given a particular $\epsilon$, and we be able to find a $\delta$ so small that $f(x)+g(x)$
+differs from $F+G$ by at most $\epsilon$ for $|x-a|<\delta$. But the Weierstrass definition also tells us that given $\epsilon/2$, we can find
+a $\delta$ such that $f$ differs from $F$ by at most $\epsilon/2$, and likewise for $g$ and $G$. The amount by which $f+g$ differs from $F+G$
+is then at most $\epsilon/2+\epsilon/2$, which completes the proof.
+
+(b) Let $\der x$ be infinitesimal. Then the definition of the limit in terms of infinitesimals says that the standard part of $f(a+\der x)$
+differs at most infinitesimally from $F$, and likewise for $g$ and $G$. This means that $f+g$ differs from $F+G$ by the sum of two infinitesimals,
+which is itself an infinitesimal, and therefore the standard part of $f+g$ evaluated at $x+\der x$ equals $F+G$, satisfying the definition.
 
 \beginsolutions{3}
 
