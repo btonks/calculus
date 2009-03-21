@@ -420,6 +420,12 @@ the outside function, the sine in this case, and then multiply by the derivative
 need to invent a third, intermediate variable, as we did here with $y$.
 \end{eg}
 
+\begin{eg}\label{eg:chain-rule-without-leibniz}
+Let's express the chain rule without the use of the Leibniz notation.
+Let the function $f$ be defined by $f(x)=g(h(x))$. Then the derivative
+of $f$ is given by $f'(x)=g'(h(x))\cdot h'(x)$.
+\end{eg}
+
 \section{Exponentials and logarithms}
 
 \subsection{The exponential}\index{derivative!of the exponential}\index{exponential!derivative of}
@@ -1600,5 +1606,18 @@ Prove that the linear function $y=ax+b$ is continuous, first using the definitio
 continuity in terms of infinitesimals, and then using the definition in terms of
 limits.
 \end{hw}
+
+\begin{hwwithsoln}{nines-forever}
+Discuss the following statement: \emph{The repeating decimal $0.999\ldots$ is infinitesimally less than one}.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{chain-rule-units}
+Example \ref{eg:chain-rule-without-leibniz} on page \pageref{eg:chain-rule-without-leibniz}
+expressed the chain rule without the Leibniz notation, writing a function $f$ defined by
+$f(x)=g(h(x))$. Suppose that you're trying to remember the rule, and two of the possibilities
+that come to mind are $f'(x)=g'(h(x))$ and $f'(x)=g'(h(x))h(x)$. Show that neither of these
+can possibly be right, by considering the case where $x$ has units. You may find it helpful
+to convert both expressions back into the Leibniz notation.
+\end{hwwithsoln}
 
 \end{hwsection}

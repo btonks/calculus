@@ -196,6 +196,36 @@ is then at most $\epsilon/2+\epsilon/2$, which completes the proof.
 differs at most infinitesimally from $F$, and likewise for $g$ and $G$. This means that $f+g$ differs from $F+G$ by the sum of two infinitesimals,
 which is itself an infinitesimal, and therefore the standard part of $f+g$ evaluated at $x+\der x$ equals $F+G$, satisfying the definition.
 
+\hwsolnhdr{nines-forever}
+
+The normal definition of a repeating decimal such as $0.999\ldots$ is that it is the \emph{limit} of the sequence
+$0.9$, $0.99$, $\ldots$, and the limit is a real number, by definition. $0.999\ldots$ equals 1.
+However, there is an intuition that the limiting process $0.9$, $0.99$, $\ldots$ ``never quite gets
+there.'' This intuition can, in fact, be formalized in the construction described beginning on
+page \pageref{detour:transfer-true}; we can define a hyperreal number based on the sequence
+$0.9$, $0.99$, $\ldots$, and it is a number infinitesimally less than one. This is not, however,
+the normal way of defining the symbol $0.999\ldots$, and we probably wouldn't want to change the
+definition so that it was. If it was, then $0.333\ldots$ would not equal $1/3$.
+
+\hwsolnhdr{chain-rule-units}
+
+Converting these into Leibniz notation, we find
+\begin{align*}
+  \frac{\der f}{\der x} &=   \frac{\der g}{\der h}
+\intertext{and}
+  \frac{\der f}{\der x} &=   \frac{\der g}{\der h}\cdot h  \qquad .
+\end{align*}
+To prove something is not true in general, it suffices to find one counterexample. Suppose
+that $g$ and $h$ are both unitless, and $x$ has units of seconds. The value of $f$ is defined by
+the output of $g$, so $f$ must also be unitless. Since $f$ is unitless, $\der f/\der x$ has units
+of inverse seconds (``per second''). But this doesn't match the units of either of the proposed expressions,
+because they're both unitless.
+The correct chain rule, however, works. In the equation
+\begin{equation*}
+  \frac{\der f}{\der x} =   \frac{\der g}{\der h}\cdot \frac{\der h}{\der x}  \qquad ,
+\end{equation*}
+the right-hand side consists of a unitless factor multiplied by a factor with units of
+inverse seconds, so its units are inverse seconds, matching the left-hand side.
 
 \hwsolnhdr{lennard-jones}
 
