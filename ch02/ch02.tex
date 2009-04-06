@@ -72,6 +72,103 @@ required significant sweat and ingenuity when proved on page \pageref{detour:pol
 and not only that but the old method would have required a completely different method of proof for a function that
 wasn't a polynomial, whereas the new one can be applied more generally, as shown in the following example.
 
+It's easy to get the mistaken impression that infinitesimals exist in some remote fairyland where we can never
+touch them. This may be true in the same artsy-fartsy sense that we can never truly understand $\sqrt{2}$, because
+its decimal expansion goes on forever, and we therefore can never compute it exactly. But in practical work,
+that doesn't stop us from working with $\sqrt{2}$. We just approximate it as, e.g., 1.41. Infinitesimals
+are no more or less mysterious than irrational numbers, and in particular we can represent them concretely on a computer.
+If you go to \verb@lightandmatter.com/calc/inf@, you'll find a web-based calculator called Inf,\index{Inf (calculator)}
+which can handle infinite and infinitesimal numbers. It has a built-in symbol, \verb@d@, which represents an infinitesimally
+small number such as the $\der x$'s and $\der t$'s we've been handling symbolically.
+
+Let's use Inf to verify that the derivative of $t^3$, evaluated at $t=1$, is equal to 3, as found by plugging in to
+the result of example \ref{eg:third-power}. The \verb@:@ symbol is the prompt that shows you Inf is ready to accept
+your typed input.
+
+\begin{Code}
+  \ii : ((1+d)^3-1)/d
+  \oo{3+3d+d^2}
+\end{Code}
+
+As claimed, the result is 3, or close enough to 3 that the infinitesimal error doesn't matter in real life.
+It might look like Inf did this example by using algebra to simplify the expression, but in fact Inf doesn't
+know anything about algebra. One way to see this is to use Inf to compare \verb@d@ with various real numbers:
+
+\begin{Code}
+  \ii : d<1
+  \oo{true}
+  \ii : d<0.01
+  \oo{true}
+  \ii : d<10^-10
+  \oo{true}
+  \ii : d<0
+  \oo{false}
+\end{Code}
+
+If \verb@d@ were just a variable being treated according to the axioms of algebra, there would be no way
+to tell how it compared with other numbers without having some special information. Inf doesn't know
+algebra, but it does know that \verb@d@ is a positive number that is less than any positive \emph{real} number
+that can be represented using decimals or scientific notation.
+
+\pagebreak
+
+%%graph%% geometric-series func=1/(1-x) format=eps xlo=-1.0 xhi=1 ylo=0 yhi=3 with=lines x=t y=x samples=300 xtic_spacing=1 ytic_spacing=1
+\smallfig{geometric-series}{The function $x=1/(1-t)$.}
+
+\begin{eg}\label{eg:geometric-series}
+\egquestion
+Find the derivative of $1/(1-t)$, evaluated at $t=0$.
+
+\eganswer
+The graph shows what the function looks like. It blows up to infinity at $t=1$, but it's well behaved at $t=0$, where it has a
+positive slope.
+
+For insight, let's calculate some points on the curve. The point at which we're differentiating is
+$(0,1)$. If we put in a small, positive value of $t$, we can observe how much the result increases
+relative to 1, and this will give us an approximation to the derivative. For example, we find
+that at $t=0.001$, the function has the value 1.001001001001, and so the derivative
+is approximately $(1.001-1)/(.001-0)$, or about 1. We can therefore conjecture that the derivative
+is exactly 1, but that's not the same as proving it.
+
+But let's take another look at that number 1.001001001001. It's clearly a repeating decimal.
+In other words, it appears that
+\begin{equation*}
+       \frac{1}{1-1/1000} = 1+\frac{1}{1000}+\left(\frac{1}{1000}\right)^2+\ldots \qquad ,
+\end{equation*}
+and we can easily verify this by multiplying both sides of the equation by $1-1/1000$ and collecting like
+powers. This is a special case of the geometric series\index{geometric series}
+\begin{equation*}
+       \frac{1}{1-t} = 1+t+t^2+\ldots \qquad ,
+\end{equation*}
+which can be derived by doing synthetic division\index{synthetic division} (the equivalent of long
+division for polynomials), or simply verified, after forming the conjecture based on the numerical
+example above, by multiplying both sides by $1-t$.
+
+As we'll see in section \ref{sec:safe-infinitesimals}, infinitesimals obey all the same elementary laws of algebra as the real numbers,
+so the above derivation also holds for an infinitesimal value of $t$.
+We can verify the result using Inf:
+\begin{Code}
+  \ii : 1/(1-d)
+  \oo{1+d+d^2+d^3+d^4}
+\end{Code}
+Notice, however, that the series is truncated after the first five terms. This is similar to
+the truncation that happens when you ask your calculator to find $\sqrt{2}$ as a decimal.
+
+The result for the derivative is
+\begin{align*}
+  \frac{\der x}{\der t} &= \frac{\left(1+\der t+{\der t}^2+\ldots\right)-1}{1+\der t-1} \\
+                        &= 1+\ldots \qquad ,
+\end{align*}
+where as usual we discard infinitesimal terms at the end.
+\end{eg}
+
+Example \ref{eg:geometric-series} required some
+ingenuity. By the end of this chapter you'll learn general techniques for
+cranking out any derivative cookbook-style.
+%
+%%graph%% derivative-of-sine func=sin(x) format=eps xlo=0 xhi=6.283 ylo=-1 yhi=1 with=lines x=t y=x samples=300 xtic_spacing=1 ytic_spacing=1 ; func=cos(x)
+\smallfig{derivative-of-sine}{Graphs of $\sin t$, and its derivative $\cos t$.}
+
 \begin{eg}\label{eg:derivative-of-sin}
 The derivative of $x=\sin t$, with $t$ in units of radians, is
 \begin{equation*}
@@ -87,14 +184,30 @@ we have
 \frac{\der x}{\der t}   &= \frac{\cos t \: \der t}{\der t} \\
                         &= \cos t \qquad .
 \end{align*}
-But are the approximations good enough? The situation is similar to the one we encountered earlier,
-in which we computed $(t+\der t)^2$, and neglected the $\der t^2$ term represented by the small square
-in figure \figref{t-squared-geometrically}. Being a little less cavalier, I should demonstrate
+This is all there is to the computation of the derivative. 
+But were the approximations good enough?
+Being a little less cavalier, I should demonstrate
 explicitly that the error introduced by the small-angle approximations is really of the same order
 of magnitude as $\der t^2$, i.e., a number that is infinitesimally small compared even to the
-infinitesimal size of $\der t$; I've done this on page \pageref{detour:sin-rigor}.\index{derivative!of the sine}\index{sine!derivative of}
-There's even a second subtle issue that I've swept under the rug, and I'll come back to that on page
-\pageref{transcendentals}.
+infinitesimal size of $\der t$. A quick and dirty way to check whether this is likely to be true is to
+use Inf to calculate $\sin(t+\der t)$ at some specific value of $t$. For example, at $t=1$ we have
+this result:\footnote{If you're wondering how Inf calculates this kind of thing, the answer is that it uses something called
+a Taylor series, discussed in section \ref{sec:taylor}. Using Inf here without knowing yet how Taylor series
+work is like using your calculator as a black box to extract the square root of $\sqrt{2}$ without knowing how
+it does it.}
+\begin{Code}
+  \ii : sin(1+d)
+  \oo{(0.84147)}
+  \oo{+(0.54030)d}
+  \oo{+(-0.42074)d^2}
+  \oo{+(-0.09006)d^3}
+  \oo{+(0.03506)d^4}
+\end{Code}
+The small-angle approximations give $\sin(1+d)\approx\sin 1+(\cos 1)d$.
+The coefficients of the first two terms of the exact result are, as expected $\sin(1)=0.84147$ and $\cos(1)=0.5403\ldots$, so although the
+small-angle approximations have introduced some errors, they involve only higher powers of $\der t$, as claimed.
+On page \pageref{detour:sin-rigor} I've given a general proof that works without having to pick a specific
+value of $t$ to check.\index{derivative!of the sine}\index{sine!derivative of}
 
 Figure \figref{derivative-of-sine} shows the graphs of the function and its derivative. Note how the two
 graphs correspond. At $t=0$, the slope of $\sin t$ is at its largest, and is positive; this is where
@@ -105,9 +218,6 @@ $\sin t$ has its maximum negative slope, and $\cos t$ is at its most negative ex
 Physically, $\sin t$ could represent the position of a pendulum as it moved back and forth from left
 to right, and $\cos t$ would then be the pendulum's velocity.
 \end{eg}
-%
-%%graph%% derivative-of-sine func=sin(x) format=eps xlo=0 xhi=6.283 ylo=-1 yhi=1 with=lines x=t y=x samples=300 xtic_spacing=1 ytic_spacing=1 ; func=cos(x)
-\smallfig{derivative-of-sine}{Graphs of $\sin t$, and its derivative $\cos t$.}
 
 \begin{eg}\label{eg:dcos}\index{derivative!of the cosine}\index{cosine!derivative of}
 What about the derivative of the cosine? The cosine and the sine are really the same function, shifted to the left or right by
@@ -119,7 +229,7 @@ the cosine must be a cosine shifted to the left by $\pi/2$:
 \end{align*}
 \end{eg}
 
-\section{Safe use of infinitesimals}\index{infinitesimal number!safe use of}
+\section{Safe use of infinitesimals}\label{sec:safe-infinitesimals}\index{infinitesimal number!safe use of}
 
 The idea of infinitesimally small numbers has always irked purists. One prominent critic of the calculus was Newton's
 contemporary George Berkeley, the Bishop of Cloyne. Although some of his complaints are clearly wrong (he denied the
@@ -287,7 +397,7 @@ $1.01^2=1.0201$, $1.001^2=1.002001$, \ldots, it's clear that the number represen
 smaller faster than the contribution due to the digit 2 in the middle.
 
 \label{transcendentals}
-One subtle issue here, which I alluded to in the differentiation of the sine function on page \pageref{eg:derivative-of-sin},
+One subtle issue here, which I avoided mentioning in the differentiation of the sine function on page \pageref{eg:derivative-of-sin},
 is whether the transfer principle is sufficient to let us define all the functions that
 appear as familiar keys on a calculator: $x^2$, $\sqrt{x}$, $\sin x$, $\cos x$, $e^x$, and so on.
 After all, these functions were originally defined as rules that would take a real number as an input
@@ -295,6 +405,8 @@ and give a real number as an output. It's not trivially obvious that their defin
 to take a hyperreal number as an input and give back a hyperreal as an output. Essentially the answer is that
 we can apply the transfer principle to them just as we would to statements about simple arithmetic, but I've discussed
 this a little more on page \pageref{detour:transcendentals}.
+
+\pagebreak
 
 \section{The product rule}\index{derivative!product rule}\index{product rule}
 
@@ -392,7 +504,7 @@ a trick, and also applies to values of $n$ that aren't integers.\label{coy-der-x
 
 \widefig[t]{clowns}{Three clowns on seesaws demonstrate the chain rule.}
 
-\pagebreak[4]\section{The chain rule}\label{sec:chain-rule}\index{derivative!chain rule}\index{chain rule}
+\section{The chain rule}\label{sec:chain-rule}\index{derivative!chain rule}\index{chain rule}
 
 Figure \figref{clowns} shows three clowns on seesaws. If the leftmost clown moves down by a distance $\der x$,
 the middle one will come up by $\der y$, but this will also cause the one on the right to move down by $\der z$.
@@ -429,9 +541,9 @@ of $f$ is given by $f'(x)=g'(h(x))\cdot h'(x)$.
 \section{Exponentials and logarithms}
 
 \subsection{The exponential}\index{derivative!of the exponential}\index{exponential!derivative of}
-An important application of the chain rule comes up when we want to differentiate
-the omnipresent function $e^x$, where $e=2.71828\ldots$ is the base of natural
-logarithms. We have
+The exponential function $e^x$, where $e=2.71828\ldots$ is the base of natural
+logarithms, comes constantly up in applications as diverse as credit-card interest, the growth of
+animal populations, and electric circuits. For its derivative we have
 \begin{align*}
   \frac{\der e^x}{\der x} &= \frac{e^{x+\der x}-e^x}{\der x} \\
                           &= \frac{e^x e^{\der x}-e^x}{\der x} \\
@@ -443,10 +555,22 @@ $e^x$, multiplied by some unknown constant,
 \begin{equation*}
   \frac{\der e^x}{\der x} = c\:e^x .
 \end{equation*}
-A rough check by graphing at, say $x=0$, shows that the slope is close to 1, so $c$ is close to
-1. But how do we know it's exactly one? The proof is given on page \pageref{detour:exp}.\label{main:exp}
 
-\pagebreak[4]
+\vfill\pagebreak
+
+A rough check by graphing at, say $x=0$, shows that the slope is close to 1, so $c$ is close to
+1. Numerical calculation also shows that, for example, $e^{0.001}=1.00100050016671$ is very close
+to 1. But how do we know it's exactly one when $\der x$ is really infinitesimal?
+We can use Inf:
+\begin{Code}
+  \ii : [exp(d)-1]/d
+  \oo{1+0.5d+...}
+\end{Code}
+(The ... indicates where I've snipped some higher-order terms out of the output.) It seems clear
+that $c$ is equal to 1 except for negligible terms involving higher powers of $\der x$.
+A rigorous proof is given on page \pageref{detour:exp}.\label{main:exp}
+
+\vfill\pagebreak
 
 \begin{eg}\label{eg:caffeine}
 \egquestion The concentration of a foreign substance in the bloodstream generally falls off exponentially
@@ -515,6 +639,10 @@ $x$ to be a function of $y$. Applying this to the natural logarithm,
   \frac{\der \ln x}{\der x} &= \frac{1}{x} \qquad .
 \end{align*}
 
+\fig{power-ladder}{Differentiation and integration of functions of the form $x^n$. Constants
+out in front of the functions are not shown, so keep in mind that, for example, the derivative
+of $x^2$ isn't $x$, it's $2x$.}
+
 This is noteworthy because it shows that there must be an exception to the rule
 that the derivative of $x^n$ is $nx^{n-1}$, and the integral of $x^{n-1}$ is
 $x^n/n$. (On page \pageref{coy-der-x-to-neg-k} I remarked that this rule could
@@ -535,12 +663,8 @@ The functions $x^n$ form a kind of ladder, with differentiation taking us down
 one rung, and integration taking us up. However, there are two special cases where differentiation
 takes us off the ladder entirely.
 
-\fig{power-ladder}{Differentiation and integration of functions of the form $x^n$. Constants
-out in front of the functions are not shown, so keep in mind that, for example, the derivative
-of $x^2$ isn't $x$, it's $2x$.}
-
 \begin{eg}\label{eg:der-x-to-any-k}
-\egquestion Prove $\der(x^n)/\der x=nx^{n-1}$ for any real value of $n$.
+\egquestion Prove $\der(x^n)/\der x=nx^{n-1}$ for any real value of $n$, not just an integer.
 
 \eganswer
 \begin{align*}
@@ -742,6 +866,8 @@ and integrals using simple computer programs, using Yacas.
 The following little Yacas program does the same thing as the set of calculator
 operations shown above:\index{differentiation!computer-aided!numerical}
 
+\pagebreak
+
 \restartLineNumbers
 \begin{eg}
 \startcodeeg
@@ -754,6 +880,7 @@ operations shown above:\index{differentiation!computer-aided!numerical}
 \end{Code}
 \finishcodeeg
 \end{eg}
+
 
 (I've omitted all of Yacas's output except for the final result.)
 Line 1 defines the function we want to differentiate. Lines 2 and
@@ -884,9 +1011,9 @@ theorem, there must be a solution in the interval $-1 \le x \le 1$. The graph, \
 this, and shows that there is only one solution.
 \end{eg}
 
+
 %%graph%% x-minus-cos-x func=(x-cos(x)) format=eps xlo=-8 xhi=8 ylo=-8 yhi=8 xtic_spacing=4 ytic_spacing=4
 \smallfig{x-minus-cos-x}{The function $x-\cos x$ constructed in example \ref{eg:x-minus-cos-x}.}
-
 
 
 \begin{eg}
@@ -943,7 +1070,7 @@ It follows from the intermediate value theorem that there are infinitely many so
 
 In chapter \ref{ch:rates-of-change}, we saw that locating maxima and minima of functions may in general
 be fairly difficult, because there are so many different ways in which a function can attain an extremum:
-e.g., at an endpoint, at a place where its derivative is zero, or at a nondifferentiable point. The following
+e.g., at an endpoint, at a place where its derivative is zero, or at a nondifferentiable kink. The following
 theorem allows us to make a very general statement about all these possible cases, assuming only continuity.
 
 The \emph{extreme value theorem}\label{extreme-value-theorem}
@@ -958,7 +1085,7 @@ $x \ge 1$; this function never gets bigger than 1, but it never attains a value 
 
 The extreme value theorem is proved, in a somewhat more general form, on page \pageref{detour:extreme-value}.
 
-\pagebreak
+\vfill\pagebreak
 
 \begin{eg}
 \egquestion Find the maximum value of the polynomial $P(x)=x^3+x^2+x+1$ for $-5 \le x \le 5$.
