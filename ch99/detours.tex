@@ -81,15 +81,46 @@ the desired result.
 
 Some ideas in this proof are due to Jerome Keisler (see references, p. \pageref{references}).
 
-On page \pageref{eg:derivative-of-sin}, I computed
+On page \pageref{eg:derivative-of-sin}, I computed the derivative of $\sin t$ to be $\cos t$
+as follows:
 \begin{align*}
   \der x &= \sin(t+\der t)-\sin t \qquad , \\
          &= \sin t \: \cos \der t \\
          &\quad + \cos t \: \sin \der t - \sin t \\
-         &\approx \cos t \: \der t \qquad .
+         &= \cos t \: \der t + \ldots\qquad .
 \end{align*}
-Here I'll prove that the error introduced by the small-angle approximations really
-is of order $\der t^2$. We have
+We want to prove prove that the error ``\ldots'' introduced by the small-angle approximations really
+is of order $\der t^2$. 
+
+A quick and dirty way to check whether this is likely to be true is to
+use Inf to calculate $\sin(t+\der t)$ at some specific value of $t$. For example, at $t=1$ we have
+this result:
+\begin{Code}
+  \ii : sin(1+d)
+  \oo{(0.84147)+(0.54030)d}
+  \oo{+(-0.42074)d^2+(-0.09006)d^3}
+  \oo{+(0.03506)d^4}
+\end{Code}
+The small-angle approximations give $\sin(1+d)\approx\sin 1+(\cos 1)d$.
+The coefficients of the first two terms of the exact result are, as expected $\sin(1)=0.84147$ and $\cos(1)=0.5403\ldots$, so although the
+small-angle approximations have introduced some errors, they involve only higher powers of $\der t$, as claimed.
+
+The demonstration with Inf has two shortcomings. One is that it only works for $t=1$, but we need to
+prove that the result for all values of $t$. That doesn't mean that the check for $t=1$ was useless.
+Even though a general mathematical statement about all numbers can never be \emph{proved} by demonstrating
+specific examples for which it succeeds, a single counterexample suffices to \emph{disprove} it.
+The check for $t=1$ was worth doing, because if the first term had come out to be
+0.88888, it would have immediately disproved our claim, thereby
+saving us from wasting hours attempting to prove something that wasn't true.
+
+The other problem is that I've never explained how Inf calculates this kind of thing.
+The answer is that it uses something called
+a Taylor series, discussed in section \ref{sec:taylor}. Using Inf here without knowing yet how Taylor series
+work is like using your calculator as a ``black box'' to extract the square root of $\sqrt{2}$ without knowing how
+it does it. Not knowing the inner workings of the black box makes the demonstration less than satisfying.
+
+In any case, this preliminary check makes it sound like it's reasonable to go on and try to produce a
+real proof. We have
 \begin{equation*}
   \sin(t+\der t) = \sin t + \cos t \der t - E \qquad ,
 \end{equation*}

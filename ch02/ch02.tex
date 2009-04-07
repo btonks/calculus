@@ -70,7 +70,8 @@ where the dots indicate infinitesimal terms that we can neglect.
 This result
 required significant sweat and ingenuity when proved on page \pageref{detour:polynomial-proof} by the methods of chapter 1,
 and not only that but the old method would have required a completely different method of proof for a function that
-wasn't a polynomial, whereas the new one can be applied more generally, as shown in the following example.
+wasn't a polynomial, whereas the new one can be applied more generally, as we'll see presently in examples
+\ref{eg:derivative-of-sin}-\ref{eg:geometric-series}.
 
 It's easy to get the mistaken impression that infinitesimals exist in some remote fairyland where we can never
 touch them. This may be true in the same artsy-fartsy sense that we can never truly understand $\sqrt{2}$, because
@@ -112,6 +113,57 @@ that can be represented using decimals or scientific notation.
 
 \pagebreak
 
+%%graph%% derivative-of-sine func=sin(x) format=eps xlo=0 xhi=6.283 ylo=-1 yhi=1 with=lines x=t y=x samples=300 xtic_spacing=1 ytic_spacing=1 ; func=cos(x)
+\smallfig{derivative-of-sine}{Graphs of $\sin t$, and its derivative $\cos t$.}
+
+\begin{eg}\label{eg:derivative-of-sin}\index{derivative!of the sine}\index{sine!derivative of}
+The derivative of $x=\sin t$, with $t$ in units of radians, is
+\begin{equation*}
+  \frac{\der x}{\der t} = \frac{\sin(t+\der t)-\sin t}{\der t} \qquad , \\
+\end{equation*}
+and with the trig identity $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$, this becomes
+\begin{equation*}
+                        = \frac{\sin t \: \cos \der t + \cos t \: \sin \der t - \sin t}{\der t} \qquad .\\
+\end{equation*}
+Applying the small-angle approximations $\sin u\approx u$ and $\cos u\approx 1$,
+we have
+\begin{align*}
+\frac{\der x}{\der t}   &= \frac{\cos t \: \der t}{\der t} + \ldots\\
+                        &= \cos t + \ldots \qquad ,
+\end{align*}
+where ``\ldots'' represents the error caused by the small-angle approximations.
+
+This is essentially all there is to the computation of the derivative, except for the remaining technical
+point that we haven't proved that the small-angle approximations are good enough. In example \ref{eg:third-power} on page \pageref{eg:third-power},
+when we calculated the derivative of $t^3$, the resulting expression for the quotient $\der x/\der t$
+came out in a form in which we could inspect the ``\ldots'' terms and verify before discarding them that they were infinitesimal.
+The issue is less trivial in the present example.
+This point is addressed more rigorously on page \pageref{detour:sin-rigor}.
+
+Figure \figref{derivative-of-sine} shows the graphs of the function and its derivative. Note how the two
+graphs correspond. At $t=0$, the slope of $\sin t$ is at its largest, and is positive; this is where
+the derivative, $\cos t$, attains its maximum positive value of 1. At $t=\pi/2$, $\sin t$ has reached
+a maximum, and has a slope of zero; $\cos t$ is zero here. At $t=\pi$, in the middle of the graph,
+$\sin t$ has its maximum negative slope, and $\cos t$ is at its most negative extreme of $-1$.
+
+Physically, $\sin t$ could represent the position of a pendulum as it moved back and forth from left
+to right, and $\cos t$ would then be the pendulum's velocity.
+\end{eg}
+
+\begin{eg}\label{eg:dcos}\index{derivative!of the cosine}\index{cosine!derivative of}
+What about the derivative of the cosine? The cosine and the sine are really the same function, shifted to the left or right by
+$\pi/2$. If the derivative of the sine is the same as itself, but shifted to the left by $\pi/2$, then the derivative of
+the cosine must be a cosine shifted to the left by $\pi/2$:
+\begin{align*}
+  \frac{\der\: \cos t}{\der t} &= \cos(t+\pi/2) \\
+                               &= -\sin t \qquad .
+\end{align*}
+\end{eg}
+The next example will require a little trickery.
+By the end of this chapter you'll learn general techniques for
+cranking out any derivative cookbook-style, without having to come
+up with any tricks.
+
 %%graph%% geometric-series func=1/(1-x) format=eps xlo=-1.0 xhi=1 ylo=0 yhi=3 with=lines x=t y=x samples=300 xtic_spacing=1 ytic_spacing=1
 \smallfig{geometric-series}{The function $x=1/(1-t)$.}
 
@@ -140,11 +192,16 @@ powers. This is a special case of the geometric series\index{geometric series}
 \begin{equation*}
        \frac{1}{1-t} = 1+t+t^2+\ldots \qquad ,
 \end{equation*}
-which can be derived by doing synthetic division\index{synthetic division} (the equivalent of long
+which can be derived\footnote{As a technical aside, it's not necessary for our present purposes
+to go into the issue of how to make the most general possible definition of what is meant by
+a sum like this one which has an infinite number of terms; the only fact we'll need here is that
+the error in \emph{finite} sum obtained by leaving out the ``\ldots'' has only higher powers of $t$.}
+by doing synthetic division\index{synthetic division} (the equivalent of long
 division for polynomials), or simply verified, after forming the conjecture based on the numerical
 example above, by multiplying both sides by $1-t$.
 
-As we'll see in section \ref{sec:safe-infinitesimals}, infinitesimals obey all the same elementary laws of algebra as the real numbers,
+As we'll see in section \ref{sec:safe-infinitesimals}, and have been implicitly assuming so far,
+infinitesimals obey all the same elementary laws of algebra as the real numbers,
 so the above derivation also holds for an infinitesimal value of $t$.
 We can verify the result using Inf:
 \begin{Code}
@@ -157,77 +214,11 @@ the truncation that happens when you ask your calculator to find $\sqrt{2}$ as a
 The result for the derivative is
 \begin{align*}
   \frac{\der x}{\der t} &= \frac{\left(1+\der t+{\der t}^2+\ldots\right)-1}{1+\der t-1} \\
-                        &= 1+\ldots \qquad ,
+                        &= 1+\ldots \qquad .
 \end{align*}
-where as usual we discard infinitesimal terms at the end.
 \end{eg}
 
-Example \ref{eg:geometric-series} required some
-ingenuity. By the end of this chapter you'll learn general techniques for
-cranking out any derivative cookbook-style.
 %
-%%graph%% derivative-of-sine func=sin(x) format=eps xlo=0 xhi=6.283 ylo=-1 yhi=1 with=lines x=t y=x samples=300 xtic_spacing=1 ytic_spacing=1 ; func=cos(x)
-\smallfig{derivative-of-sine}{Graphs of $\sin t$, and its derivative $\cos t$.}
-
-\begin{eg}\label{eg:derivative-of-sin}
-The derivative of $x=\sin t$, with $t$ in units of radians, is
-\begin{equation*}
-  \frac{\der x}{\der t} = \frac{\sin(t+\der t)-\sin t}{\der t} \qquad , \\
-\end{equation*}
-and with the trig identity $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$, this becomes
-\begin{equation*}
-                        = \frac{\sin t \: \cos \der t + \cos t \: \sin \der t - \sin t}{\der t} \qquad .\\
-\end{equation*}
-Applying the small-angle approximations $\sin u\approx u$ and $\cos u\approx 1$,
-we have
-\begin{align*}
-\frac{\der x}{\der t}   &= \frac{\cos t \: \der t}{\der t} \\
-                        &= \cos t \qquad .
-\end{align*}
-This is all there is to the computation of the derivative. 
-But were the approximations good enough?
-Being a little less cavalier, I should demonstrate
-explicitly that the error introduced by the small-angle approximations is really of the same order
-of magnitude as $\der t^2$, i.e., a number that is infinitesimally small compared even to the
-infinitesimal size of $\der t$. A quick and dirty way to check whether this is likely to be true is to
-use Inf to calculate $\sin(t+\der t)$ at some specific value of $t$. For example, at $t=1$ we have
-this result:\footnote{If you're wondering how Inf calculates this kind of thing, the answer is that it uses something called
-a Taylor series, discussed in section \ref{sec:taylor}. Using Inf here without knowing yet how Taylor series
-work is like using your calculator as a black box to extract the square root of $\sqrt{2}$ without knowing how
-it does it.}
-\begin{Code}
-  \ii : sin(1+d)
-  \oo{(0.84147)}
-  \oo{+(0.54030)d}
-  \oo{+(-0.42074)d^2}
-  \oo{+(-0.09006)d^3}
-  \oo{+(0.03506)d^4}
-\end{Code}
-The small-angle approximations give $\sin(1+d)\approx\sin 1+(\cos 1)d$.
-The coefficients of the first two terms of the exact result are, as expected $\sin(1)=0.84147$ and $\cos(1)=0.5403\ldots$, so although the
-small-angle approximations have introduced some errors, they involve only higher powers of $\der t$, as claimed.
-On page \pageref{detour:sin-rigor} I've given a general proof that works without having to pick a specific
-value of $t$ to check.\index{derivative!of the sine}\index{sine!derivative of}
-
-Figure \figref{derivative-of-sine} shows the graphs of the function and its derivative. Note how the two
-graphs correspond. At $t=0$, the slope of $\sin t$ is at its largest, and is positive; this is where
-the derivative, $\cos t$, attains its maximum positive value of 1. At $t=\pi/2$, $\sin t$ has reached
-a maximum, and has a slope of zero; $\cos t$ is zero here. At $t=\pi$, in the middle of the graph,
-$\sin t$ has its maximum negative slope, and $\cos t$ is at its most negative extreme of $-1$.
-
-Physically, $\sin t$ could represent the position of a pendulum as it moved back and forth from left
-to right, and $\cos t$ would then be the pendulum's velocity.
-\end{eg}
-
-\begin{eg}\label{eg:dcos}\index{derivative!of the cosine}\index{cosine!derivative of}
-What about the derivative of the cosine? The cosine and the sine are really the same function, shifted to the left or right by
-$\pi/2$. If the derivative of the sine is the same as itself, but shifted to the left by $\pi/2$, then the derivative of
-the cosine must be a cosine shifted to the left by $\pi/2$:
-\begin{align*}
-  \frac{\der\: \cos t}{\der t} &= \cos(t+\pi/2) \\
-                               &= -\sin t \qquad .
-\end{align*}
-\end{eg}
 
 \section{Safe use of infinitesimals}\label{sec:safe-infinitesimals}\index{infinitesimal number!safe use of}
 
@@ -559,7 +550,7 @@ $e^x$, multiplied by some unknown constant,
 \vfill\pagebreak
 
 A rough check by graphing at, say $x=0$, shows that the slope is close to 1, so $c$ is close to
-1. Numerical calculation also shows that, for example, $e^{0.001}=1.00100050016671$ is very close
+1. Numerical calculation also shows that, for example, $(e^{0.001}-1)/0.001=1.00050016670838$ is very close
 to 1. But how do we know it's exactly one when $\der x$ is really infinitesimal?
 We can use Inf:
 \begin{Code}
@@ -1293,6 +1284,15 @@ infinitesimals.
                                          &= 1 \qquad .
 \end{align*}
 
+\pagebreak
+
+We can check our work using Inf:
+\begin{Code}
+  \ii : (sin d)/d
+  \oo{1+(-0.16667)d^2+...}
+\end{Code}
+(The \verb@...@ is where I've snipped trailing terms from the output.)
+
 This is a special case of a the following rule for calculating limits involving $0/0$:
 
 \begin{important}[L'H\^{o}pital's rule]
@@ -1401,7 +1401,18 @@ finite, infinite, infinitesimal, or indeterminate?
   \sqrt{1000001}-&\sqrt{999999} \\
     = 1.000000&00020373\times 10^{-3} \qquad ,
 \end{align*}
-which is clearly a wannabe infinitesimal. More rigorously, we can rewrite
+which is clearly a wannabe infinitesimal.
+We can verify the result using Inf:
+\begin{Code}
+  \ii : H=1/d
+  \oo{d^-1}
+  \ii : sqrt(H+1)-sqrt(H-1)
+  \oo{d^1/2+0.125d^5/2+...}
+\end{Code}
+For convenience, the first line of input defines an infinite number $H$ in terms of the calculator's
+built-in infinitesimal $d$. The result has only positive powers of $d$, so it's clearly infinitesimal.
+
+More rigorously, we can rewrite
 the expression as $\sqrt{H}(\sqrt{1+1/H}-\sqrt{1-1/H})$. Since the derivative
 of the square root function $\sqrt{x}$ evaluated at $x=1$ is 1/2, we can
 approximate this as
@@ -1410,7 +1421,7 @@ approximate this as
     &= \sqrt{H}\left[\frac{1}{H}+\ldots\right] \\
     &= \frac{1}{\sqrt{H}} \qquad ,
 \end{align*}
-which is clearly infinitesimal.
+which is infinitesimal.
 \end{eg}
 
 \subsection{Limits at infinity}
