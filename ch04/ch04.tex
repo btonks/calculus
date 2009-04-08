@@ -130,7 +130,7 @@ if we're given a numerical value of $x$, we can always use
 Newton's method to find $y$, and then
 evaluate the derivative.
 
-\section{Taylor series}\label{sec:taylor}\index{Taylor series}
+\section{Taylor series}\label{sec:taylor}\index{Taylor series}\index{series!Taylor}
 
 If you calculate $e^{0.1}$ on your calculator, you'll find that
 it's very close to 1.1. This is because the tangent line at $x=0$
@@ -191,7 +191,7 @@ evaluated, and they don't necessarily tell us anything about points far away.
 
 It's a remarkable fact, then, that by taking enough terms in a polynomial approximation, we can always get as good an
 approximation to $e^x$ as necessary --- it's just that a large number of terms may be required for large values of $x$.
-In other words, the \emph{infinite series}
+In other words, the \emph{infinite series}\index{series, infinite}
 \begin{equation*}
    1+x+\frac{1}{2}x^2+\frac{1}{2\cdot3}x^3+\ldots
 \end{equation*}
@@ -212,7 +212,7 @@ for our polynomial whose fifth derivative is 1, we need $x^5/5!$. The result for
   e^x = \sum_{n=0}^\infty \frac{x^n}{n!} \qquad ,
 \end{equation*}
 where the special case of $0!=1$ is assumed.\footnote{This makes sense, because, for example, 4!=5!/5, 3!=4!/4, etc., so
-we should have 0!=1!/1.} This is called the \emph{Taylor series} for $e^x$, evaluated around $x=0$, and it's true, although I haven't proved it,
+we should have 0!=1!/1.} This infinite series is called the \emph{Taylor series} for $e^x$, evaluated around $x=0$, and it's true, although I haven't proved it,
 that this particular Taylor series always converges to $e^x$, no matter how far $x$ is from zero.
 
 In general, the Taylor series
@@ -257,45 +257,20 @@ The pattern is that the nth derivative is $n!$. The Taylor series therefore has 
 \end{equation*}
 \end{eg}
 
-A deeper question that arises here is what we really mean by adding infinitely many numbers. This concept goes back
-to ancient Greek mathematics, and Euclid's \emph{Elements} includes a discussion of the geometric series, two thousand
-years before the modern concept of a limit. Intuitively, the idea is that an infinite sum like $1+1+1+\ldots$ would
-clearly give an infinite result, but this is only because the terms are all staying the same size. If the terms get
-smaller and smaller, and get smaller fast enough, then the result can be finite. For example, consider the geometric
-series in the case where $x=1/2$, for which we expect the result $1/(1-1/2)=2$. We have
-\begin{equation*}
-  1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \ldots \qquad ,
-\end{equation*}
-which at the successive steps of addition equals 1, $1\frac{1}{2}$, $1\frac{3}{4}$, $1\frac{7}{8}$,  $1\frac{15}{16}$, \ldots.
-We're getting closer and closer to 2, cutting the distance in half at each step. Clearly we can get as close as we like to 2,
-if we're willing to add enough terms. This is the same as the concept of a limit at infinity that we encountered in chapter
-\ref{ch:infinity}, with the trivial difference that here we have an integer variable $n$ approaching infinity, as opposed
-to a continuous variable $x$.
-
-It's instructive to see what happens with $x=0.1$. The geometric series becomes
-\begin{equation*}
-  1 + 0.1 + 0.01 + 0.001 + \ldots \qquad .
-\end{equation*}
-The partial sums are 1, 1.1, 1.11, 1.111, \ldots We can see vividly here that adding another term will only affect
-the result in a certain decimal place, without affecting any of the earlier ones. For instance, if we needed a
-result that was valid to three digits past the decimal place, we could stop at 1.111, being assured that we had
-attained a good enough approximation. If we wanted an exact result, we could also observe that multiplying the
-result by 9 would give $9.999\ldots$, which is the same as 10, so the result must be 10/9, which is in agreement
-with $1/(1-1/10)=1/(9/10)$.
-
-Notice how much more quickly the sum converges in the case of $x=0.1$ than it did for $x=0.5$. In general, we expect
+If you flip back to page \pageref{geometric-tenths} and compare the rate of convergence of the geometric
+series for $x=0.1$ and $0.5$, you'll see that the sum converged 
+much more quickly for $x=0.1$ than for $x=0.5$. In general, we expect
 that any Taylor series will converge more quickly when $x$ is smaller. Now consider what happens at $x=1$. The series
 is now $1+1+1+\ldots$, which gives an infinite result, and we shouldn't have expected any better behavior, since
 attempting to evaluate $1/(1-x)$ at $x=1$ gives division by zero. For $x>1$, the results become nonsense.
 For example, $1/(1-2)=-1$, which is finite, but the geometric series gives $1+2+4+\ldots$, which is infinite.
 
-In general, every function's Taylor series around $x=0$ converges to the function for all values of $x$ in the range
+In general, every function's Taylor series around $x=0$ converges for all values of $x$ in the range
 defined by $|x|<r$, where $r$ is some number, known as the radius of convergence.\index{radius of convergence}
-For the function $e^x$, the radius
-of convergence happens to be infinite, whereas for $1/(1-x)$ it's 1. The following example shows a worst-case
+There is also some radius, possibly smaller, within which it converges to the \emph{correct} value.
+For the function $e^x$, both radii
+happen to be infinite, whereas for $1/(1-x)$ they both equal 1. The following example shows a worst-case
 scenario.
-
-\pagebreak
 
 %%graph%% nonanalytic func=exp(-1/x**2) format=eps xlo=-4 xhi=4 ylo=0 yhi=1.1 with=lines xtic_spacing=2 ytic_spacing=1
 \fig{nonanalytic}{The function $e^{-1/x^2}$ never converges to its Taylor series.}
@@ -305,10 +280,10 @@ The function $y=e^{-1/x^2}$, shown in figure \figref{nonanalytic}, never converg
 This is because the Taylor series for this function, evaluated around $x=0$ is exactly zero! At $x=0$, we have
 $y=0$, $\der y/\der x=0$, $\der^2 y/\der x^2=0$, and so on for every derivative. The zero function matches the function
 $y(x)$ and all its derivatives to all orders, and yet is useless as an approximation to $y(x)$. The radius of convergence
-of the Taylor series is zero.
+of the Taylor series is infinite, but the radius within which it gives the correct result is zero.
 \end{eg}
 
-\begin{eg}
+\begin{eg}\label{eg:taylor-sin}
 \egquestion Find the Taylor series of $y=\sin x$, evaluated around $x=0$.
 
 \eganswer  The first few derivatives are
@@ -342,8 +317,33 @@ where
 \begin{equation*}
   \left. \frac{a_n}{n!} = \frac{\der^n y}{\der x^n}\right|_{x=c} \qquad .
 \end{equation*}
+To see that this is the right generalization, we can do a change of variable,
+defining a new function $g(x)=f(x-c)$. The radius of convergence is to be measured
+from the center $c$ rather than from 0.
 
+\begin{eg}
+\egquestion
+Find the Taylor series of $\ln x$, evaluated around $x=1$.
 
+\eganswer
+Evaluating a few derivatives, we get
+\begin{align*}
+  \frac{\der}{\der x}\ln x &= x^{-1} \\
+  \frac{\der^2}{\der x^2}\ln x &= -x^{-2}\\
+  \frac{\der^3}{\der x^3}\ln x &= 2x^{-3}\\
+  \frac{\der^4}{\der x^4}\ln x &= -6x^{-4}
+\end{align*}
+Note that evaluating these at $x=0$ wouldn't have worked, since division by zero is undefined;
+this is because $\ln x$ blows up to negative infinity at $x=0$. Evaluating them at $x=1$, we
+find that the $nth$ derivative equals $\pm (n-1)!$, so the coefficients of the Taylor
+series are $\pm (n-1)!/n!=\pm1/n$, except for the $n=0$ term, which is zero because
+$\ln 1=0$. The resulting series is
+\begin{equation*}
+  \ln x = (x-1) - \frac{1}{2}(x-1)^2 + \frac{1}{3}(x-1)^3 + \ldots \qquad .
+\end{equation*}
+We can predict that its radius of convergence can't be any greater than 1, because
+$\ln x$ blows up at 0, which is at a distance of 1 from 1.
+\end{eg}
 
 \section{Methods of integration}
 
@@ -740,9 +740,42 @@ at the point on the curve you found in part a. Answer: $\der y/\der x=-0.0379$\\
 \end{hw}
 
 \begin{hw}
-Find the Taylor series expansion of $\ln(1+x)$ around $x=0$, and use it to evaluate
-$\ln 1.776$ to four significant figures of precision.
+Find the Taylor series expansion of $\cos x$ around $x=0$. Check your work by combining the first two
+terms of this series with the first term of the sine function from example \ref{eg:taylor-sin}
+on page \pageref{eg:taylor-sin} to verify that the trig identity $\sin^2 x+\cos^2 x=1$ holds
+for terms up to order $x^2$.
 \end{hw}
+
+\begin{hw}
+Find the Taylor series expansion of $\log_2 x$ around $x=1$, and use it to evaluate
+$\log_2 1.0595$ to four significant figures of precision. Check your result by using the
+fact that 1.0595 is approximately the twelfth root of 2. This number is the ratio of
+the frequencies of two successive notes of the chromatic scale\index{chromatic scale}
+in music, e.g., C and D-flat.
+\end{hw}
+
+\begin{hw}
+In classical physics, the kinetic energy $K$ of an object of mass $m$ moving at velocity $v$
+is given by $K=\frac{1}{2}mv^2$. For example, if a car is to start from a stoplight and then
+accelerate up to $v$, this is
+the theoretical minimum amount of energy  that would have to be used up by burning gasoline.
+(In reality, a car's engine is not 100\% efficient, so the amount of gas burned is greater.)
+
+Einstein's theory of relativity states that the correct equation is actually
+\begin{equation*}
+  K = \left(\frac{1}{\sqrt{1-\frac{v^2}{c^2}}}-1\right)mc^2 \qquad ,
+\end{equation*}
+where $c$ is the speed of light. The fact that it diverges as $v \rightarrow c$ is interpreted
+to mean that no object can be accelerated to the speed of light.
+
+Expand $K$ in a Taylor series, and show that the first
+nonvanishing term is equal to the classical expression. This means that for velocities that
+are small compared to the speed of light, the classical expression is a good approximation,
+and Einstein's theory does not contradict any of the prior empirical evidence from which
+the classical expression was inferred.
+\end{hw}
+
+\pagebreak
 
 \begin{hw}\label{hw:air-res-taylor}
 In free fall, the acceleration will not be exactly constant, due to air resistance. For example,

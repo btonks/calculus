@@ -188,7 +188,7 @@ In other words, it appears that
        \frac{1}{1-1/1000} = 1+\frac{1}{1000}+\left(\frac{1}{1000}\right)^2+\ldots \qquad ,
 \end{equation*}
 and we can easily verify this by multiplying both sides of the equation by $1-1/1000$ and collecting like
-powers. This is a special case of the geometric series\index{geometric series}
+powers. This is a special case of the geometric series\index{geometric series}\index{series!geometric}\label{geometric-series}
 \begin{equation*}
        \frac{1}{1-t} = 1+t+t^2+\ldots \qquad ,
 \end{equation*}
@@ -1131,8 +1131,8 @@ We say that $\ell$ is the limit of the function $f(x)$ as $x$ approaches $a$, wr
   \lim_{x\rightarrow a} f(x) = \ell \qquad ,
 \end{equation*}
 if the following is true: for any infinitesimal number $\der x$, 
-the value of $f(x+\der x)$ is finite, and the standard
-part of $f(x+\der x)$ equals $\ell$.
+the value of $f(a+\der x)$ is finite, and the standard
+part of $f(a+\der x)$ equals $\ell$.
 \end{important}
 
 The two definitions are equivalent.
@@ -1500,6 +1500,54 @@ Another approach is to use L'H\^{o}pital's rule. The derivative
 of the top is 2, and the derivative of the bottom is 1, so the limit is 2/1=2.
 \end{eg}
 
+\subsection{Infinite sequences}\index{sequence}
+
+Consider an infinite sequence of numbers like $1/2$, $2/3$, $3/4$, $4/5$, \ldots We want to define
+this as approaching 1, or ``converging to 1.'' The way to do this is to make a function $f(n)$, which is only
+well defined for integer values of $n$. Then $f(1)=1/2$, $f(2)=2/3$, and in general
+$f(n)=n/(n+1)$. With just a little tinkering, our definitions of limits can be
+applied to this type of series (see problem \ref{hw:sequence-weierstrass} on page \pageref{hw:sequence-weierstrass}).
+
+\subsection{Infinite series}
+A related question is how to rigorously define the sum of infinitely many numbers, which is referred to
+as an infinite \emph{series}.\index{series!infinite} An example is the geometric series
+$1+x+x^2+x^3+\ldots$,\index{series!geometric}\index{geometric series}\index{Euclid}
+which we used casually on page \pageref{geometric-series}.
+The general concept of an infinite series goes back
+to ancient Greek mathematics, and Euclid's \emph{Elements}, which includes a discussion of the geometric series,
+two thousand years before the modern concept of a limit. Intuitively, the idea is that an infinite sum like $1+1+1+\ldots$ would
+clearly give an infinite result, but this is only because the terms are all staying the same size. If the terms get
+smaller and smaller, and get smaller fast enough, then the result can be finite. For example, consider the geometric
+series in the case where $x=1/2$, for which we expect the result $1/(1-1/2)=2$. We have
+\begin{equation*}
+  1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \ldots \qquad ,
+\end{equation*}
+which at the successive steps of addition equals 1, $1\frac{1}{2}$, $1\frac{3}{4}$, $1\frac{7}{8}$,  $1\frac{15}{16}$, \ldots.
+We're getting closer and closer to 2, cutting the distance in half at each step. Clearly we can get as close as we like to 2,
+if we're willing to add enough terms.
+
+Note that we ended up wanting to talk about the partial sums of the series. This is the right way to get a rigorous definition of
+the convergence of series in general.
+In the case of the geometric series, for example,
+we can define a sequence of the
+partial sums 1, $1+x$, $1+x+x^2$, \ldots 
+
+It's instructive to see what happens to the geometric series with $x=0.1$. The geometric series becomes\label{geometric-tenths}
+\begin{equation*}
+  1 + 0.1 + 0.01 + 0.001 + \ldots \qquad .
+\end{equation*}
+The partial sums are 1, 1.1, 1.11, 1.111, \ldots We can see vividly here that adding another term will only affect
+the result in a certain decimal place, without affecting any of the earlier ones. For instance, if we needed a
+result that was valid to three digits past the decimal place, we could stop at 1.111, being assured that we had
+attained a good enough approximation. If we wanted an exact result, we could also observe that multiplying the
+result by 9 would give $9.999\ldots$, which is the same as 10, so the result must be 10/9, which is in agreement
+with $1/(1-1/10)=1/(9/10)$.
+
+The thing to watch out for with infinite series is that
+the axioms of the real number system only talk about finite sums, so it's easy to get wrong results
+by attempting to apply them to infinite ones (see problem
+\ref{hw:bogus-series} on page \pageref{hw:bogus-series}).\label{infinite-sum-warning}
+
 \begin{hwsection}
 
 \begin{hwwithsoln}{fourth-power}
@@ -1776,5 +1824,16 @@ the maximum occurs close to, but not exactly at, $f_\zu{o}$.
 
 %%graph%% resonance func=1/sqrt(3*(x**2-1)**2+x**2) xlo=0 xhi=3 ylo=0 yhi=1.1 with=lines xtic_spacing=1 ytic_spacing=.5 format=eps
 \smallfig{resonance}{The function of problem \ref{hw:resonance}, with $a=3$, $b=1$, and $f_\zu{o}=1$.}%
+
+\begin{hwwithsoln}{sequence-weierstrass}
+Modify the Weierstrass definition of the limit to apply to infinite sequences.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{bogus-series}
+(a) Prove that the infinite series $1-1+1-1+1-1+\ldots$ does not converge to any limit, using the generalization
+of the Weierstrass limit found in problem \ref{hw:sequence-weierstrass}.
+(b) Criticize the following argument. The series given in part a equals zero, because addition is associative, so we can
+rewrite it as $(1-1)+(1-1)+(1-1)+\ldots$
+\end{hwwithsoln}
 
 \end{hwsection}
