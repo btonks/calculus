@@ -215,8 +215,7 @@ where the special case of $0!=1$ is assumed.\footnote{This makes sense, because,
 we should have 0!=1!/1.} This is called the \emph{Taylor series} for $e^x$, evaluated around $x=0$, and it's true, although I haven't proved it,
 that this particular Taylor series always converges to $e^x$, no matter how far $x$ is from zero.
 
-A Taylor series can be used to approximate other functions besides $e^x$, and when you ask your calculator to evaluate a
-function such as a sine or a cosine, it may actually be using a Taylor series to do it. In general, the Taylor series
+In general, the Taylor series
 around $x=0$ for a function $y$ is
 \begin{equation*}
   T_0(x) = \sum_{n=0}^\infty a_n x^n \qquad ,
@@ -227,30 +226,87 @@ where the condition for equality of the nth order derivative is
 \end{equation*}
 Here the notation $\left.\right|_{x=0}$ means that the derivative is to be evaluated at $x=0$.
 
+A Taylor series can be used to approximate other functions besides $e^x$, and when you ask your calculator to evaluate a
+function such as a sine or a cosine, it may actually be using a Taylor series to do it.
+Taylor series are also the method Inf uses to calculate most expressions involving infinitesimals. In example
+\ref{eg:geometric-series} on page \pageref{eg:geometric-series}, we saw that
+when Inf was asked to calculate $1/(1-d)$, where $d$ was infinitesimal, the result was the geometric series:
+\begin{Code}
+  \ii : 1/(1-d)
+  \oo{1+d+d^2+d^3+d^4}
+\end{Code}
+These are also the the first five terms of the Taylor series for the function $y=1/(1-x)$, evaluated around $x=0$.
+That is, the geometric series $1+x+x^2+x^3+\ldots$ is really just one special example of a Taylor series, as
+demonstrated in the following example.
+
+\begin{eg}\label{eg:taylor-geometric}
+\egquestion Find the Taylor series of $y=1/(1-x)$ around $x=0$, and see what you can say about
+its radius of convergence.
+
+\eganswer Rewriting the function as $y=(1-x)^{-1}$ and applying the chain rule, we have
+\begin{align*}
+                                                & \left.y\right|_{x=0} = 1\\
+  \left.\frac{\der y}{\der x}\right|_{x=0}     =& \left.(1-x)^{-2}\right|_{x=0} = 1\\
+  \left.\frac{\der^2 y}{\der x^2}\right|_{x=0} =& \left.2(1-x)^{-3}\right|_{x=0} = 2\\
+  \left.\frac{\der^3 y}{\der x^3}\right|_{x=0} =& \left.2\cdot3(1-x)^{-4}\right|_{x=0} = 2\cdot3\\
+                                                & \ldots
+\end{align*}
+The pattern is that the nth derivative is $n!$. The Taylor series therefore has $a_n=n!/n!=1$:
+\begin{equation*}
+  \frac{1}{1-x} =  1+x+x^2+x^3+\ldots
+\end{equation*}
+\end{eg}
+
+A deeper question that arises here is what we really mean by adding infinitely many numbers. This concept goes back
+to ancient Greek mathematics, and Euclid's \emph{Elements} includes a discussion of the geometric series, two thousand
+years before the modern concept of a limit. Intuitively, the idea is that an infinite sum like $1+1+1+\ldots$ would
+clearly give an infinite result, but this is only because the terms are all staying the same size. If the terms get
+smaller and smaller, and get smaller fast enough, then the result can be finite. For example, consider the geometric
+series in the case where $x=1/2$, for which we expect the result $1/(1-1/2)=2$. We have
+\begin{equation*}
+  1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \ldots \qquad ,
+\end{equation*}
+which at the successive steps of addition equals 1, $1\frac{1}{2}$, $1\frac{3}{4}$, $1\frac{7}{8}$,  $1\frac{15}{16}$, \ldots.
+We're getting closer and closer to 2, cutting the distance in half at each step. Clearly we can get as close as we like to 2,
+if we're willing to add enough terms. This is the same as the concept of a limit at infinity that we encountered in chapter
+\ref{ch:infinity}, with the trivial difference that here we have an integer variable $n$ approaching infinity, as opposed
+to a continuous variable $x$.
+
+It's instructive to see what happens with $x=0.1$. The geometric series becomes
+\begin{equation*}
+  1 + 0.1 + 0.01 + 0.001 + \ldots \qquad .
+\end{equation*}
+The partial sums are 1, 1.1, 1.11, 1.111, \ldots We can see vividly here that adding another term will only affect
+the result in a certain decimal place, without affecting any of the earlier ones. For instance, if we needed a
+result that was valid to three digits past the decimal place, we could stop at 1.111, being assured that we had
+attained a good enough approximation. If we wanted an exact result, we could also observe that multiplying the
+result by 9 would give $9.999\ldots$, which is the same as 10, so the result must be 10/9, which is in agreement
+with $1/(1-1/10)=1/(9/10)$.
+
+Notice how much more quickly the sum converges in the case of $x=0.1$ than it did for $x=0.5$. In general, we expect
+that any Taylor series will converge more quickly when $x$ is smaller. Now consider what happens at $x=1$. The series
+is now $1+1+1+\ldots$, which gives an infinite result, and we shouldn't have expected any better behavior, since
+attempting to evaluate $1/(1-x)$ at $x=1$ gives division by zero. For $x>1$, the results become nonsense.
+For example, $1/(1-2)=-1$, which is finite, but the geometric series gives $1+2+4+\ldots$, which is infinite.
+
+In general, every function's Taylor series around $x=0$ converges to the function for all values of $x$ in the range
+defined by $|x|<r$, where $r$ is some number, known as the radius of convergence.\index{radius of convergence}
+For the function $e^x$, the radius
+of convergence happens to be infinite, whereas for $1/(1-x)$ it's 1. The following example shows a worst-case
+scenario.
+
+\pagebreak
+
+%%graph%% nonanalytic func=exp(-1/x**2) format=eps xlo=-4 xhi=4 ylo=0 yhi=1.1 with=lines xtic_spacing=2 ytic_spacing=1
+\fig{nonanalytic}{The function $e^{-1/x^2}$ never converges to its Taylor series.}
+
 \begin{eg}
 The function $y=e^{-1/x^2}$, shown in figure \figref{nonanalytic}, never converges to its Taylor series, except at $x=0$.
 This is because the Taylor series for this function, evaluated around $x=0$ is exactly zero! At $x=0$, we have
 $y=0$, $\der y/\der x=0$, $\der^2 y/\der x^2=0$, and so on for every derivative. The zero function matches the function
-$y(x)$ and all its derivatives to all orders, and yet is useless as an approximation to $y(x)$.
+$y(x)$ and all its derivatives to all orders, and yet is useless as an approximation to $y(x)$. The radius of convergence
+of the Taylor series is zero.
 \end{eg}
-
-%%graph%% nonanalytic func=exp(-1/x**2) format=eps xlo=-4 xhi=4 ylo=0 yhi=1.1 with=lines xtic_spacing=2 ytic_spacing=1
-\fig{nonanalytic}{The function $e^{-1/x^2}$ never converges to its Taylor series.}
-%
-In general, every function's Taylor series around $x=0$ converges to the function for all values of $x$ in the range
-defined by $|x|<r$, where $r$ is some number, known as the radius of convergence.\index{radius of convergence}
-For the function $e^x$, the radius
-of convergence happens to be infinite, whereas for $e^{-1/x^2}$ it's zero.
-
-A function's Taylor series doesn't have to be evaluated around $x=0$. The Taylor series around some other
-center $x=c$ is given by
-\begin{equation*}
-  T_c(x) = \sum_{n=0}^\infty a_n (x-c)^n \qquad ,
-\end{equation*}
-where 
-\begin{equation*}
-  \left. \frac{a_n}{n!} = \frac{\der^n y}{\der x^n}\right|_{x=c} \qquad .
-\end{equation*}
 
 \begin{eg}
 \egquestion Find the Taylor series of $y=\sin x$, evaluated around $x=0$.
@@ -277,34 +333,17 @@ this is that the factorials grow extremely rapidly, so that the successive terms
 diminish quickly, even for large values of $x$.
 \end{eg}
 
-\begin{eg}
-\egquestion Find the Taylor series of $y=1/(1-x)$ around $x=0$, and see what you can say about
-its radius of convergence.
-
-\eganswer Rewriting the function as $y=(1-x)^{-1}$ and applying the chain rule, we have
-\begin{align*}
-                                                & \left.y\right|_{x=0} = 1\\
-  \left.\frac{\der y}{\der x}\right|_{x=0}     =& \left.(1-x)^{-2}\right|_{x=0} = 1\\
-  \left.\frac{\der^2 y}{\der x^2}\right|_{x=0} =& \left.2(1-x)^{-3}\right|_{x=0} = 2\\
-  \left.\frac{\der^3 y}{\der x^3}\right|_{x=0} =& \left.2\cdot3(1-x)^{-4}\right|_{x=0} = 2\cdot3\\
-                                                & \ldots
-\end{align*}
-The pattern is that the nth derivative is $n!$. The Taylor series therefore has $a_n=n!/n!=1$:
+A function's Taylor series doesn't have to be evaluated around $x=0$. The Taylor series around some other
+center $x=c$ is given by
 \begin{equation*}
-  \frac{1}{1-x} =  1+x+x^2+x^3+\ldots
+  T_c(x) = \sum_{n=0}^\infty a_n (x-c)^n \qquad ,
+\end{equation*}
+where 
+\begin{equation*}
+  \left. \frac{a_n}{n!} = \frac{\der^n y}{\der x^n}\right|_{x=c} \qquad .
 \end{equation*}
 
-The radius of convergence of this series definitely can't be greater than 1, since for $x=1$ the
-series is $1+1+1+\ldots$, which grows indefinitely without ever converging to a specific number.
-Likewise for $x=-1$ the series becomes $1-1+1-1+\ldots$, which oscillates back and forth rather
-than converging. Intuitively we can see a couple of hints as to why this happens: (1) The
-function $1/(1-x)$ itself misbehaves at $x=1$, blowing up to infinity; (2) 
-The only way a series can get closer and closer to a finite value is if the absolute values of the terms
-decrease, and decrease sufficiently rapidly. But the coefficients
-$a_n$ of this Taylor series don't decrease with $n$, so so the only way the absolute values of
-the terms can decrease is for $|x|<1$.
 
-\end{eg}
 
 \section{Methods of integration}
 
