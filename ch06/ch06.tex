@@ -1,164 +1,287 @@
 %%chapter%% 06
-\chapter{Improper integrals}\index{integral!improper}\index{improper integral}
+\chapter{Complex number techniques}
 
-\section{Integrating a function that blows up}
-When we integrate a function that blows up to infinity at some
-point in the interval we're integrating, the result may be either
-finite or infinite.
+\section{Review of complex numbers}\index{complex number}
 
-\begin{eg}\label{eg:improper-a}
-\egquestion Integrate the function $y=1/\sqrt{x}$ from $x=0$ to $x=1$.
+For a more detailed treatment of complex numbers, see ch. 3 of
+James Nearing's free book at \\
+\verb@http://www.physics.miami.edu/@
+\verb@nearing/mathmethods/@.
+%
+\fig{complex-numbers}{Visualizing complex numbers as points in a plane.}
+%
+\fig{complex-addition}{Addition of complex numbers is just like addition of vectors,
+although the real and imaginary axes don't actually represent directions in space.}
+%
+\fig{complex-conjugate}{A complex number and its conjugate.}
 
-\eganswer The function blows up to infinity at one end of the region
-of integration, but let's just try evaluating it, and see what happens.
+We assume there is a number, $i$, such that $i^2=-1$.
+The square roots of $-1$ are then $i$ and $-i$. (In electrical engineering work,
+where $i$ stands for current, $j$ is sometimes used instead.) This gives rise
+to a number system, called the complex numbers, containing the real numbers as a subset.
+Any complex number $z$ can be written in the form $z=a+bi$, where $a$ and $b$ are
+real, and $a$ and $b$ are then referred to as the real and imaginary parts of $z$.
+A number with a zero real part is called an imaginary number.\index{imaginary number}
+The complex numbers can be visualized as a plane, figure \figref{complex-numbers}, with the real number line placed
+horizontally like the $x$ axis of the familiar $x-y$ plane, and the imaginary numbers running
+along the $y$ axis. The complex numbers are complete in a way that the real numbers
+aren't: every nonzero complex number has two square roots. For example, 1 is
+a real number, so it is also a member of the complex numbers, and its square roots
+are $-1$ and 1. Likewise, $-1$ has square roots $i$ and $-i$, and the number $i$
+has square roots $1/\sqrt{2}+i/\sqrt{2}$ and $-1/\sqrt{2}-i/\sqrt{2}$.
+
+Complex numbers can be added and subtracted by adding or subtracting their real
+and imaginary parts, figure \figref{complex-addition}. Geometrically, this is the same as vector addition.
+
+The complex numbers $a+bi$ and $a-bi$, lying at equal distances above and below the
+real axis, are called complex conjugates.\index{conjugate}\index{complex number!conjugate of}
+The results of the quadratic formula
+are either both real, or complex conjugates of each other.
+The complex conjugate of a number $z$ is notated as $\bar{z}$ or
+$z^*$.
+
+The complex numbers obey all the same rules of arithmetic as the reals, except that
+they can't be ordered along a single line. That is, it's not possible to say whether
+one complex number is greater than another. We can compare them in terms of their
+magnitudes\index{magnitude of a complex number}\index{complex number!magnitude of}
+(their distances from the origin), but two distinct complex numbers may
+have the same magnitude, so, for example, we can't say whether $1$ is greater than
+$i$ or $i$ is greater than $1$.
+
+\begin{eg}\label{eg:sqrt-i}
+\egquestion Prove that $1/\sqrt{2}+i/\sqrt{2}$ is a square root of $i$.
+
+\eganswer Our proof can use any ordinary rules of arithmetic, except for
+ordering.
 \begin{align*}
-  \int_0^1 x^{-1/2}\:\der x &= \left.2x^{1/2}\right|_0^1 \\
-                         &= 2
+   (\frac{1}{\sqrt{2}}+\frac{i}{\sqrt{2}})^2 
+    & = \frac{1}{\sqrt{2}}\cdot\frac{1}{\sqrt{2}}
+       +\frac{1}{\sqrt{2}}\cdot\frac{i}{\sqrt{2}}\\
+       &+\frac{i}{\sqrt{2}}\cdot\frac{1}{\sqrt{2}}
+       +\frac{i}{\sqrt{2}}\cdot\frac{i}{\sqrt{2}} \\
+    &= \frac{1}{2}(1+i+i-1) \\
+    &= i
 \end{align*}
-
-The result turns out to be finite. Intuitively, the reason for this
-is that the spike at $x=0$ is very skinny, and gets skinny fast
-as we go higher and higher up.
 \end{eg}
 
-%%graph%% improper-a-raw func=x**-.5 format=svg xlo=0 xhi=1.1 ylo=0 yhi=10 with=lines xtic_spacing=1 ytic_spacing=5
-\smallfig{improper-a}{The integral $\int_0^1 \der x/\sqrt{x}$ is finite.}
+Example \ref{eg:sqrt-i} showed one method of multiplying complex numbers.
+However, there is another nice interpretation of complex multiplication.
+We define the argument of a complex number, figure \figref{complex-polar}, as its angle in the complex plane, measured
+counterclockwise from the positive real axis.\index{argument}\index{complex number!argument of}
+Multiplying two complex numbers then corresponds to multiplying their magnitudes,
+and adding their arguments, figure \figref{complex-multiplication}.
+%
+\fig{complex-polar}{A complex number can be described in terms of its magnitude and
+argument.}
+%
+\fig{complex-multiplication}{The argument of $uv$ is the sum of the arguments of $u$ and $v$.}
 
-\pagebreak
+\begin{selfcheck}{complex-square-root}
+Using this interpretation of multiplication, how could you find the
+square roots of a complex number?
+\end{selfcheck}
 
 \begin{eg}
-\egquestion Integrate the function $y=1/x^2$ from $x=0$ to $x=1$.
-
-\eganswer 
-\begin{align*}
-  \int_0^1 x^{-2}\:\der x &= \left.-x^{-1}\right|_0^1 \\
-                         &= -1+\frac{1}{0}
-\end{align*}
-
-Division by zero is undefined, so the result is undefined.
-
-Another way of putting it, using the hyperreal number system,
-is that if we were to integrate
-from $\epsilon$ to 1, where $\epsilon$ was an infinitesimal
-number, then the result would be $-1+1/\epsilon$, which is
-infinite. The smaller we make $\epsilon$, the bigger the
-infinite result we get out.
-
-Intuitively, the reason that this integral comes out infinite is
-that the spike at $x=0$ is fat, and doesn't get skinny fast enough.
+The magnitude $|z|$ of a complex number $z$ obeys
+the identity $|z|^2=z\bar{z}$. To prove this, we first note that $\bar{z}$
+has the same magnitude as $z$, since flipping it to the other side of the
+real axis doesn't change its distance from the origin. Multiplying $z$ by
+$\bar{z}$ gives a result whose magnitude is found by multiplying their
+magnitudes, so the magnitude of
+$z\bar{z}$ must therefore equal  $|z|^2$. Now we just have to prove that
+$z\bar{z}$ is a positive real number. But if, for example, $z$ lies counterclockwise
+from the real axis, then $\bar{z}$ lies clockwise from it. If $z$ has a positive
+argument, then $\bar{z}$ has a negative one, or vice-versa. The sum of their arguments is therefore
+zero, so the result has an argument of zero, and is on the positive real axis.
+\footnote{I cheated a little. If $z$'s argument
+is 30 degrees, then we could say $\bar{z}$'s was -30, but we could also call it
+330. That's OK, because 330+30 gives 360, and an argument of
+360 is the same as an argument of zero.}
 \end{eg}
 
-%%graph%% improper-b-raw func=x**-2 format=svg xlo=0 xhi=1.1 ylo=0 yhi=10 with=lines xtic_spacing=1 ytic_spacing=5
-\smallfig{improper-b}{The integral $\int_0^1 \der x/x^2$ is infinite.}
+This whole system was built up in order to make every number have square roots.
+What about cube roots, fourth roots, and so on? Does it get even more weird when
+you want to do those as well? No. The complex number system we've already discussed
+is sufficient to handle all of them. The nicest way of thinking about it is in terms
+of roots of polynomials. In the real number system, the polynomial $x^2-1$ has
+two roots, i.e., two values of $x$ (plus and minus one) that we can plug in to the
+polynomial and get zero. Because it has these two real roots, we can rewrite the
+polynomial as $(x-1)(x+1)$. However, the polynomial $x^2+1$ has no real roots. It's
+ugly that in the real number system, some second-order polynomials have two
+roots, and can be factored, while others can't. In the complex number system,
+they all can. For instance, $x^2+1$ has roots $i$ and $-i$, and can be factored
+as $(x-i)(x+i)$. In general, the fundamental theorem of algebra\index{fundamental theorem of algebra!statement}
+states that in the complex number system,
+any nth-order polynomial can be factored completely
+into $n$ linear factors, and we can also say that it has $n$ complex roots,
+with the understanding that some of the roots may be the same. For instance,
+the fourth-order polynomial $x^4+x^2$ can be factored as $(x-i)(x+i)(x-0)(x-0)$,
+and we say that it has four roots, $i$, $-i$, 0, and 0, two of which happen to be
+the same. This is a sensible way to think about it, because in real life, numbers are
+always approximations anyway, and if we make tiny, random changes
+to the coefficients of this polynomial,
+it will have four distinct roots, of which two just happen to be very close
+to zero. I've given a proof of the fundamental theorem of algebra on
+page \pageref{detour:fn-thm-alg-proof}.
 
-These two examples were examples of improper integrals.
+\section{Euler's formula}
 
-\section{Limits of integration at infinity}
-
-Another type of improper integral is one in which one of the
-limits of integration is infinite. The notation
+Having expanded our horizons to include the complex numbers, it's natural to want to extend
+functions we knew and loved from the world of real numbers so that they can also operate on
+complex numbers. The only really natural way to do this in general is to use Taylor series.
+A particularly beautiful thing happens with the functions $e^x$, $\sin x$, and $\cos x$:
+\begin{align*}
+  e^x    &= 1 + \frac{1}{2!}x^2 + \frac{1}{3!}x^3 + \ldots \\
+  \cos x &= 1 - \frac{1}{2!}x^2 + \frac{1}{4!}x^4 - \ldots \\
+  \sin x &= x - \frac{1}{3!}x^3 + \frac{1}{5!}x^5 - \ldots \\
+\end{align*}
+If $x=i\phi$ is an imaginary number, we have
 \begin{equation*}
-  \int_a^\infty f(x)\:\der x
+  e^{i\phi} = \cos \phi + i \sin \phi \qquad ,
 \end{equation*}
-means the limit of $\int_a^H f(x)\:\der x$, where $H$ is
-made to grow bigger and bigger. Alternatively, we can
-think of it as an integral in which the top end of the
-interval of integration is an infinite hyperreal number.
-A similar interpretation applies when the lower limit is
-$-\infty$, or when both limits are infinite.
+a result known as Euler's formula.\index{Euler's formula}
+The geometrical interpretation in the complex
+plane is shown in figure \figref{euler}.
+
+\fig{euler}{The complex number $e^{i\phi}$ lies on the unit circle.}
+
+Although the result may seem like something out of a freak show at first,
+applying the definition\footnote{See page \pageref{definition-of-exp} for an explanation
+of where this definition comes from and why it makes sense.} of the exponential function
+makes it clear how natural it is:
+\begin{align*}
+  e^x = \lim_{n\rightarrow \infty} \left(1+\frac{x}{n}\right)^n \qquad .
+\end{align*}
+When $x=i\phi$ is imaginary, the quantity $(1+i\phi/n)$ represents a number
+lying just above 1 in the complex plane. For large $n$, $(1+i\phi/n)$
+becomes very close to the unit circle, and its argument is the small
+angle $\phi/n$. Raising this number to the nth power multiplies its
+argument by $n$, giving a number with an argument of $\phi$.
+
+\smallfig{euler-portrait}{Leonhard Euler (1707-1783)}\index{Euler, Leonhard}
+
+Euler's formula is used frequently in physics and engineering.
+
+\begin{eg}
+\egquestion Write the sine and cosine functions in terms of exponentials.
+
+\eganswer Euler's formula for $x=-i\phi$ gives $\cos \phi - i \sin \phi$,
+since $\cos(-\theta)=\cos\theta$, and $\sin(-\theta)=-\sin\theta$.
+\begin{align*}
+  \cos x &= \frac{e^{ix}+e^{-ix}}{2} \\
+  \sin x &= \frac{e^{ix}-e^{-ix}}{2i} 
+\end{align*}
+\end{eg}
 
 \begin{eg}
 \egquestion Evaluate
 \begin{equation*}
-  \int_1^\infty x^{-2}\:\der x 
+  \int e^x \cos x \der x
 \end{equation*}
 
-\eganswer
+\eganswer This seemingly impossible integral becomes easy if we rewrite
+the cosine in terms of exponentials:
 \begin{align*}
-  \int_1^H x^{-2}\:\der x &= \left.-x^{-1}\right|_1^H \\
-               &= -\frac{1}{H}+1
-\end{align*}
-As $H$ gets bigger and bigger, the result gets closer and closer
-to 1, so the result of the improper integral is 1.
-
-Note that this is the same graph as in example \ref{eg:improper-a}, but with the $x$ and $y$ axes
-interchanged; this shows that the two different types of improper integrals really aren't so different.
-\end{eg}
-
-%%graph%% improper-c-raw func=x**-2 format=svg xlo=0 xhi=10 ylo=0 yhi=1 with=lines xtic_spacing=5 ytic_spacing=1
-\smallfig{improper-c}{The integral $\int_1^\infty \der x/x^2$ is finite.}
-
-\begin{eg}
-\egquestion Newton's law of gravity states that the gravitational force between two objects
-is given by $F=Gm_1m_2/r^2$, where $G$ is a constant, $m_1$ and $m_2$ are the objects' masses,
-and $r$ is the center-to-center distance between them. Compute the work that must be done
-to take an object from the earth's surface, at $r=a$, and remove it to $r=\infty$.
-
-\eganswer
-\begin{align*}
-  W &= \int_a^\infty \frac{Gm_1m_2}{r^2} \: \der r \\
-    &= Gm_1m_2 \int_a^\infty r^{-2} \: \der r \\
-    &= -Gm_1m_2 \left.r^{-1}\right|_a^\infty  \\
-    &= \frac{Gm_1m_2}{a}
+  \int e^x & \cos x \der x \\
+      &= \int e^x \left(\frac{e^{ix}+e^{-ix}}{2}\right) \:\der x \\
+      &= \frac{1}{2} \int (e^{(1+i)x}+e^{(1-i)x})\:\der x \\
+      &= \frac{1}{2} \left( \frac{e^{(1+i)x}}{1+i}+\frac{e^{(1-i)x}}{1-i} \right)+ c
 \end{align*}
 
-The answer is inversely proportional to $a$. In other words, if we were able to start from
-higher up, less work would have to be done.
+Since this result is the integral of a real-valued function, we'd like it to be
+real, and in fact it is, since the first and second terms are complex conjugates of
+one another. If we wanted to, we could use Euler's theorem to convert it back to
+a manifestly real result.\footnote{In general, the use of complex number techniques to
+do an integral could result in a complex number, but that complex number would
+be a constant, which could be subsumed within the usual constant of integration.}
+
 \end{eg}
+
+\section{Partial fractions revisited}\label{sec:complex-part-frac}\index{integration!methods of!partial fractions}\index{partial fractions}
+
+Suppose we want to evaluate the integral
+\begin{equation*}
+  \int \frac{\der x}{x^2+1}
+\end{equation*}
+by the method of partial fractions. The quadratic formula tells us that the
+roots are $i$ and $-i$, setting
+$1/(x^2+1)=A/(x+i)+B/(x-i)$ gives $A=i/2$ and $B=-i/2$, so
+\begin{align*}
+  \int \frac{\der x}{x^2+1} &= \frac{i}{2} \int \frac{\der x}{x+i} \\
+                            &  -\frac{i}{2}\int \frac{\der x}{x-i} \\
+      &= \frac{i}{2}\ln(x+i)\\
+        &-\frac{i}{2}\ln(x-i) \\
+      &= \frac{i}{2}\ln\frac{x+i}{x-i} \qquad .
+\end{align*}
+The attractive thing about this approach, compared with the method
+used on page \pageref{eg:arctan}, is that it doesn't require any
+tricks. If you came across this integral ten years from now, you
+could pull out your old calculus book, flip through it, and say,
+``Oh, here we go, there's a way to integrate one over a polynomial ---
+partial fractions.'' On the other hand, it's odd that we started out
+trying to evaluate an integral that had nothing but real numbers,
+and came out with an answer that isn't even obviously a real number.
+
+But what about that expression $(x+i)/(x-i)$? Let's give it a name,
+$w$. The numerator and denominator are complex conjugates of one
+another. Since they have the same magnitude, we must have $|w|=1$,
+i.e., $w$ is a complex number that lies on the unit circle, the
+kind of complex number that Euler's formula refers to. The numerator
+has an argument of $\tan^{-1}(1/x)=\pi/2-\tan^{-1}x$, and the denominator
+has the same argument but with the opposite sign. Division means subtracting
+arguments, so $\arg w=\pi-2\tan^{-1}x$. That means that the result can
+be rewritten using Euler's formula as
+\begin{align*}
+  \int \frac{\der x}{x^2+1} &= \frac{i}{2}\ln e^{i(\pi-2\tan^{-1}x)} \\
+      &=  \frac{i}{2}\cdot i(\pi-2\tan^{-1}x) \\
+      &=  \tan^{-1}x + c \qquad .
+\end{align*}
+In other words, it's the same result we found before, but found 
+without the need for trickery.
 
 \begin{hwsection}
 
 \begin{hw}
-Integrate
-\begin{equation*}
-  \int_0^\infty e^{-x} \der x \qquad ,
-\end{equation*}
-or show that it diverges.
+Find $\arg i$, $\arg(-i)$, and $\arg 37$, where $\arg z$ denotes the argument of the complex number $z$.
 \end{hw}
 
 \begin{hw}
-Integrate
-\begin{equation*}
-  \int_1^\infty \frac{\der x}{x} \qquad ,
-\end{equation*}
-or show that it diverges.
+Visualize the following multiplications in the complex plane using the interpretation of multiplication
+in terms of multiplying magnitudes and adding arguments: $(i)(i)=-1$, $(i)(-i)=1$, $(-i)(-i)=-1$.
 \end{hw}
 
 \begin{hw}
-Integrate
-\begin{equation*}
-  \int_0^1 \frac{\der x}{x} \qquad ,
-\end{equation*}
-or show that it diverges.
+If we visualize $z$ as a point in the complex plane, how should we visualize $-z$?
 \end{hw}
 
 \begin{hw}
-Integrate
-\begin{equation*}
-  \int_0^\infty e^{-x}\cos x \: \der x
-\end{equation*}
-or show that it diverges.
+Find four different complex numbers $z$ such that $z^4=1$.
 \end{hw}
 
 \begin{hw}
-Prove that
+Compute the following: 
+\begin{gather*}
+|1+i| \quad , \quad \arg(1+i) \quad , \\
+  \left|\frac{1}{1+i}\right| \quad , \quad \arg\left(\frac{1}{1+i}\right) \quad , \\
+  \frac{1}{1+i}
+\end{gather*}
+\end{hw}
+
+\begin{hw}
+Write the function $\tan x$ in terms of complex exponentials.
+\end{hw}
+
+\begin{hw}
+Evaluate
 \begin{equation*}
-  \int_0^\infty e^{-e^x} \: \der x
+  \int \frac{\der x}{x^3-x^2+4x-4} \qquad .
 \end{equation*}
-converges, but don't evaluate it.
 \end{hw}
 
-\begin{hw}\label{hw:laser}
-(a) Verify that the probability distribution $\der P/\der x$ given in example \ref{eg:laser} on page \pageref{eg:laser}
-is properly normalized.\\
-(b) Find the average value of $x$, or show that it diverges.\\
-(c) Find the standard deviation of $x$, or show that it diverges.
-\end{hw}
-
-\begin{hw}[2]
-Prove
+\begin{hw}
+Evaluate
 \begin{equation*}
-  \int_0^\infty e^{-x}x^n\:\der x = n! \qquad .
+  \int e^{-ax}\cos bx \: \der x \qquad .
 \end{equation*}
 \end{hw}
 
