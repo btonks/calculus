@@ -240,8 +240,7 @@ That is, the geometric series $1+x+x^2+x^3+\ldots$ is really just one special ex
 demonstrated in the following example.
 
 \begin{eg}\label{eg:taylor-geometric}
-\egquestion Find the Taylor series of $y=1/(1-x)$ around $x=0$, and see what you can say about
-its radius of convergence.
+\egquestion Find the Taylor series of $y=1/(1-x)$ around $x=0$.
 
 \eganswer Rewriting the function as $y=(1-x)^{-1}$ and applying the chain rule, we have
 \begin{align*}
@@ -267,9 +266,11 @@ For example, $1/(1-2)=-1$, which is finite, but the geometric series gives $1+2+
 
 In general, every function's Taylor series around $x=0$ converges for all values of $x$ in the range
 defined by $|x|<r$, where $r$ is some number, known as the radius of convergence.\index{radius of convergence}
-There is also some radius, possibly smaller, within which it converges to the \emph{correct} value.
-For the function $e^x$, both radii
-happen to be infinite, whereas for $1/(1-x)$ they both equal 1. The following example shows a worst-case
+Also, if the function is defined by putting together other functions that are well behaved (in the sense of
+converging to their own Taylor series in the relevant region), then the Taylor series will not only converge
+but converge to the \emph{correct} value.
+For the function $e^x$, the radius
+happen to be infinite, whereas for $1/(1-x)$ it equals 1. The following example shows a worst-case
 scenario.
 
 %%graph%% nonanalytic func=exp(-1/x**2) format=eps xlo=-4 xhi=4 ylo=0 yhi=1.1 with=lines xtic_spacing=2 ytic_spacing=1
@@ -280,7 +281,9 @@ The function $y=e^{-1/x^2}$, shown in figure \figref{nonanalytic}, never converg
 This is because the Taylor series for this function, evaluated around $x=0$ is exactly zero! At $x=0$, we have
 $y=0$, $\der y/\der x=0$, $\der^2 y/\der x^2=0$, and so on for every derivative. The zero function matches the function
 $y(x)$ and all its derivatives to all orders, and yet is useless as an approximation to $y(x)$. The radius of convergence
-of the Taylor series is infinite, but the radius within which it gives the correct result is zero.
+of the Taylor series is infinite, but it doesn't give correct results except at $x=0$. The reason for this is that
+$y$ was built by composing two functions, $w(x)=-1/x^2$ and $y(w)=e^w$. The function $w$ is badly behaved at $x=0$
+because it blows up there. In particular, it doesn't have a well-defined Taylor series at $x=0$.
 \end{eg}
 
 \begin{eg}\label{eg:taylor-sin}
@@ -321,6 +324,8 @@ To see that this is the right generalization, we can do a change of variable,
 defining a new function $g(x)=f(x-c)$. The radius of convergence is to be measured
 from the center $c$ rather than from 0.
 
+\pagebreak
+
 \begin{eg}
 \egquestion
 Find the Taylor series of $\ln x$, evaluated around $x=1$.
@@ -344,6 +349,8 @@ $\ln 1=0$. The resulting series is
 We can predict that its radius of convergence can't be any greater than 1, because
 $\ln x$ blows up at 0, which is at a distance of 1 from 1.
 \end{eg}
+
+\pagebreak
 
 \section{Methods of integration}
 
@@ -747,12 +754,14 @@ for terms up to order $x^2$.
 \end{hw}
 
 \begin{hw}
-Find the Taylor series expansion of $\log_2 x$ around $x=1$, and use it to evaluate
-$\log_2 1.0595$ to four significant figures of precision. Check your result by using the
-fact that 1.0595 is approximately the twelfth root of 2. This number is the ratio of
-the frequencies of two successive notes of the chromatic scale\index{chromatic scale}
-in music, e.g., C and D-flat.
+Expand $(1+x)^{1/3}$ in a Taylor series around $x=0$. The value $x=28$ lies outside
+this series' radius of convergence, but we can nevertheless use it to
+extract the cube root of 28 by recognizing that $28^{1/3}=3(28/27)^{1/3}$.
+Calculate the root to four significant figures of precision, and check it
+in the obvious way.
 \end{hw}
+
+\pagebreak
 
 \begin{hw}
 In classical physics, the kinetic energy $K$ of an object of mass $m$ moving at velocity $v$
@@ -776,6 +785,14 @@ the classical expression was inferred.
 \end{hw}
 
 \pagebreak
+
+\begin{hw}
+Find the Taylor series expansion of $\log_2 x$ around $x=1$, and use it to evaluate
+$\log_2 1.0595$ to four significant figures of precision. Check your result by using the
+fact that 1.0595 is approximately the twelfth root of 2. This number is the ratio of
+the frequencies of two successive notes of the chromatic scale\index{chromatic scale}
+in music, e.g., C and D-flat.
+\end{hw}
 
 \begin{hw}\label{hw:air-res-taylor}
 In free fall, the acceleration will not be exactly constant, due to air resistance. For example,
