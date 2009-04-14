@@ -7,16 +7,20 @@ Consider an infinite sequence of numbers like $1/2$, $2/3$, $3/4$, $4/5$, \ldots
 this as approaching 1, or ``converging to 1.'' The way to do this is to make a function $f(n)$, which is only
 well defined for integer values of $n$. Then $f(1)=1/2$, $f(2)=2/3$, and in general
 $f(n)=n/(n+1)$. With just a little tinkering, our definitions of limits can be
-applied to this type of series (see problem \ref{hw:sequence-weierstrass} on page \pageref{hw:sequence-weierstrass}).
+applied to this type of function  (see problem \ref{hw:sequence-weierstrass} on page \pageref{hw:sequence-weierstrass}).
 
 \section{Infinite series}
 A related question is how to rigorously define the sum of infinitely many numbers, which is referred to
 as an infinite \emph{series}.\index{series!infinite} An example is the geometric series
-$1+x+x^2+x^3+\ldots$,\index{series!geometric}\index{geometric series}\index{Euclid}
+$1+x+x^2+x^3+\ldots=1/(1-x)$,\index{series!geometric}\index{geometric series}\index{Euclid}
 which we used casually on page \pageref{geometric-series}.
 The general concept of an infinite series goes back
-to ancient Greek mathematics, and Euclid's \emph{Elements}, which includes a discussion of the geometric series,
-two thousand years before the modern concept of a limit. Intuitively, the idea is that an infinite sum like $1+1+1+\ldots$ would
+to ancient Greek mathematics. Various supposed paradoxes about infinite series, such as Zeno's paradox,\index{Zeno's paradox}
+were exhibited, influencing Euclid to sidestep the issue in his \emph{Elements}, where in Book IX, Proposition 35
+he provides only an expression $(1-x^n)/(1-x)$ for the $n$th partial sum of the geometric series.
+The case where $n$ gets so big that $x^n$ becomes negligible is left to the reader's imagination,
+as in one of those scenes in a romance novel that ends with something like ``...and she surrendered...''
+For those with modern training, the idea is that an infinite sum like $1+1+1+\ldots$ would
 clearly give an infinite result, but this is only because the terms are all staying the same size. If the terms get
 smaller and smaller, and get smaller fast enough, then the result can be finite. For example, consider the geometric
 series in the case where $x=1/2$, for which we expect the result $1/(1-1/2)=2$. We have
@@ -31,7 +35,8 @@ Note that we ended up wanting to talk about the partial sums of the series. This
 the convergence of series in general.
 In the case of the geometric series, for example,
 we can define a sequence of the
-partial sums 1, $1+x$, $1+x+x^2$, \ldots 
+partial sums 1, $1+x$, $1+x+x^2$, \ldots We can then define convergence and limits of series in terms of convergence and limits
+of the partial sums.
 
 It's instructive to see what happens to the geometric series with $x=0.1$. The geometric series becomes\label{geometric-tenths}
 \begin{equation*}
@@ -42,12 +47,80 @@ the result in a certain decimal place, without affecting any of the earlier ones
 result that was valid to three digits past the decimal place, we could stop at 1.111, being assured that we had
 attained a good enough approximation. If we wanted an exact result, we could also observe that multiplying the
 result by 9 would give $9.999\ldots$, which is the same as 10, so the result must be 10/9, which is in agreement
-with $1/(1-1/10)=1/(9/10)$.
+with $1/(1-1/10)=10/9$.
 
-The thing to watch out for with infinite series is that
+One thing to watch out for with infinite series is that
 the axioms of the real number system only talk about finite sums, so it's easy to get wrong results
 by attempting to apply them to infinite ones (see problem
 \ref{hw:bogus-series} on page \pageref{hw:bogus-series}).\label{infinite-sum-warning}
+
+\section{Tests for convergence}
+
+There are many different tests that can be used to determine whether a sequence or series converges.
+I'll briefly state three of the most useful, with sketches of their proofs.
+
+\emph{Bounded and increasing sequences\/:} A sequence that always increases, but never
+surpasses a certain value, converges.
+
+This amounts to a restatement of the compactness axiom for the real numbers stated on page \pageref{compactness},
+and is therefore to be interpreted not so much as a statement about sequences but as one about the
+real number system. In particular, it fails if interpreted as a statement about sequences confined entirely to the rational number system, as we can see from the
+sequence 1, 1.4, 1.41, 1.414, \ldots consisting of the successive decimal approximations to $\sqrt{2}$,
+which does not converge to any rational-number value.
+
+\begin{eg}
+\egquestion Prove that the geometric series
+$1+1/2+1/4+\ldots$ converges.
+
+\eganswer The sequence of partial sums is increasing, since each term is positive.
+Each term closes half of the remaining gap separating the previous partial sum from 2,
+so the sum never surpasses 2. Since the partial sums are increasing and bounded,
+they converge to a limit.
+\end{eg}
+
+Once we know that a particular series converges, we can also easily infer the convergence
+of other series whose terms get smaller faster. For example, we can be certain
+that if the geometric series converges, so does the series
+\begin{equation*}
+  \frac{1}{1} + \frac{1}{1\times 2} + \frac{1}{1\times 2 \times 3} +\ldots \qquad ,
+\end{equation*}
+whose terms get smaller faster than any base raised to the power $n$.
+
+\emph{Alternating series with decreasing terms\/:} If the terms of a series alternate
+in sign and approach zero, then the series converges.
+
+Sketch of a proof: The even partial sums form an increasing sequence, the odd sums a decreasing one.
+Neither of these sequences of partial sums can be unbounded, since the difference between partial
+sums $n$ and $n+1$ would then have to be unbounded, but this difference is simply the $n$th term,
+and the terms approach zero. Since the even
+partial sums are increasing and bounded, they converge to a limit, and similarly for the odd ones.
+The two limits must be equal, since the terms approach zero.
+
+\begin{eg}
+\egquestion Prove that the series $1-1/2+1/3-1/4+\ldots$ converges.
+
+\eganswer Its convergence follows because it is an alternating series with decreasing terms.
+The sum turns out to be $\ln 2$, although the convergence of the series is so slow that
+an extremely large number of terms is required in order to obtain a decent approximation,
+\end{eg}
+
+\emph{The integral test\/:} If the terms of a series $a_n$ are positive and decreasing, and $f(x)$ is a positive and decreasing function
+on the real number line such that $f(n)=a_n$, then the sum of $a_n$ from $n=1$ to $\infty$ converges if and only if
+$\int_1^\infty f(x)\der x$ does.
+
+Sketch of proof: Since the theorem is supposed to hold for both convergence and divergence, and is also an ``if and only if,''
+there are actually four cases to prove, of which we pick the representative one where the integral is known to converge and we
+want to prove convergence of the corresponding sum.
+The sum and the integral can be interpreted as the areas under two graphs: one like a smooth ramp and one like a staircase.
+Sliding the staircase half a unit to the left, it lies entirely underneath the ramp, and therefore the area under it is
+also finite.
+
+\begin{eg}
+\egquestion Prove that the series $1+1/2+1/3+\ldots$ diverges.
+
+\eganswer The integral of $1/x$ is $\ln x$, which diverges as $x$ approaches infinity, so the series diverges as well.
+\end{eg}
+
 
 \section{Taylor series}\label{sec:taylor}\index{Taylor series}\index{series!Taylor}
 
@@ -267,23 +340,6 @@ We can predict that its radius of convergence can't be any greater than 1, becau
 $\ln x$ blows up at 0, which is at a distance of 1 from 1.
 \end{eg}
 
-\section{Tests for convergence}
-
-The following tests may be used to determine whether a sequence or series converges.
-
-\emph{1. Bounded and increasing sequences\/:} A sequence that always increases, but never
-surpasses a certain value, converges.
-
-\emph{2. Alternating series with decreasing terms\/:} If the terms of a series alternate
-in sign and decrease in absolute value, then the series converges.
-
-\emph{3. Integral test\/:} If the terms of a series $a_n$ are decreasing, and $f(x)$ is a function
-on the real number line such that $f(n)=a_n$, then the sum of $a_n$ converges if and only if
-$\int_1^\infty f(x)\der x$ does.
-
-Sketches of proofs: Test 1 follows directly from the compactness axiom stated on page \pageref{compactness}.
-Test 2 can be proved by applying test 1 to the even and odd partial sums.
-
 \begin{hwsection}
 \begin{hwwithsoln}{sequence-weierstrass}
 Modify the Weierstrass definition of the limit to apply to infinite sequences.
@@ -294,6 +350,20 @@ Modify the Weierstrass definition of the limit to apply to infinite sequences.
 of the Weierstrass limit found in problem \ref{hw:sequence-weierstrass}.
 (b) Criticize the following argument. The series given in part a equals zero, because addition is associative, so we can
 rewrite it as $(1-1)+(1-1)+(1-1)+\ldots$
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{geometric-series-conv-integral}
+Use the integral test to prove the convergence of the geometric series for $0<x<1$.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{determine-convergence}
+Determine the convergence or divergence of the following series.\\
+(a) $1+1/2^2+1/3^2+\ldots$\\
+(b) $1/\ln\ln 3-1/\ln\ln 6+1/\ln \ln 9-1/\ln\ln 12+\ldots$\\
+(c)
+\begin{equation*}
+\frac{2\sqrt{2}}{9801} \sum^\infty_{k=0} \frac{(4k)!(1103+26390k)}{(k!)^4 396^{4k}}
+\end{equation*}
 \end{hwwithsoln}
 
 \begin{hw}
@@ -362,6 +432,12 @@ the air.   (For a sphere of mass $m$ and diameter $d$ dropping in air, $A=4.11m/
 Evaluate the constant and linear terms of the Taylor series for the function $E(b)$.
 \end{hw}
 % ans: E(b)=b/3+...
+
+\begin{hw}
+(a) Prove that the convergence of an infinite series is unaffected by omitting
+some initial terms. (b) Similarly, prove that convergence is unaffected by
+multiplying all the terms by some constant factor.
+\end{hw}
 
 
 \end{hwsection}
