@@ -1,288 +1,441 @@
-%%chapter%% 06
-\chapter{Complex number techniques}
+%%chapter%% 05
+\chapter{Sequences and Series}
 
-\section{Review of complex numbers}\index{complex number}
+\section{Infinite sequences}\index{sequence}
 
-For a more detailed treatment of complex numbers, see ch. 3 of
-James Nearing's free book at \\
-\verb@http://www.physics.miami.edu/@
-\verb@nearing/mathmethods/@.
-%
-\fig{complex-numbers}{Visualizing complex numbers as points in a plane.}
-%
-\fig{complex-addition}{Addition of complex numbers is just like addition of vectors,
-although the real and imaginary axes don't actually represent directions in space.}
-%
-\fig{complex-conjugate}{A complex number and its conjugate.}
+Consider an infinite sequence of numbers like $1/2$, $2/3$, $3/4$, $4/5$, \ldots We want to define
+this as approaching 1, or ``converging to 1.'' The way to do this is to make a function $f(n)$, which is only
+well defined for integer values of $n$. Then $f(1)=1/2$, $f(2)=2/3$, and in general
+$f(n)=n/(n+1)$. With just a little tinkering, our definitions of limits can be
+applied to this type of function  (see problem \ref{hw:sequence-weierstrass} on page \pageref{hw:sequence-weierstrass}).
 
-We assume there is a number, $i$, such that $i^2=-1$.
-The square roots of $-1$ are then $i$ and $-i$. (In electrical engineering work,
-where $i$ stands for current, $j$ is sometimes used instead.) This gives rise
-to a number system, called the complex numbers, containing the real numbers as a subset.
-Any complex number $z$ can be written in the form $z=a+bi$, where $a$ and $b$ are
-real, and $a$ and $b$ are then referred to as the real and imaginary parts of $z$.
-A number with a zero real part is called an imaginary number.\index{imaginary number}
-The complex numbers can be visualized as a plane, figure \figref{complex-numbers}, with the real number line placed
-horizontally like the $x$ axis of the familiar $x-y$ plane, and the imaginary numbers running
-along the $y$ axis. The complex numbers are complete in a way that the real numbers
-aren't: every nonzero complex number has two square roots. For example, 1 is
-a real number, so it is also a member of the complex numbers, and its square roots
-are $-1$ and 1. Likewise, $-1$ has square roots $i$ and $-i$, and the number $i$
-has square roots $1/\sqrt{2}+i/\sqrt{2}$ and $-1/\sqrt{2}-i/\sqrt{2}$.
+\section{Infinite series}
+A related question is how to rigorously define the sum of infinitely many numbers, which is referred to
+as an infinite \emph{series}.\index{series!infinite} An example is the geometric series
+$1+x+x^2+x^3+\ldots=1/(1-x)$,\index{series!geometric}\index{geometric series}\index{Euclid}
+which we used casually on page \pageref{geometric-series}.
+The general concept of an infinite series goes back
+to ancient Greek mathematics. Various supposed paradoxes about infinite series, such as Zeno's paradox,\index{Zeno's paradox}
+were exhibited, influencing Euclid to sidestep the issue in his \emph{Elements}, where in Book IX, Proposition 35
+he provides only an expression $(1-x^n)/(1-x)$ for the $n$th partial sum of the geometric series.
+The case where $n$ gets so big that $x^n$ becomes negligible is left to the reader's imagination,
+as in one of those scenes in a romance novel that ends with something like ``...and she surrendered...''
+For those with modern training, the idea is that an infinite sum like $1+1+1+\ldots$ would
+clearly give an infinite result, but this is only because the terms are all staying the same size. If the terms get
+smaller and smaller, and get smaller fast enough, then the result can be finite. For example, consider the geometric
+series in the case where $x=1/2$, for which we expect the result $1/(1-1/2)=2$. We have
+\begin{equation*}
+  1 + \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \ldots \qquad ,
+\end{equation*}
+which at the successive steps of addition equals 1, $1\frac{1}{2}$, $1\frac{3}{4}$, $1\frac{7}{8}$,  $1\frac{15}{16}$, \ldots.
+We're getting closer and closer to 2, cutting the distance in half at each step. Clearly we can get as close as we like to 2,
+if we're willing to add enough terms.
 
-Complex numbers can be added and subtracted by adding or subtracting their real
-and imaginary parts, figure \figref{complex-addition}. Geometrically, this is the same as vector addition.
+Note that we ended up wanting to talk about the partial sums of the series. This is the right way to get a rigorous definition of
+the convergence of series in general.
+In the case of the geometric series, for example,
+we can define a sequence of the
+partial sums 1, $1+x$, $1+x+x^2$, \ldots We can then define convergence and limits of series in terms of convergence and limits
+of the partial sums.
 
-The complex numbers $a+bi$ and $a-bi$, lying at equal distances above and below the
-real axis, are called complex conjugates.\index{conjugate}\index{complex number!conjugate of}
-The results of the quadratic formula
-are either both real, or complex conjugates of each other.
-The complex conjugate of a number $z$ is notated as $\bar{z}$ or
-$z^*$.
+It's instructive to see what happens to the geometric series with $x=0.1$. The geometric series becomes\label{geometric-tenths}
+\begin{equation*}
+  1 + 0.1 + 0.01 + 0.001 + \ldots \qquad .
+\end{equation*}
+The partial sums are 1, 1.1, 1.11, 1.111, \ldots We can see vividly here that adding another term will only affect
+the result in a certain decimal place, without affecting any of the earlier ones. For instance, if we needed a
+result that was valid to three digits past the decimal place, we could stop at 1.111, being assured that we had
+attained a good enough approximation. If we wanted an exact result, we could also observe that multiplying the
+result by 9 would give $9.999\ldots$, which is the same as 10, so the result must be 10/9, which is in agreement
+with $1/(1-1/10)=10/9$.
 
-The complex numbers obey all the same rules of arithmetic as the reals, except that
-they can't be ordered along a single line. That is, it's not possible to say whether
-one complex number is greater than another. We can compare them in terms of their
-magnitudes\index{magnitude of a complex number}\index{complex number!magnitude of}
-(their distances from the origin), but two distinct complex numbers may
-have the same magnitude, so, for example, we can't say whether $1$ is greater than
-$i$ or $i$ is greater than $1$.
+One thing to watch out for with infinite series is that
+the axioms of the real number system only talk about finite sums, so it's easy to get wrong results
+by attempting to apply them to infinite ones (see problem
+\ref{hw:bogus-series} on page \pageref{hw:bogus-series}).\label{infinite-sum-warning}
 
-\begin{eg}\label{eg:sqrt-i}
-\egquestion Prove that $1/\sqrt{2}+i/\sqrt{2}$ is a square root of $i$.
+\section{Tests for convergence}
 
-\eganswer Our proof can use any ordinary rules of arithmetic, except for
-ordering.
-\begin{align*}
-   (\frac{1}{\sqrt{2}}+\frac{i}{\sqrt{2}})^2 
-    & = \frac{1}{\sqrt{2}}\cdot\frac{1}{\sqrt{2}}
-       +\frac{1}{\sqrt{2}}\cdot\frac{i}{\sqrt{2}}\\
-       &+\frac{i}{\sqrt{2}}\cdot\frac{1}{\sqrt{2}}
-       +\frac{i}{\sqrt{2}}\cdot\frac{i}{\sqrt{2}} \\
-    &= \frac{1}{2}(1+i+i-1) \\
-    &= i
-\end{align*}
-\end{eg}
+There are many different tests that can be used to determine whether a sequence or series converges.
+I'll briefly state three of the most useful, with sketches of their proofs.
 
-Example \ref{eg:sqrt-i} showed one method of multiplying complex numbers.
-However, there is another nice interpretation of complex multiplication.
-We define the argument of a complex number, figure \figref{complex-polar}, as its angle in the complex plane, measured
-counterclockwise from the positive real axis.\index{argument}\index{complex number!argument of}
-Multiplying two complex numbers then corresponds to multiplying their magnitudes,
-and adding their arguments, figure \figref{complex-multiplication}.
-%
-\fig{complex-polar}{A complex number can be described in terms of its magnitude and
-argument.}
-%
-\fig{complex-multiplication}{The argument of $uv$ is the sum of the arguments of $u$ and $v$.}
+\emph{Bounded and increasing sequences\/:} A sequence that always increases, but never
+surpasses a certain value, converges.
 
-\begin{selfcheck}{complex-square-root}
-Using this interpretation of multiplication, how could you find the
-square roots of a complex number?
-\end{selfcheck}
+This amounts to a restatement of the compactness axiom for the real numbers stated on page \pageref{compactness},
+and is therefore to be interpreted not so much as a statement about sequences but as one about the
+real number system. In particular, it fails if interpreted as a statement about sequences confined entirely to the rational number system, as we can see from the
+sequence 1, 1.4, 1.41, 1.414, \ldots consisting of the successive decimal approximations to $\sqrt{2}$,
+which does not converge to any rational-number value.
 
 \begin{eg}
-The magnitude $|z|$ of a complex number $z$ obeys
-the identity $|z|^2=z\bar{z}$. To prove this, we first note that $\bar{z}$
-has the same magnitude as $z$, since flipping it to the other side of the
-real axis doesn't change its distance from the origin. Multiplying $z$ by
-$\bar{z}$ gives a result whose magnitude is found by multiplying their
-magnitudes, so the magnitude of
-$z\bar{z}$ must therefore equal  $|z|^2$. Now we just have to prove that
-$z\bar{z}$ is a positive real number. But if, for example, $z$ lies counterclockwise
-from the real axis, then $\bar{z}$ lies clockwise from it. If $z$ has a positive
-argument, then $\bar{z}$ has a negative one, or vice-versa. The sum of their arguments is therefore
-zero, so the result has an argument of zero, and is on the positive real axis.
-\footnote{I cheated a little. If $z$'s argument
-is 30 degrees, then we could say $\bar{z}$'s was -30, but we could also call it
-330. That's OK, because 330+30 gives 360, and an argument of
-360 is the same as an argument of zero.}
+\egquestion Prove that the geometric series
+$1+1/2+1/4+\ldots$ converges.
+
+\eganswer The sequence of partial sums is increasing, since each term is positive.
+Each term closes half of the remaining gap separating the previous partial sum from 2,
+so the sum never surpasses 2. Since the partial sums are increasing and bounded,
+they converge to a limit.
 \end{eg}
 
-This whole system was built up in order to make every number have square roots.
-What about cube roots, fourth roots, and so on? Does it get even more weird when
-you want to do those as well? No. The complex number system we've already discussed
-is sufficient to handle all of them. The nicest way of thinking about it is in terms
-of roots of polynomials. In the real number system, the polynomial $x^2-1$ has
-two roots, i.e., two values of $x$ (plus and minus one) that we can plug in to the
-polynomial and get zero. Because it has these two real roots, we can rewrite the
-polynomial as $(x-1)(x+1)$. However, the polynomial $x^2+1$ has no real roots. It's
-ugly that in the real number system, some second-order polynomials have two
-roots, and can be factored, while others can't. In the complex number system,
-they all can. For instance, $x^2+1$ has roots $i$ and $-i$, and can be factored
-as $(x-i)(x+i)$. In general, the fundamental theorem of algebra\index{fundamental theorem of algebra!statement}
-states that in the complex number system,
-any nth-order polynomial can be factored completely
-into $n$ linear factors, and we can also say that it has $n$ complex roots,
-with the understanding that some of the roots may be the same. For instance,
-the fourth-order polynomial $x^4+x^2$ can be factored as $(x-i)(x+i)(x-0)(x-0)$,
-and we say that it has four roots, $i$, $-i$, 0, and 0, two of which happen to be
-the same. This is a sensible way to think about it, because in real life, numbers are
-always approximations anyway, and if we make tiny, random changes
-to the coefficients of this polynomial,
-it will have four distinct roots, of which two just happen to be very close
-to zero. I've given a proof of the fundamental theorem of algebra on
-page \pageref{detour:fn-thm-alg-proof}.
-
-\section{Euler's formula}
-
-Having expanded our horizons to include the complex numbers, it's natural to want to extend
-functions we knew and loved from the world of real numbers so that they can also operate on
-complex numbers. The only really natural way to do this in general is to use Taylor series.
-A particularly beautiful thing happens with the functions $e^x$, $\sin x$, and $\cos x$:
-\begin{align*}
-  e^x    &= 1 + \frac{1}{2!}x^2 + \frac{1}{3!}x^3 + \ldots \\
-  \cos x &= 1 - \frac{1}{2!}x^2 + \frac{1}{4!}x^4 - \ldots \\
-  \sin x &= x - \frac{1}{3!}x^3 + \frac{1}{5!}x^5 - \ldots \\
-\end{align*}
-If $x=i\phi$ is an imaginary number, we have
+Once we know that a particular series converges, we can also easily infer the convergence
+of other series whose terms get smaller faster. For example, we can be certain
+that if the geometric series converges, so does the series
 \begin{equation*}
-  e^{i\phi} = \cos \phi + i \sin \phi \qquad ,
+  \frac{1}{1} + \frac{1}{1\times 2} + \frac{1}{1\times 2 \times 3} +\ldots \qquad ,
 \end{equation*}
-a result known as Euler's formula.\index{Euler's formula}
-The geometrical interpretation in the complex
-plane is shown in figure \figref{euler}.
+whose terms get smaller faster than any base raised to the power $n$.
 
-\fig{euler}{The complex number $e^{i\phi}$ lies on the unit circle.}
+\emph{Alternating series with decreasing terms\/:} If the terms of a series alternate
+in sign and approach zero, then the series converges.
 
-Although the result may seem like something out of a freak show at first,
-applying the definition\footnote{See page \pageref{definition-of-exp} for an explanation
-of where this definition comes from and why it makes sense.} of the exponential function
-makes it clear how natural it is:
-\begin{align*}
-  e^x = \lim_{n\rightarrow \infty} \left(1+\frac{x}{n}\right)^n \qquad .
-\end{align*}
-When $x=i\phi$ is imaginary, the quantity $(1+i\phi/n)$ represents a number
-lying just above 1 in the complex plane. For large $n$, $(1+i\phi/n)$
-becomes very close to the unit circle, and its argument is the small
-angle $\phi/n$. Raising this number to the nth power multiplies its
-argument by $n$, giving a number with an argument of $\phi$.
-
-\smallfig{euler-portrait}{Leonhard Euler (1707-1783)}\index{Euler, Leonhard}
-
-Euler's formula is used frequently in physics and engineering.
+Sketch of a proof: The even partial sums form an increasing sequence, the odd sums a decreasing one.
+Neither of these sequences of partial sums can be unbounded, since the difference between partial
+sums $n$ and $n+1$ would then have to be unbounded, but this difference is simply the $n$th term,
+and the terms approach zero. Since the even
+partial sums are increasing and bounded, they converge to a limit, and similarly for the odd ones.
+The two limits must be equal, since the terms approach zero.
 
 \begin{eg}
-\egquestion Write the sine and cosine functions in terms of exponentials.
+\egquestion Prove that the series $1-1/2+1/3-1/4+\ldots$ converges.
 
-\eganswer Euler's formula for $x=-i\phi$ gives $\cos \phi - i \sin \phi$,
-since $\cos(-\theta)=\cos\theta$, and $\sin(-\theta)=-\sin\theta$.
-\begin{align*}
-  \cos x &= \frac{e^{ix}+e^{-ix}}{2} \\
-  \sin x &= \frac{e^{ix}-e^{-ix}}{2i} 
-\end{align*}
+\eganswer Its convergence follows because it is an alternating series with decreasing terms.
+The sum turns out to be $\ln 2$, although the convergence of the series is so slow that
+an extremely large number of terms is required in order to obtain a decent approximation,
 \end{eg}
+
+\emph{The integral test\/:} If the terms of a series $a_n$ are positive and decreasing, and $f(x)$ is a positive and decreasing function
+on the real number line such that $f(n)=a_n$, then the sum of $a_n$ from $n=1$ to $\infty$ converges if and only if
+$\int_1^\infty f(x)\der x$ does.
+
+Sketch of proof: Since the theorem is supposed to hold for both convergence and divergence, and is also an ``if and only if,''
+there are actually four cases to prove, of which we pick the representative one where the integral is known to converge and we
+want to prove convergence of the corresponding sum.
+The sum and the integral can be interpreted as the areas under two graphs: one like a smooth ramp and one like a staircase.
+Sliding the staircase half a unit to the left, it lies entirely underneath the ramp, and therefore the area under it is
+also finite.
 
 \begin{eg}
-\egquestion Evaluate
-\begin{equation*}
-  \int e^x \cos x \der x
-\end{equation*}
+\egquestion Prove that the series $1+1/2+1/3+\ldots$ diverges.
 
-\eganswer This seemingly impossible integral becomes easy if we rewrite
-the cosine in terms of exponentials:
-\begin{align*}
-  \int e^x & \cos x \der x \\
-      &= \int e^x \left(\frac{e^{ix}+e^{-ix}}{2}\right) \:\der x \\
-      &= \frac{1}{2} \int (e^{(1+i)x}+e^{(1-i)x})\:\der x \\
-      &= \frac{1}{2} \left( \frac{e^{(1+i)x}}{1+i}+\frac{e^{(1-i)x}}{1-i} \right)+ c
-\end{align*}
-
-Since this result is the integral of a real-valued function, we'd like it to be
-real, and in fact it is, since the first and second terms are complex conjugates of
-one another. If we wanted to, we could use Euler's theorem to convert it back to
-a manifestly real result.\footnote{In general, the use of complex number techniques to
-do an integral could result in a complex number, but that complex number would
-be a constant, which could be subsumed within the usual constant of integration.}
-
+\eganswer The integral of $1/x$ is $\ln x$, which diverges as $x$ approaches infinity, so the series diverges as well.
 \end{eg}
 
-\section{Partial fractions revisited}\label{sec:complex-part-frac}\index{integration!methods of!partial fractions}\index{partial fractions}
 
-Suppose we want to evaluate the integral
+\section{Taylor series}\label{sec:taylor}\index{Taylor series}\index{series!Taylor}
+
+If you calculate $e^{0.1}$ on your calculator, you'll find that
+it's very close to 1.1. This is because the tangent line at $x=0$
+on the graph of $e^x$ has a slope of 1 ($\der e^x/\der x=e^x=1$ at $x=0$),
+and the tangent line is a good approximation to the exponential curve
+as long as we don't get too far away from the point of tangency.
+
+%%graph%% ex-tangent func=exp(x) format=eps xlo=-1 xhi=1 ylo=0 yhi=3 with=lines xtic_spacing=1 ytic_spacing=1 ; func=1+x
+\smallfig{ex-tangent}{The function $e^x$, and the tangent line at $x=0$.}
+
+How big is the error? The actual value of $e^{0.1}$ is $1.10517091807565\ldots$, which
+differs from $1.1$ by about $0.005$. If we go farther from the point of tangency,
+the approximation gets worse. At $x=0.2$, the error is about $0.021$, which is about
+four times bigger. In other words, doubling $x$ seems to roughly quadruple the error,
+so the error is proportional to $x^2$; it seems to be about $x^2/2$. Well, if we want a handy-dandy, super-accurate
+estimate of $e^x$ for small values of $x$, why not just account for this
+error. Our new and improved estimate is
+\begin{align*}
+  e^x \approx 1+x+\frac{1}{2}x^2
+\end{align*}
+for small values of $x$.
+
+%%graph%% ex-quadratic func=exp(x) format=eps xlo=-1 xhi=1 ylo=0 yhi=3 with=lines xtic_spacing=1 ytic_spacing=1 ; func=1+x+x**2/2
+\smallfig{ex-quadratic}{The function $e^x$, and the approximation $1+x+x^2/2$.}
+
+Figure \figref{ex-quadratic} shows that the approximation is now extremely good for sufficiently small values of $x$.
+The difference is that whereas $1+x$ matched both the y-intercept and the slope of the curve, $1+x+x^2/2$ matches
+the curvature as well. Recall that the second derivative is a measure of curvature. The second derivatives of the
+function and its approximation are
+\begin{gather*}
+  \frac{\der}{\der x} e^x = 1\\
+  \frac{\der}{\der x} \left(1+x+\frac{1}{2}x^2\right) = 1
+\end{gather*}
+
+%%graph%% ex-cubic func=exp(x) format=eps xlo=-1 xhi=1 ylo=0 yhi=3 with=lines xtic_spacing=1 ytic_spacing=1 ; func=1+x+x**2/2+x**3/6
+\smallfig{ex-cubic}{The function $e^x$, and the approximation $1+x+x^2/2+x^3/6$.}
+%
+We can do even better. Suppose we want to match the third derivatives. All the derivatives of $e^x$, evaluated
+at $x=0$, are 1, so we just need to add on a term proportional to $x^3$ whose third derivative is one. Taking the
+first derivative will bring down a factor of 3 in front, and taking and the second derivative will give a 2, so
+to cancel these out we need the third-order term to be $(1/2)(1/3)$:
+\begin{align*}
+  e^x \approx 1+x+\frac{1}{2}x^2+\frac{1}{2\cdot3}x^3
+\end{align*}
+Figure \figref{ex-cubic} shows the result. For a significant range of $x$ values close to zero, the approximation is
+now so good that we can't even see the difference between the two functions on the graph.
+
+ On the other hand, figure \figref{ex-cubic-wide} shows that 
+the cubic approximation for somewhat larger negative and positive values of $x$ is poor --- worse, in fact, than the
+linear approximation, or even the constant approximation $e^x=1$. This is to be expected, because
+any polynomial will blow up to either positive or negative infinity as $x$ approaches negative infinity, whereas
+the function $e^x$ is supposed to get very close to zero for large negative $x$. The idea here is that derivatives
+are \emph{local} things: they only measure the properties of a function very close to the point at which they're
+evaluated, and they don't necessarily tell us anything about points far away.
+%
+%%graph%% ex-cubic-wide func=exp(x) format=eps xlo=-4 xhi=2.5 ylo=-10 yhi=12 with=lines xtic_spacing=1 ytic_spacing=5 ; func=1+x+x**2/2+x**3/6
+\fig{ex-cubic-wide}{The function $e^x$, and the approximation $1+x+x^2/2+x^3/6$, on a wider scale.}
+
+It's a remarkable fact, then, that by taking enough terms in a polynomial approximation, we can always get as good an
+approximation to $e^x$ as necessary --- it's just that a large number of terms may be required for large values of $x$.
+In other words, the \emph{infinite series}\index{series, infinite}
 \begin{equation*}
-  \int \frac{\der x}{x^2+1}
+   1+x+\frac{1}{2}x^2+\frac{1}{2\cdot3}x^3+\ldots
 \end{equation*}
-by the method of partial fractions. The quadratic formula tells us that the
-roots are $i$ and $-i$, setting
-$1/(x^2+1)=A/(x+i)+B/(x-i)$ gives $A=i/2$ and $B=-i/2$, so
+always gives exactly $e^x$. But what is the pattern here that would allows us to figure out, say, the fourth-order
+and fifth-order terms that were swept under the rug with the symbol ``\ldots''? Let's do the fifth-order term as
+an example. The point of adding in a fifth-order term is to make the fifth derivative of the approximation equal
+to the fifth derivative of $e^x$, which is 1. The first, second, \ldots derivatives of $x^5$ are
 \begin{align*}
-  \int \frac{\der x}{x^2+1} &= \frac{i}{2} \int \frac{\der x}{x+i} \\
-                            &  -\frac{i}{2}\int \frac{\der x}{x-i} \\
-      &= \frac{i}{2}\ln(x+i)\\
-        &-\frac{i}{2}\ln(x-i) \\
-      &= \frac{i}{2}\ln\frac{x+i}{x-i} \qquad .
+  \frac{\der}{\der x}x^5 &= 5x^4 \\
+  \frac{\der^2}{\der x^2}x^5 &= 5\cdot4 x^3 \\
+  \frac{\der^3}{\der x^3}x^5 &= 5\cdot4\cdot3 x^2 \\
+  \frac{\der^4}{\der x^4}x^5 &= 5\cdot4\cdot3\cdot2 x \\
+  \frac{\der^5}{\der x^5}x^5 &= 5\cdot4\cdot3\cdot2\cdot1  
 \end{align*}
-The attractive thing about this approach, compared with the method
-used on page \pageref{eg:arctan}, is that it doesn't require any
-tricks. If you came across this integral ten years from now, you
-could pull out your old calculus book, flip through it, and say,
-``Oh, here we go, there's a way to integrate one over a polynomial ---
-partial fractions.'' On the other hand, it's odd that we started out
-trying to evaluate an integral that had nothing but real numbers,
-and came out with an answer that isn't even obviously a real number.
+The notation for a product like $1\cdot2\cdot\ldots\cdot n$ is $n!$, read\index{factorial} ``$n$ factorial.'' So to get a term
+for our polynomial whose fifth derivative is 1, we need $x^5/5!$. The result for the infinite series is
+\begin{equation*}
+  e^x = \sum_{n=0}^\infty \frac{x^n}{n!} \qquad ,
+\end{equation*}
+where the special case of $0!=1$ is assumed.\footnote{This makes sense, because, for example, 4!=5!/5, 3!=4!/4, etc., so
+we should have 0!=1!/1.} This infinite series is called the \emph{Taylor series} for $e^x$, evaluated around $x=0$, and it's true, although I haven't proved it,
+that this particular Taylor series always converges to $e^x$, no matter how far $x$ is from zero.
 
-But what about that expression $(x+i)/(x-i)$? Let's give it a name,
-$w$. The numerator and denominator are complex conjugates of one
-another. Since they have the same magnitude, we must have $|w|=1$,
-i.e., $w$ is a complex number that lies on the unit circle, the
-kind of complex number that Euler's formula refers to. The numerator
-has an argument of $\tan^{-1}(1/x)=\pi/2-\tan^{-1}x$, and the denominator
-has the same argument but with the opposite sign. Division means subtracting
-arguments, so $\arg w=\pi-2\tan^{-1}x$. That means that the result can
-be rewritten using Euler's formula as
+In general, the Taylor series
+around $x=0$ for a function $y$ is
+\begin{equation*}
+  T_0(x) = \sum_{n=0}^\infty a_n x^n \qquad ,
+\end{equation*}
+where the condition for equality of the nth order derivative is
+\begin{equation*}
+  \left. a_n = \frac{1}{n!}\frac{\der^n y}{\der x^n}\right|_{x=0} \qquad .
+\end{equation*}
+Here the notation $\left.\right|_{x=0}$ means that the derivative is to be evaluated at $x=0$.
+
+A Taylor series can be used to approximate other functions besides $e^x$, and when you ask your calculator to evaluate a
+function such as a sine or a cosine, it may actually be using a Taylor series to do it.
+Taylor series are also the method Inf uses to calculate most expressions involving infinitesimals. In example
+\ref{eg:geometric-series} on page \pageref{eg:geometric-series}, we saw that
+when Inf was asked to calculate $1/(1-d)$, where $d$ was infinitesimal, the result was the geometric series:
+\begin{Code}
+  \ii : 1/(1-d)
+  \oo{1+d+d^2+d^3+d^4}
+\end{Code}
+These are also the the first five terms of the Taylor series for the function $y=1/(1-x)$, evaluated around $x=0$.
+That is, the geometric series $1+x+x^2+x^3+\ldots$ is really just one special example of a Taylor series, as
+demonstrated in the following example.
+
+\begin{eg}\label{eg:taylor-geometric}
+\egquestion Find the Taylor series of $y=1/(1-x)$ around $x=0$.
+
+\eganswer Rewriting the function as $y=(1-x)^{-1}$ and applying the chain rule, we have
 \begin{align*}
-  \int \frac{\der x}{x^2+1} &= \frac{i}{2}\ln e^{i(\pi-2\tan^{-1}x)} \\
-      &=  \frac{i}{2}\cdot i(\pi-2\tan^{-1}x) \\
-      &=  \tan^{-1}x + c \qquad .
+                                                & \left.y\right|_{x=0} = 1\\
+  \left.\frac{\der y}{\der x}\right|_{x=0}     =& \left.(1-x)^{-2}\right|_{x=0} = 1\\
+  \left.\frac{\der^2 y}{\der x^2}\right|_{x=0} =& \left.2(1-x)^{-3}\right|_{x=0} = 2\\
+  \left.\frac{\der^3 y}{\der x^3}\right|_{x=0} =& \left.2\cdot3(1-x)^{-4}\right|_{x=0} = 2\cdot3\\
+                                                & \ldots
 \end{align*}
-In other words, it's the same result we found before, but found 
-without the need for trickery.
+The pattern is that the nth derivative is $n!$. The Taylor series therefore has $a_n=n!/n!=1$:
+\begin{equation*}
+  \frac{1}{1-x} =  1+x+x^2+x^3+\ldots
+\end{equation*}
+\end{eg}
+
+If you flip back to page \pageref{geometric-tenths} and compare the rate of convergence of the geometric
+series for $x=0.1$ and $0.5$, you'll see that the sum converged 
+much more quickly for $x=0.1$ than for $x=0.5$. In general, we expect
+that any Taylor series will converge more quickly when $x$ is smaller. Now consider what happens at $x=1$. The series
+is now $1+1+1+\ldots$, which gives an infinite result, and we shouldn't have expected any better behavior, since
+attempting to evaluate $1/(1-x)$ at $x=1$ gives division by zero. For $x>1$, the results become nonsense.
+For example, $1/(1-2)=-1$, which is finite, but the geometric series gives $1+2+4+\ldots$, which is infinite.
+
+In general, every function's Taylor series around $x=0$ converges for all values of $x$ in the range
+defined by $|x|<r$, where $r$ is some number, known as the radius of convergence.\index{radius of convergence}
+Also, if the function is defined by putting together other functions that are well behaved (in the sense of
+converging to their own Taylor series in the relevant region), then the Taylor series will not only converge
+but converge to the \emph{correct} value.
+For the function $e^x$, the radius
+happen to be infinite, whereas for $1/(1-x)$ it equals 1. The following example shows a worst-case
+scenario.
+
+%%graph%% nonanalytic func=exp(-1/x**2) format=eps xlo=-4 xhi=4 ylo=0 yhi=1.1 with=lines xtic_spacing=2 ytic_spacing=1
+\fig{nonanalytic}{The function $e^{-1/x^2}$ never converges to its Taylor series.}
+
+\begin{eg}
+The function $y=e^{-1/x^2}$, shown in figure \figref{nonanalytic}, never converges to its Taylor series, except at $x=0$.
+This is because the Taylor series for this function, evaluated around $x=0$ is exactly zero! At $x=0$, we have
+$y=0$, $\der y/\der x=0$, $\der^2 y/\der x^2=0$, and so on for every derivative. The zero function matches the function
+$y(x)$ and all its derivatives to all orders, and yet is useless as an approximation to $y(x)$. The radius of convergence
+of the Taylor series is infinite, but it doesn't give correct results except at $x=0$. The reason for this is that
+$y$ was built by composing two functions, $w(x)=-1/x^2$ and $y(w)=e^w$. The function $w$ is badly behaved at $x=0$
+because it blows up there. In particular, it doesn't have a well-defined Taylor series at $x=0$.
+\end{eg}
+
+\begin{eg}\label{eg:taylor-sin}
+\egquestion Find the Taylor series of $y=\sin x$, evaluated around $x=0$.
+
+\eganswer  The first few derivatives are
+\begin{align*}
+  \frac{\der}{\der x}\sin x &= \cos x \\
+  \frac{\der^2}{\der x^2}\sin x &= -\sin x\\
+  \frac{\der^3}{\der x^3}\sin x &= -\cos x\\
+  \frac{\der^4}{\der x^4}\sin x &= \sin x\\
+  \frac{\der^5}{\der x^5}\sin x &= \cos x
+\end{align*}
+We can see that there will be a cycle of $\sin$, $\cos$, $-\sin$, and $-\cos$, repeating
+indefinitely. Evaluating these derivatives at $x=0$, we have
+0, 1, 0, $-1$, \ldots. All the even-order terms of the series are zero, and all the odd-order
+terms are $\pm1/n!$. The result is
+\begin{equation*}
+  \sin x = x - \frac{1}{3!}x^3 + \frac{1}{5!}x^5 - \ldots \qquad .
+\end{equation*}
+The linear term is the familiar small-angle approximation $\sin x\approx x$.
+
+The radius of convergence of this series turns out to be infinite. Intuitively the reason for
+this is that the factorials grow extremely rapidly, so that the successive terms in the series eventually start
+diminish quickly, even for large values of $x$.
+\end{eg}
+
+A function's Taylor series doesn't have to be evaluated around $x=0$. The Taylor series around some other
+center $x=c$ is given by
+\begin{equation*}
+  T_c(x) = \sum_{n=0}^\infty a_n (x-c)^n \qquad ,
+\end{equation*}
+where 
+\begin{equation*}
+  \left. \frac{a_n}{n!} = \frac{\der^n y}{\der x^n}\right|_{x=c} \qquad .
+\end{equation*}
+To see that this is the right generalization, we can do a change of variable,
+defining a new function $g(x)=f(x-c)$. The radius of convergence is to be measured
+from the center $c$ rather than from 0.
+
+\begin{eg}
+\egquestion
+Find the Taylor series of $\ln x$, evaluated around $x=1$.
+
+\eganswer
+Evaluating a few derivatives, we get
+\begin{align*}
+  \frac{\der}{\der x}\ln x &= x^{-1} \\
+  \frac{\der^2}{\der x^2}\ln x &= -x^{-2}\\
+  \frac{\der^3}{\der x^3}\ln x &= 2x^{-3}\\
+  \frac{\der^4}{\der x^4}\ln x &= -6x^{-4}
+\end{align*}
+Note that evaluating these at $x=0$ wouldn't have worked, since division by zero is undefined;
+this is because $\ln x$ blows up to negative infinity at $x=0$. Evaluating them at $x=1$, we
+find that the $nth$ derivative equals $\pm (n-1)!$, so the coefficients of the Taylor
+series are $\pm (n-1)!/n!=\pm1/n$, except for the $n=0$ term, which is zero because
+$\ln 1=0$. The resulting series is
+\begin{equation*}
+  \ln x = (x-1) - \frac{1}{2}(x-1)^2 + \frac{1}{3}(x-1)^3 + \ldots \qquad .
+\end{equation*}
+We can predict that its radius of convergence can't be any greater than 1, because
+$\ln x$ blows up at 0, which is at a distance of 1 from 1.
+\end{eg}
 
 \begin{hwsection}
+\begin{hwwithsoln}{sequence-weierstrass}
+Modify the Weierstrass definition of the limit to apply to infinite sequences.
+\end{hwwithsoln}
 
-\begin{hw}
-Find $\arg i$, $\arg(-i)$, and $\arg 37$, where $\arg z$ denotes the argument of the complex number $z$.
-\end{hw}
+\begin{hwwithsoln}{bogus-series}
+(a) Prove that the infinite series $1-1+1-1+1-1+\ldots$ does not converge to any limit, using the generalization
+of the Weierstrass limit found in problem \ref{hw:sequence-weierstrass}.
+(b) Criticize the following argument. The series given in part a equals zero, because addition is associative, so we can
+rewrite it as $(1-1)+(1-1)+(1-1)+\ldots$
+\end{hwwithsoln}
 
-\begin{hw}
-Visualize the following multiplications in the complex plane using the interpretation of multiplication
-in terms of multiplying magnitudes and adding arguments: $(i)(i)=-1$, $(i)(-i)=1$, $(-i)(-i)=-1$.
-\end{hw}
+\begin{hwwithsoln}{geometric-series-conv-integral}
+Use the integral test to prove the convergence of the geometric series for $0<x<1$.
+\end{hwwithsoln}
 
-\begin{hw}
-If we visualize $z$ as a point in the complex plane, how should we visualize $-z$?
-\end{hw}
-
-\begin{hw}
-Find four different complex numbers $z$ such that $z^4=1$.
-\end{hw}
-
-\begin{hw}
-Compute the following: 
-\begin{gather*}
-|1+i| \quad , \quad \arg(1+i) \quad , \\
-  \left|\frac{1}{1+i}\right| \quad , \quad \arg\left(\frac{1}{1+i}\right) \quad , \\
-  \frac{1}{1+i}
-\end{gather*}
-\end{hw}
-
-\begin{hw}
-Write the function $\tan x$ in terms of complex exponentials.
-\end{hw}
-
-\begin{hw}
-Evaluate
+\begin{hwwithsoln}{determine-convergence}
+Determine the convergence or divergence of the following series.\\
+(a) $1+1/2^2+1/3^2+\ldots$\\
+(b) $1/\ln\ln 3-1/\ln\ln 6+1/\ln \ln 9-1/\ln\ln 12+\ldots$\\
+(c)
 \begin{equation*}
-  \int \frac{\der x}{x^3-x^2+4x-4} \qquad .
+\frac{2\sqrt{2}}{9801} \sum^\infty_{k=0} \frac{(4k)!(1103+26390k)}{(k!)^4 396^{4k}}
 \end{equation*}
+\end{hwwithsoln}
+
+\begin{hw}
+Find the Taylor series expansion of $\cos x$ around $x=0$. Check your work by combining the first two
+terms of this series with the first term of the sine function from example \ref{eg:taylor-sin}
+on page \pageref{eg:taylor-sin} to verify that the trig identity $\sin^2 x+\cos^2 x=1$ holds
+for terms up to order $x^2$.
 \end{hw}
 
 \begin{hw}
-Evaluate
+In classical physics, the kinetic energy $K$ of an object of mass $m$ moving at velocity $v$
+is given by $K=\frac{1}{2}mv^2$. For example, if a car is to start from a stoplight and then
+accelerate up to $v$, this is
+the theoretical minimum amount of energy  that would have to be used up by burning gasoline.
+(In reality, a car's engine is not 100\% efficient, so the amount of gas burned is greater.)
+
+Einstein's theory of relativity states that the correct equation is actually
 \begin{equation*}
-  \int e^{-ax}\cos bx \: \der x \qquad .
+  K = \left(\frac{1}{\sqrt{1-\frac{v^2}{c^2}}}-1\right)mc^2 \qquad ,
 \end{equation*}
+where $c$ is the speed of light. The fact that it diverges as $v \rightarrow c$ is interpreted
+to mean that no object can be accelerated to the speed of light.
+
+Expand $K$ in a Taylor series, and show that the first
+nonvanishing term is equal to the classical expression. This means that for velocities that
+are small compared to the speed of light, the classical expression is a good approximation,
+and Einstein's theory does not contradict any of the prior empirical evidence from which
+the classical expression was inferred.
 \end{hw}
+
+\pagebreak
+
+\begin{hw}
+Expand $(1+x)^{1/3}$ in a Taylor series around $x=0$. The value $x=28$ lies outside
+this series' radius of convergence, but we can nevertheless use it to
+extract the cube root of 28 by recognizing that $28^{1/3}=3(28/27)^{1/3}$.
+Calculate the root to four significant figures of precision, and check it
+in the obvious way.
+\end{hw}
+
+\begin{hw}
+Find the Taylor series expansion of $\log_2 x$ around $x=1$, and use it to evaluate
+$\log_2 1.0595$ to four significant figures of precision. Check your result by using the
+fact that 1.0595 is approximately the twelfth root of 2. This number is the ratio of
+the frequencies of two successive notes of the chromatic scale\index{chromatic scale}
+in music, e.g., C and D-flat.
+\end{hw}
+
+\begin{hw}\label{hw:air-res-taylor}
+In free fall, the acceleration will not be exactly constant, due to air resistance. For example,
+a skydiver does not speed up indefinitely until opening her chute, but rather approaches a certain
+maximum velocity at which the upward force of air resistance cancels out the force of gravity.
+If an object is dropped from a height $h$, and the time it takes to reach the ground is used to
+measure the acceleration of gravity, $g$, then the relative error in the result due to air
+resistance is\footnote{Jan Benacka
+and Igor Stubna, \emph{The Physics Teacher}, 43 (2005) 432.}
+\begin{align*}
+  E &= \frac{g-g_{vacuum}}{g} \\
+   & = 1-\frac{2b}{\ln^2\left(e^b+\sqrt{e^{2b}-1}\right)} \qquad ,
+\end{align*}
+where $b=h/A$, and
+$A$ is a constant that depends on the size, shape, and mass of the object, and the density of
+the air.   (For a sphere of mass $m$ and diameter $d$ dropping in air, $A=4.11m/d^2$. Cf. problem \ref{hw:air-res-v}, p. \pageref{hw:air-res-v}.)
+Evaluate the constant and linear terms of the Taylor series for the function $E(b)$.
+\end{hw}
+% ans: E(b)=b/3+...
+
+\begin{hw}
+(a) Prove that the convergence of an infinite series is unaffected by omitting
+some initial terms. (b) Similarly, prove that convergence is unaffected by
+multiplying all the terms by some constant factor.
+\end{hw}
+
 
 \end{hwsection}
