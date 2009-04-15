@@ -226,6 +226,7 @@ $k$ are irrelevant, and can be set to 1. We then have
 Plugging in $r=\pm 1$, we get a positive result, which confirms that the concavity is upward.
 
 \hwsolnhdr{prove-n-extrema}
+
 Since polynomials don't have kinks or endpoints in their graphs, the maxima and minima must be points where the
 derivative is zero. Differentiation bumps down all the powers of a polynomial by one, so 
 the derivative of a third-order polynomial is a second-order polynomial. A second-order polynomial
@@ -233,6 +234,25 @@ can have at most two real roots (values of $t$ for which it equals zero), which 
 quadratic formula. (If the number inside the square root in the quadratic formula is zero or negative,
 there could be less than two real roots.) That means a third-order polynomial can have at most two
 maxima or minima.
+
+\hwsolnhdr{pyramidal-tent}
+
+Considering $V$ as a function of $h$, with $b$ treated as a constant, we have for the slope
+of its graph
+\begin{align*}
+  \dot{V} &= \frac{e_V}{e_h} \qquad ,\\
+\intertext{so}
+  e_V &= \dot{V}\cdot e_h \\
+      &= \frac{1}{3}b e_h
+\end{align*}
+
+\hwsolnhdr{rocket-height}
+
+Thinking of the rocket's height as a function of time, we can see that goal is to measure
+the function at its maximum. The derivative is zero at the maximum, so the error incurred
+due to timing is approximately zero. She should not worry about the timing error too much.
+Other factors are likely to be more important, e.g., the rocket may not rise exactly
+vertically above the launchpad.
 
 \beginsolutions{2}
 
