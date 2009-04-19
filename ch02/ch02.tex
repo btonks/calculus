@@ -1778,5 +1778,27 @@ the maximum occurs close to, but not exactly at, $f_\zu{o}$.
 %%graph%% resonance func=1/sqrt(3*(x**2-1)**2+x**2) xlo=0 xhi=3 ylo=0 yhi=1.1 with=lines xtic_spacing=1 ytic_spacing=.5 format=eps
 \smallfig{resonance}{The function of problem \ref{hw:resonance}, with $a=3$, $b=1$, and $f_\zu{o}=1$.}%
 
+\widefig[t]{hw-near-focal-point}{Problem \ref{hw:near-focal-point}. A set of light rays is emitted from
+the tip of the glamorous movie star's nose on the film, and reunited to form a spot on the screen which is the image of the
+same point on his nose. The distances have been distorted for
+clarity. The distance $y$ represents the entire length of the theater from front to back.}
+%
+\begin{hwwithsoln}{near-focal-point}
+In a movie theater, the image on the screen is formed by a lens in the projector, and originates from one of the frames on the strip of celluloid film (or,
+in the newer digital projection systems, from a liquid crystal chip).
+Let the distance from the film to the lens be $x$, and let the distance from the lens to the screen be $y$. The projectionist
+needs to adjust $x$ so that it is properly matched with $y$, or else the image will be out of focus. There is therefore
+a fixed relationship between $x$ and $y$, and this relationship is of the form
+\begin{equation*}
+  \frac{1}{x}+\frac{1}{y} = \frac{1}{f} \qquad ,
+\end{equation*}
+where $f$ is a property of the lens, called its focal length. A stronger lens has a shorter focal length.
+Since the theater is large, and the projector is relatively small, $x$ is much less than $y$.
+We can see from the equation that if $y$ is sufficiently large, the left-hand side of the equation
+is dominated by the $1/x$ term, and we have $x \approx f$. Since the $1/y$ term doesn't completely
+vanish, we must have $x$ slightly greater than $f$, so that the $1/x$ term is slightly less than
+$1/f$. Let $x=f+\der x$, and approximate $\der x$ as being infinitesimally small.
+Find a simple expression for $y$ in terms of $f$ and $\der x$.
+\end{hwwithsoln}
 
 \end{hwsection}

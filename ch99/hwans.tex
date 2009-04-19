@@ -614,6 +614,20 @@ the square root in the original expression for $s$. Then by the chain rule,
 We looked for the place where $\der I/\der x$ was zero, but $\der s/\der f$ could also be zero if one of the
 other factors was zero. This is what happens at $f=0$, where $\der x/\der f=0$.
 
+\hwsolnhdr{near-focal-point}
+
+\begin{align*}
+  y &= \left(\frac{1}{f}-\frac{1}{x}\right)^{-1} \\
+    &= \left(\frac{1}{f}-\frac{1}{f+\der x}\right)^{-1} \\
+    &= f\left(1-\frac{1}{1+\der x/f}\right)^{-1} \\
+\intertext{Applying the geometric series $1/(1+r)=1+r+r^2+\ldots$,}
+  y &\approx f\left(1-\left(1-\frac{\der x}{f}\right)\right)^{-1} \\
+    &= \frac{f^2}{\der x} 
+\end{align*}
+
+As checks on our result, we note that the units work out correctly (meters squared divided by
+meters give meters), and that the result is indeed large, since we divide by the small quantity $\der x$.
+
 \beginsolutions{6}
 
 \hwsolnhdr{sequence-weierstrass}
