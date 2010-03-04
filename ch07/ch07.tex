@@ -239,6 +239,24 @@ be rewritten using Euler's formula as
 In other words, it's the same result we found before, but found 
 without the need for trickery.
 
+\begin{eg}
+\egquestion Evaluate $\int dx/\sin x$.
+
+\eganswer
+This can be tackled by rewriting the sine function in terms of complex exponentials, changing variables
+to $u=e^{ix}$, and then using partial fractions.
+\begin{align*}
+  \int \frac{\der x}{\sin x} &= -2i \int \frac{\der x}{e^{ix}-e^{-ix}} \\
+                             &= -2i \int \frac{\der u/iu}{u-1/u} \\
+                             &= -2\int \frac{\der u}{u^2-1} \\
+                             &= \int \frac{\der u}{u-1} - \int \frac{\der u}{u+1} \\
+                             &= \ln(u-1)-ln(u+1) +c \\
+                             &= \ln \frac{e^{ix}-1}{e^{ix}+1} +c \\
+                             &= \ln(-i\tan(x/2)) +c \\
+                             &= \ln\tan(x/2)+ c'
+\end{align*}
+\end{eg}
+
 \begin{hwsection}
 
 \begin{hw}
