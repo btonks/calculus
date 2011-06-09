@@ -11,8 +11,6 @@
 
 \newcommand{\lmserifmath}{\mathversion{normal}\everymath{}\everydisplay{}}
 
-\newcommand{\st}{\text{st}}
-
 % ========================== low-level stuff =========================================
 \newcommand{\zerosizebox}[3]{
   \makebox[0mm][l]{%

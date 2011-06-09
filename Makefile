@@ -29,6 +29,7 @@ DO_PDFLATEX = echo "$(DO_PDFLATEX_RAW)" ; perl -e 'if (system("$(DO_PDFLATEX_RAW
 
 book1:
 	@$(DO_PDFLATEX)
+	@scripts/harvest_aux_files.rb
 	@rm -f $(TERMINAL_OUTPUT) # If pdflatex has a nonzero exit code, we don't get here, so the output file is available for inspection.
 
 index:
@@ -37,13 +38,24 @@ index:
 book:
 	make clean
 	@$(DO_PDFLATEX)
+	@scripts/harvest_aux_files.rb
 	@$(DO_PDFLATEX)
+	@scripts/harvest_aux_files.rb
 	$(MAKEINDEX)
 	@$(DO_PDFLATEX)
+	@scripts/harvest_aux_files.rb
 	@rm -f $(TERMINAL_OUTPUT) # If pdflatex has a nonzero exit code, we don't get here, so the output file is available for inspection.
 
 test:
 	perl -e 'if (system("pdflatex -interaction=$(MODE) $(BOOK) >$(TERMINAL_OUTPUT)")) {print "error\n"} else {print "no error\n"}'
+
+web:
+	@[ `which footex` ] || echo "******** footex is not installed, so html cannot be generated; get footex from http://www.lightandmatter.com/footex/footex.html"
+	@[ `which footex` ] || exit 1
+	scripts/prep_web.pl
+	WOPT='--html5' scripts/make_web.pl # html 5
+	WOPT='--modern' scripts/make_web.pl # xhtml
+	scripts/make_web.pl # html 4
 
 clean:
 	# Sometimes we get into a state where LaTeX is unhappy, and erasing these cures it:
@@ -66,6 +78,7 @@ clean:
 	rm -f calc_lulu.pdf
 	rm -f calc.pdf
 	rm -f temp.pdf
+	rm -f ch*/ch*temp.temp
 
 post:
 	cp calc.pdf /home/bcrowell/Lightandmatter/calc

@@ -1,0 +1,28 @@
+=================================================================
+producing pdf output
+=================================================================
+Compiling the book into pdf format is fairly easy on a Linux
+machine. Basically you just need to install some open-source
+software. The following are the relevant packages on a Debian-based
+system such as Ubuntu:
+  texlive-full
+  pdftk
+  m4
+  inkscape
+  imagemagick
+  libjson-ruby
+  libjson-perl (version 2.0 or higher)
+  ruby 1.9, packaged as ruby1.9 (karmic koala) or simply as ruby (lucid lynx)
+
+Go to the main directory (the one where you found this README).
+
+Make sure you have at least inkscape 0.47 and ruby 1.9. Set all the scripts
+to be executable.
+
+Then:
+  gen_graph.rb ch*/ch*.tex
+  make book
+
+I haven't tried compiling the books on MacOS X or Windows. I suspect
+it could be done on MacOS X without any heroic measures, and I suspect
+that it would be a real pain on Windows.
