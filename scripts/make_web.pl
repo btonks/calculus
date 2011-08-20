@@ -87,3 +87,7 @@ foreach my $tex(<ch*/ch*temp.temp>) {
     die "make_web.pl is upset, why doesn't $tex have chapter number?";
   }
 }
+
+open(FILE,">>$index") or die "error opening $index";
+print FILE "</body></html>\n";
+close FILE;

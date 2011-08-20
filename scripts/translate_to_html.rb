@@ -834,6 +834,8 @@ def handle_math(tex,inline_only=false,allow_bitmap=true)
 
   unless inline_only then
 
+  tex.gsub!(/\\mygamma/) {"\\gamma"}
+
   if false then # I think this is no longer necessary now that I'm using footex, and in fact it causes problems.
   #--------------------- locate displayed math with intertext or multiple lines, and split into smaller pieces ----------------------------
   # This has to come before inline ($...$) math, because sometimes displayed math has \text{...$...$...} inside it.

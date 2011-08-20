@@ -17,12 +17,18 @@ foreach my $in(<ch*/ch*.tex>) {
   my $t = <F>;
   close F;
 
+  my $curly = "(?:(?:{[^{}]*}|[^{}]*)*)"; # match anything, as long as any curly braces in it are paired properly, and not nested
+
   $t =~ s/\\chapter/\\mychapter/g;
   $t =~ s/\\section/\\mysection/g;
   $t =~ s/\\subsection/\\mysubsection/g;
   $t =~ s/\\subsubsection/\\mysubsubsection/g;
-  my $curly = "(?:(?:{[^{}]*}|[^{}]*)*)"; # match anything, as long as any curly braces in it are paired properly, and not nested
   $t =~ s/\\(fig|smallfig|widefig)(\[(\w)\])?{($curly)}{($curly)}/"\n\nZZZWEB:fig,$4,".{"fig"=>"narrow","smallfig"=>"narrow","widefig"=>"wide"}->{$1}.",0,".one_line($5)." END_CAPTION\n\n"/ge;
+
+  $t =~ s/\\newcommand.*//g;
+  foreach my $treat_as_identity_function("quoted") {
+    $t =~ s/\\$treat_as_identity_function\{($curly)}/$1/g;
+  }
 
   # convert from:
   # \begin{hw}[2]\label{hw:holditch}
@@ -38,20 +44,14 @@ foreach my $in(<ch*/ch*.tex>) {
   # convert from:
   # \startcodeeg \begin{Code} ... \end{Code}
   $t =~ s/\\(startcodeeg|finishcodeeg|restartLineNumbers)//g;
-  if (0) {
-  $t =~ s/\\begin{Code}/\\begin{listing}{1}/g;
-  $t =~ s/\\end{Code}/\\end{listing}/g;
-  $t =~ s/\\ii(.*)/<i>$1<\/i>/g;
-  $t =~ s/\\oo(.*)/$1/g;
-  }
   $t =~ s/\\begin{Code}/<tt>/g;
   $t =~ s/\\end{Code}/<\/tt>/g;
-  $t =~ s/\s*\\cc{(.*)}/ $1<br\/>/g;
-  $t =~ s/\s*\\cc(.*)/ $1<br\/>/g;
-  $t =~ s/\\ii{(.*)}(.*)/$1 $2<br\/>/g; # $2 if for possible \cc line that got joined on
-  $t =~ s/\\ii(.*)/$1<br\/>/g;
-  $t =~ s/\\oo{(.*)(.*)}/<i>$1 $2<\/i><br\/>/g;
-  $t =~ s/\\oo(.*)/<i>$1<\/i><br\/>/g;
+  $t =~ s/\s*\\cc{(.*)}/" ".no_less_thans($1)."<br\/>"/ge;
+  $t =~ s/\s*\\cc(.*)/" ".no_less_thans($1)."<br\/>"/ge;
+  $t =~ s/\\ii{(.*)}(.*)/"".no_less_thans($1)." ".no_less_thans($2)."<br\/>"/ge; # $2 if for possible \cc line that got joined on
+  $t =~ s/\\ii(.*)/"".no_less_thans($1)."<br\/>"/ge;
+  $t =~ s/\\oo{(.*)(.*)}/"<i>".no_less_thans($1)." ".no_less_thans($2)."<\/i><br\/>"/ge;
+  $t =~ s/\\oo(.*)/"<i>".no_less_thans($1)."<\/i><br\/>"/ge;
 
   open(F,">$out");
   print F $t;
@@ -62,5 +62,11 @@ foreach my $in(<ch*/ch*.tex>) {
 sub one_line {
   my $x = shift;
   $x =~ s/\n/ /g;
+  return $x;
+}
+
+sub no_less_thans {
+  my $x = shift;
+  $x =~ s/</&lt;/g;
   return $x;
 }
