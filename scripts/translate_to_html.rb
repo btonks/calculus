@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-# (c) 2006-2009 Benjamin Crowell, GPL licensed
+# (c) 2006-2011 Benjamin Crowell, GPL licensed
 
 # must be run from the book's directory
 # reads stdin, writes stdout; normally invoked by doing "run_eruby.pl w"
@@ -11,15 +11,15 @@
 #    pdftoppm (comes bundled with xpdf)
 # command-line options:
 #   --modern
-#                            Generate xhtml, meta tag saying application/xhtml+xml, use svg and mathml features. The resulting file
+#                            Generate xhtml 1.1, meta tag saying application/xhtml+xml, use svg and mathml features. The resulting file
 #                            should have file extension .xhtml so that apache will serve it as application/xhtml+xml.
 #                            If this option is not supplied, then by default:
 #                            Generate html 4.01 that should work in all browsers, meta tag saying text/html, no svg or mathml.
 #                            The resulting file should have file extension .html so that apache will serve it with as text/html.
+#                            As of Dec 2011, this is needed for opera and for old versions of firefox. May also be useful in the
+#                            future because xhtml 1.1 is a good format for converting into epub.
 #   --html5
-#                            Similar to --modern, but generates html 5 with inline mathml.
-#                            As of June 2009, I haven't actually been able to test this, because I don't have a browser that supports it.
-#                            Firefox 3.5 beta 4 doesn't seem to support mathml in html 5.
+#                            Similar to --modern, but generates html 5 with inline mathml. This works in firefox 3.7+.
 #   --mathjax
 #                            Generate html 4.01, with math in mathjax format.
 #   --wiki
@@ -35,6 +35,19 @@
 #                            Only prevents writing to the toc and writing external files for equations.
 #                            To prevent writing to the html file for each chapter, you also need to
 #                            add the x parameter on the command line for run_eruby.pl in lm.make.
+#  --override_config_with="foo.config"
+#                            After reading html.config, read foo.config as well, and overwrite any options previously set.
+# notes on handheld output:
+#   see calc book for example of handheld.config
+#   the idea is to output xhtml that calibre can convert to epub, etc.
+#   images may be too big for epub's 63k limit, but I think calibre will fix that...?
+# html.config :
+#   typical file:
+#     book,calc
+#     title,Calculus
+#     url,http://www.lightandmatter.com/calc/
+#     base_dir,.
+#     ...etc...
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
@@ -115,7 +128,8 @@ opts = GetoptLong.new(
   [ "--test",                  GetoptLong::NO_ARGUMENT ],
   [ "--redo_all_equations",    GetoptLong::NO_ARGUMENT ],
   [ "--redo_all_tables",       GetoptLong::NO_ARGUMENT ],
-  [ "--no_write",              GetoptLong::NO_ARGUMENT ]
+  [ "--no_write",              GetoptLong::NO_ARGUMENT ],
+  [ "--override_config_with",  GetoptLong::REQUIRED_ARGUMENT ]
 )
 
 opts_hash = Hash.new
@@ -123,14 +137,15 @@ opts.each do |opt,arg|
   opts_hash[opt] = arg # for boolean options, arg is "" if option was set
 end
 
-$modern             = opts_hash['--modern']!=nil || opts_hash['--html5']!=nil
-$html5              = opts_hash['--html5']!=nil
-$mathjax            = opts_hash['--mathjax']!=nil
-$wiki               = opts_hash['--wiki']!=nil
-$test_mode          = opts_hash['--test']!=nil
-$redo_all_equations = opts_hash['--redo_all_equations']!=nil
-$redo_all_tables    = opts_hash['--redo_all_tables']!=nil
-$no_write           = opts_hash['--no_write']!=nil
+$modern                = opts_hash['--modern']!=nil || opts_hash['--html5']!=nil
+$html5                 = opts_hash['--html5']!=nil
+$mathjax               = opts_hash['--mathjax']!=nil
+$wiki                  = opts_hash['--wiki']!=nil
+$test_mode             = opts_hash['--test']!=nil
+$redo_all_equations    = opts_hash['--redo_all_equations']!=nil
+$redo_all_tables       = opts_hash['--redo_all_tables']!=nil
+$no_write              = opts_hash['--no_write']!=nil
+$override_config_with  = opts_hash['--override_config_with']
 
 $stderr.print "modern=#{$modern} test=#{$test_mode} redo_all_equations=#{$redo_all_equations} redo_all_tables=#{$redo_all_tables} no_write=#{$no_write} mathjax=#{$mathjax} wiki=#{$wiki} html5=#{$html4}\n"
 
@@ -155,8 +170,7 @@ $br = "<br#{$self_closing_tag}>"
 
 require "digest/md5"
 
-config_file = 'html.config'
-if ! File.exist?(config_file) then fatal_error("error, file #{config_file} does not exist") end
+# Anything set to nil below is mandatory. Anything non-nil is a default.
 $config = {
   'book'=>nil, # a label for the book, is typically the same as the name of the directory the book resides in
   'title'=>nil, # human-readable title
@@ -164,27 +178,43 @@ $config = {
   # The following directories can have ~ in them, which expands to home directory. The directories must exist.
     'base_dir'=>nil,'script_dir'=>nil,'html_dir'=>nil,'sty_dir'=>nil,
   # Sectioning:
-     'number_sections_at_depth'=>nil,'spew_figs_at_level'=>nil,'restart_figs_at_level'=>nil,'highest_section_level'=>nil
+     'number_sections_at_depth'=>nil,'spew_figs_at_level'=>nil,'restart_figs_at_level'=>nil,'highest_section_level'=>nil,
+  'all_figs_inline'=>0,
+  'max_fig_width_pixels'=>-1, # -1 normally, >0 for handheld readers
+  'allow_png'=>1              # 1 normally, 0 for handheld readers
 }
-File.open(config_file,'r') { |f|
-  c = f.gets(nil) # nil means read whole file
-  c.scan(/(\w+),(.*)/) { |var,value|
-    if ! $config.has_key?(var) then fatal_error("Error in config file #{config_file}, illegal variable '#{var}'") end
-    if {'base_dir'=>nil,'script_dir'=>nil,'html_dir'=>nil,'sty_dir'=>nil}.has_key?(var) then
-      value.gsub!(/~/,ENV['HOME'])
-      if ! FileTest.directory?(value) then fatal_error("#{var}=#{value}, but #{value} either does not exist or is not a directory") end
-    end
-    if {'number_sections_at_depth'=>nil,'spew_figs_at_level'=>nil,'restart_figs_at_level'=>nil,'highest_section_level'=>nil}.has_key?(var) then
-      value = value.to_i
-    end
-    $config[var] = value
-    $stderr.print "#{var}=#{value} "
+# config params from this list are converted to integers
+integer_config = {
+  'number_sections_at_depth'=>nil,'spew_figs_at_level'=>nil,'restart_figs_at_level'=>nil,'highest_section_level'=>nil,
+  'all_figs_inline'=>nil,'max_fig_width_pixels'=>nil,'allow_png'=>nil
+}
+
+config_files = ['html.config']
+if !($override_config_with.nil?) then config_files.push($override_config_with) end
+config_files.each {|config_file|
+  if ! File.exist?(config_file) then fatal_error("error, file #{config_file} does not exist") end
+  File.open(config_file,'r') { |f|
+    c = f.gets(nil) # nil means read whole file
+    c.scan(/(\w+),(.*)/) { |var,value|
+      if ! $config.has_key?(var) then fatal_error("Error in config file #{config_file}, illegal variable '#{var}'") end
+      if {'base_dir'=>nil,'script_dir'=>nil,'html_dir'=>nil,'sty_dir'=>nil}.has_key?(var) then
+        value.gsub!(/~/,ENV['HOME'])
+        if ! FileTest.directory?(value) then fatal_error("#{var}=#{value}, but #{value} either does not exist or is not a directory") end
+      end
+      if integer_config.has_key?(var) then
+        value = value.to_i
+      end
+      $config[var] = value
+    }
   }
-  $stderr.print "\n"
 }
 $config.keys.each { |k|
-  if $config[k].nil? then fatal_error("error, variable #{k} not given in #{config_file}") end
+  if $config[k].nil? then fatal_error("error, variable #{k} not given in #{config_file} and has no default value") end
 }
+$config.keys.each { |k|
+  $stderr.print "#{k}=#{$config[k]} "
+}
+$stderr.print "\n"
 
 $chapter_toc = "<div class=\"container\">Contents#{$br}\n"
 
@@ -321,8 +351,8 @@ def html_subdir(subdir)
   return d
 end
 
-def is_calculus_book
-  return $config['book']=='calc'
+def all_figs_inline
+  return $config['all_figs_inline']==1
 end
 
 def make_directory_if_nonexistent(d,context)
@@ -1315,7 +1345,7 @@ end
 $read_topic_map = false
 $topic_map = {}
 def find_topic(ch,book,own)
-  if book=='calc' then return own end
+  if book=='calc' || book=='genrel' then return own end
 
   # Topic maps are also used in scripts/BookData.pm.
   if !$read_topic_map then
@@ -1356,6 +1386,10 @@ def own_figs
   end
 end
 
+# Example:
+#   if called with name='tied-rocks-1', returns 'tied-rocks-1.png'
+#   if the screen-resolution bitmap 'tied-rocks-1.png' doesn't exist yet, has the side-effect of creating it in $config['html_dir'].
+# This most commonly gets called by parse(), but also gets called by parse_itty_bitty_stuff() for \anonymousinlinefig and \fullpagewidthfignocaption.
 def find_figure(name,width_type)
   # width_type = 'narrow' , 'wide' , 'fullpage' , 'raw'
 
@@ -1381,7 +1415,7 @@ def find_figure(name,width_type)
   debug = false # debug mechanism for finding where the figure is
 
   possible_dirs = find_topic($ch,$config['book'],[own_figs()])
-  allowed_formats = ['jpg','png','pdf']
+  allowed_formats = ['jpg','png','pdf'] # input formats
   found_in_dir = nil
   found_in_fmt = nil
   allowed_formats.each {|fmt|
@@ -1408,6 +1442,7 @@ def find_figure(name,width_type)
   return '' if result==nil
 
   output_format = {'jpg'=>'jpg','png'=>'png','pdf'=>'png'}[fmt]
+  if $config['allow_png']==0 && output_format=='png' then output_format='jpg' end
   if output_format==nil then $stderr.print "error in translate_to_html.rb, find_figure, output_format is nil, name=#{name}\n"; exit(-1) end
   if name==nil then $stderr.print "error in translate_to_html.rb, find_figure, name is nil\n"; exit(-1) end
   if $config['html_dir']==nil then $stderr.print "error in translate_to_html.rb, find_figure, $config['html_dir'] is nil\n"; exit(-1) end
@@ -1428,6 +1463,7 @@ def find_figure(name,width_type)
         target_width = 100
         $stderr.print "Warning, unrecognized width type #{width_type} for figure #{dest}\n"
       end
+      if $config['max_fig_width_pixels']>0 && target_width>$config['max_fig_width_pixels'] then target_width=$config['max_fig_width_pixels'] end
       scale = target_width/width
       width = (width*scale).to_i
       height = (height*scale).to_i
@@ -1465,6 +1501,7 @@ def alphalph(x)
 end
 
 # returns an array consisting of text column and margin column blocks, [[t1,m1],[t2,m2],...]
+# m1, m2, ... will be null strings if the book has no marg() figures (as with Calculus), or if all_figs_inline is set
 def parse(t,level,current_section)
   tex = t.clone
 
@@ -1487,14 +1524,18 @@ def parse(t,level,current_section)
       if name=='zzzfake' then $fig_ctr += 1 end # kludge, I don't understand why this is needed, but it is, or else EM1 figures get out of step at the end
       whazzat = find_figure(name,width) # has the side-effect of copying or converting it if necessary
       if caption=~/\A\s*\Z/ then c='' else c="<p class=\"caption\">#{l}#{parse_para(caption)}</p>" end
-      x = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}><a #{$anchor}=\"fig:#{name}\"></a>"+c
-      if is_calculus_book then x = "<p>"+x+"</p>" end
+      i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}><a #{$anchor}=\"fig:#{name}\"></a>"
+      if all_figs_inline then 
+        x = "<p>"+i+"</p>"+c
+      else
+        x = i+c
+      end
       if name=='zzzfake' then x=c end
       x
     }
     in_marg = false # even if it starts with a marg, split() gives us a null string for the first chunk()
     tex.split(/ZZZWEB\:(?:end\_)?marg/).each { |marg|
-      if in_marg then
+      if in_marg && !all_figs_inline then
         marg_stuff = marg_stuff + marg 
       else
         non_marg_stuff = non_marg_stuff + marg

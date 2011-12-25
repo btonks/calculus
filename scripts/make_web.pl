@@ -18,6 +18,7 @@ if ($wopt=~/\-\-html5/) {$html5=1}
 print "make_web.pl, no_write=$no_write, wiki=$wiki, xhtml=$xhtml\n";
 
 my $html_dir = "/home/bcrowell/Generated/html_books/calc";
+if (exists $ENV{HTML_DIR}) {$html_dir = $ENV{HTML_DIR}}
 
 # duplicated in translate_to_html.rb, but different number of ../'s
 my $banner_html = <<BANNER;
