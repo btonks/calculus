@@ -50,6 +50,8 @@
 #                            add the x parameter on the command line for run_eruby.pl in lm.make.
 #  --override_config_with="foo.config"
 #                            After reading standard config files, read foo.config as well, and overwrite any options previously set.
+#  --write_config_and_exit
+#                            Just writes temp.config.
 # notes on handheld output:
 #   see calc book for example of handheld.config
 #   the idea is to output xhtml that calibre can convert to epub, etc.
@@ -157,7 +159,8 @@ opts = GetoptLong.new(
   [ "--redo_all_equations",    GetoptLong::NO_ARGUMENT ],
   [ "--redo_all_tables",       GetoptLong::NO_ARGUMENT ],
   [ "--no_write",              GetoptLong::NO_ARGUMENT ],
-  [ "--override_config_with",  GetoptLong::REQUIRED_ARGUMENT ]
+  [ "--override_config_with",  GetoptLong::REQUIRED_ARGUMENT ],
+  [ "--write_config_and_exit", GetoptLong::NO_ARGUMENT ]
 )
 
 opts_hash = Hash.new
@@ -174,6 +177,7 @@ $redo_all_equations    = opts_hash['--redo_all_equations']!=nil
 $redo_all_tables       = opts_hash['--redo_all_tables']!=nil
 $no_write              = opts_hash['--no_write']!=nil
 $override_config_with  = opts_hash['--override_config_with']
+$write_config_and_exit  = opts_hash['--write_config_and_exit']
 
 $stderr.print "modern=#{$modern} test=#{$test_mode} redo_all_equations=#{$redo_all_equations} redo_all_tables=#{$redo_all_tables} no_write=#{$no_write} mathjax=#{$mathjax} wiki=#{$wiki} html5=#{$html4}\n"
 
@@ -232,6 +236,7 @@ $stderr.print "\n"
 
 # Write a copy of all the config variables to a temporary file, for use by any other scripts such as latex_table_to_html.pl that might need the info.
 File.open("temp.config",'w') { |f| f.print JSON.generate($config)}
+if $write_config_and_exit then exit(0) end
 
 $chapter_toc = "<div class=\"container\">Contents#{$br}\n"
 

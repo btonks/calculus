@@ -63,6 +63,7 @@ web:
 
 handheld:
 	# see meki/zzz_misc/publishing for notes on how far I've progressed with this
+	scripts/translate_to_html.rb --write_config_and_exit --modern --override_config_with="handheld.config"
 	@rm -Rf calc_handheld
 	mkdir calc_handheld
 	scripts/prep_web.pl
@@ -78,11 +79,11 @@ post_handheld:
 
 epub:
 	# Before doing this, do a "make handheld".
-	ebook-convert calc_handheld/index.html calc.epub $(GENERIC_OPTIONS_FOR_CALIBRE) --no-default-epub-cover
+	ebook-convert calc_handheld/index.html calc.epub $(GENERIC_OPTIONS_FOR_CALIBRE) --no-default-epub-cover --cover=ch00/figs/handheld-cover.jpg
 
 mobi:
 	# Before doing this, do a "make handheld".
-	ebook-convert calc_handheld/index.html calc.mobi $(GENERIC_OPTIONS_FOR_CALIBRE) --rescale-images
+	ebook-convert calc_handheld/index.html calc.mobi $(GENERIC_OPTIONS_FOR_CALIBRE) --rescale-images --cover=ch00/figs/handheld-cover.jpg
 
 very_clean: clean
 	rm -f calc.pdf calc_lulu.pdf
