@@ -1,7 +1,20 @@
 #!/usr/bin/ruby
 
 # (c) 2006-2011 Benjamin Crowell, GPL licensed
-
+#
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+#
+#         Always edit the version of this file in ~/Documents/programming/translate_to_html/translate_to_html.rb --
+#         it will automatically get copied over into the various projects the next time I do a "make."
+#
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+#
+#
+#
 # must be run from the book's directory
 # reads stdin, writes stdout; normally invoked by doing "run_eruby.pl w"
 # also has various side-effects, like converting figures to screen resolution if necessary, writing index.html, ...
@@ -36,18 +49,32 @@
 #                            To prevent writing to the html file for each chapter, you also need to
 #                            add the x parameter on the command line for run_eruby.pl in lm.make.
 #  --override_config_with="foo.config"
-#                            After reading html.config, read foo.config as well, and overwrite any options previously set.
+#                            After reading standard config files, read foo.config as well, and overwrite any options previously set.
 # notes on handheld output:
 #   see calc book for example of handheld.config
 #   the idea is to output xhtml that calibre can convert to epub, etc.
 #   images may be too big for epub's 63k limit, but I think calibre will fix that...?
-# html.config :
-#   typical file:
-#     book,calc
-#     title,Calculus
-#     url,http://www.lightandmatter.com/calc/
-#     base_dir,.
-#     ...etc...
+# config files:
+#   These are all JSON. Later ones override earlier ones.
+#     config/default.config  --   is the same for every project: physics, calc, and genrel
+#     config/repo.config     --   is shared by all books in this repository
+#     ./this.config             --   different for this book than for others in this repository
+#     handheld.config           --   for generating epub, etc.; would typically be pointed to by  --override_config_with
+#   config variables:
+#     book       string     a label for the book, is typically the same as the name of the directory the book resides in
+#     title      string     human-readable title
+#     url        string
+#     The following config variabels are strings representing directories. They can have ~ in them, which expands to
+#     home directory. The directories must exist.
+#       base_dir, script_dir, html_dir, sty_dir
+#     The following are integers relating to sectioning:
+#       number_sections_at_depth, spew_figs_at_level, restart_figs_at_level, highest_section_level
+#    all_figs_inline                 boolean, 0 or 1
+#    max_fig_width_pixels            -1 normally, >0 for handheld readers
+#    allow_png                       boolean, 1 normally, may be 0 for handheld readers
+#    forbid_mathml                   boolean, 0 or 1, set to 1 to generate xhtml with equations as html or bitmaps, as for epub 2
+#    forbid_images_inside_text       boolean, 0 or 1, set to 1 for formats like epub 2
+#    standalone                      boolean, 0 or 1, set to 1 if everything like CSS files, etc., has to be local, not at a URL
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
@@ -171,45 +198,31 @@ $br = "<br#{$self_closing_tag}>"
 require "digest/md5"
 
 # Anything set to nil below is mandatory. Anything non-nil is a default.
-$config = {
-  'book'=>nil, # a label for the book, is typically the same as the name of the directory the book resides in
-  'title'=>nil, # human-readable title
-  'url'=>nil,
-  # The following directories can have ~ in them, which expands to home directory. The directories must exist.
-    'base_dir'=>nil,'script_dir'=>nil,'html_dir'=>nil,'sty_dir'=>nil,
-  # Sectioning:
-     'number_sections_at_depth'=>nil,'spew_figs_at_level'=>nil,'restart_figs_at_level'=>nil,'highest_section_level'=>nil,
-  'all_figs_inline'=>0,
-  'max_fig_width_pixels'=>-1, # -1 normally, >0 for handheld readers
-  'allow_png'=>1              # 1 normally, 0 for handheld readers
-}
-# config params from this list are converted to integers
-integer_config = {
-  'number_sections_at_depth'=>nil,'spew_figs_at_level'=>nil,'restart_figs_at_level'=>nil,'highest_section_level'=>nil,
-  'all_figs_inline'=>nil,'max_fig_width_pixels'=>nil,'allow_png'=>nil
-}
+$config = {}
 
-config_files = ['html.config']
+config_dir = 'config'
+if ! FileTest.directory?(config_dir) then config_dir = '../config' end
+
+config_files = ["#{config_dir}/default.config","#{config_dir}/repo.config","this.config"]
 if !($override_config_with.nil?) then config_files.push($override_config_with) end
+
 config_files.each {|config_file|
-  if ! File.exist?(config_file) then fatal_error("error, file #{config_file} does not exist") end
-  File.open(config_file,'r') { |f|
-    c = f.gets(nil) # nil means read whole file
-    c.scan(/(\w+),(.*)/) { |var,value|
-      if ! $config.has_key?(var) then fatal_error("Error in config file #{config_file}, illegal variable '#{var}'") end
-      if {'base_dir'=>nil,'script_dir'=>nil,'html_dir'=>nil,'sty_dir'=>nil}.has_key?(var) then
-        value.gsub!(/~/,ENV['HOME'])
-        if ! FileTest.directory?(value) then fatal_error("#{var}=#{value}, but #{value} either does not exist or is not a directory") end
-      end
-      if integer_config.has_key?(var) then
-        value = value.to_i
-      end
-      $config[var] = value
+  if ! File.exist?(config_file) then
+     $stderr.print "warning, config file #{config_file} does not exist\n" 
+  else
+    File.open(config_file,'r') { |f|
+      j = f.gets(nil) # nil means read whole file
+      c = JSON.parse(j)
+      c.keys.each { |k|
+        value = c[k]
+        if k=~/_dir\Z/ then
+          value.gsub!(/~/,ENV['HOME']) 
+          if ! FileTest.directory?(value) then fatal_error("#{var}=#{value}, but #{value} either does not exist or is not a directory") end
+        end
+        $config[k] = value # override any earlier value that was set
+      }
     }
-  }
-}
-$config.keys.each { |k|
-  if $config[k].nil? then fatal_error("error, variable #{k} not given in #{config_file} and has no default value") end
+  end
 }
 $config.keys.each { |k|
   $stderr.print "#{k}=#{$config[k]} "
@@ -230,12 +243,13 @@ $margin_width = 80 # mm
 
 $tex_math_trivial = "lt gt perp times sim ne le perp le nabla alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau upsilon phi chi psi omega Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa Lambda Mu Nu Xi Omicron Pi Rho Sigma Tau Upsilon Phi Chi Psi Omega".split(/ /)
   # ... tex math symbols that have exactly the same names as html entities, e.g., \propto and &propto;
-$tex_math_nontrivial = {'infty'=>'infin' , 'ldots'=>'hellip' , 'leq'=>'le' , 'geq'=>'ge' , 'partial'=>'part' , 'cdot'=>'sdot' , 'unitdot'=>'sdot'  ,  'propto'=>'prop',
-                        'approx'=>'asymp' , 'rightarrow'=>'rarr'  ,  'flat'=>'#x266D'  ,  'degunit'=>'deg' }
+$tex_math_nontrivial = {'infty'=>'infin'  , 'leq'=>'le' , 'geq'=>'ge' , 'partial'=>'part' , 'cdot'=>'sdot' , 'unitdot'=>'sdot'  ,  'propto'=>'prop',
+                        'approx'=>'asymp' , 'rightarrow'=>'rarr'  ,  'flat'=>'#x266D'  ,  'degunit'=>'deg' ,  'ldots'=>'hellip'}
   # ... nontrivial ones; trivial ones will now be appended to this list:
 $tex_math_trivial_not_entities = "sin cos tan ln log exp".split(/ /)
 $tex_math_not_entities = {'munit'=>'m' , 'sunit'=>'s' , 'kgunit'=>'kg' , 'nunit'=>'N' , 'junit'=>'J' , 'der'=>'d'  ,  'pm'=>'&#177;' ,  'degcunit'=>'&deg;C' , 'parallel'=>'||',
-                          'sharp'=>'&#x266F;'}
+                          'sharp'=>'&#x266F;'
+}
 $tex_math_not_in_mediawiki = {'munit'=>'\text{m}' , 'sunit'=>'\text{s}' , 'kgunit'=>'\text{kg}' , 'gunit'=>'\text{g}' , 'nunit'=>'\text{N}',
                               'junit'=>'\text{J}' , 'der'=>'d'  ,  'degcunit'=>'\ensuremath{\,^{\circ}}C' ,
                               'cancel'=>'', 'zu'=>'text'}
@@ -939,7 +953,7 @@ def handle_math(tex,inline_only=false,allow_bitmap=true)
 
   math.each_index { |n|
     debug = false # math[n]=~/\{1\}\{2\}/
-    m = handle_math_one(math[n],math_type[n],allow_bitmap)
+    m = handle_math_one(math[n],math_type[n],(allow_bitmap && !($config['forbid_images_inside_text']==1 && math_type[n]=='inline')))
     if m==nil then
       m=math[n]
     else
@@ -1075,7 +1089,7 @@ def handle_math_one_html(tex,math_type)
     end
     if y!=nil then return y end
 
-    if $xhtml then
+    if $xhtml && $config['forbid_mathml']==0 then
       # If it's something like an align environment, it may have \\ in it, so we need to surround it with a begin/end block, or else blahtex will get upset.
       surround = (math_type!='inline' && math_type!='equation') 
       t = 'temp_mathml'
@@ -1505,6 +1519,8 @@ end
 def parse(t,level,current_section)
   tex = t.clone
 
+  protect_mathml_in_captions = {} # fix for bug with improperly nested mathml being generated in Calculus when captions contain mathml
+
   # The following is so that text right before or right after an enumerate or itemize will be in its own paragraph:
   tex.gsub!(/(\\end{(enumerate|itemize)})/) {$1+"\n"}
   tex.gsub!(/(\\begin{(enumerate|itemize)})/) {"\n"+$1}
@@ -1523,7 +1539,11 @@ def parse(t,level,current_section)
       if anon==0 then $fig_ctr += 1 ; l=alphalph($fig_ctr).to_s+' / ' else l='' end
       if name=='zzzfake' then $fig_ctr += 1 end # kludge, I don't understand why this is needed, but it is, or else EM1 figures get out of step at the end
       whazzat = find_figure(name,width) # has the side-effect of copying or converting it if necessary
-      if caption=~/\A\s*\Z/ then c='' else c="<p class=\"caption\">#{l}#{parse_para(caption)}</p>" end
+      if caption=~/\A\s*\Z/ then c='' else 
+        pc=parse_para(caption)
+        if pc=~/<math/ then h="ZZZ_PROTECT_MATHML_IN_CAPTIONS_"+hash_function(pc); protect_mathml_in_captions[h]=pc.clone; pc=h end
+        c="<p class=\"caption\">#{l}#{pc}</p>" 
+      end
       i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}><a #{$anchor}=\"fig:#{name}\"></a>"
       if all_figs_inline then 
         x = "<p>"+i+"</p>"+c
@@ -1598,6 +1618,7 @@ def parse(t,level,current_section)
     current_section.pop
     secnum += 1
   }
+  result.each { |s| 0.upto(1) { |i| protect_mathml_in_captions.each { |k,v| unless s[i].nil? then s[i].gsub!(/#{k}/,v) end  } } }
   #------------------------------------------------------------------------------------------------------------------------------------
   curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
   if level==$config['spew_figs_at_level'] then
@@ -1609,6 +1630,7 @@ def parse(t,level,current_section)
   else
     return result
   end
+  #------------------------------------------------------------------------------------------------------------------------------------
 end
 
 def newlines_to_spaces(s)
@@ -1752,9 +1774,14 @@ if $wiki then
 end
 
 if $modern && !$html5 && !$wiki then
+  if $config['forbid_mathml']==1 then
+    doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" >'
+  else
+    doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd" >'
+  end
   print <<STUFF
 <?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd" >
+#{doctype}
 <html xmlns="http://www.w3.org/1999/xhtml">
 STUFF
   mime = 'application/xhtml+xml'
@@ -1776,10 +1803,19 @@ STUFF
   mime = 'text/html'
 end
 
+banner_css =  <<STUFF
+    <link rel="stylesheet" type="text/css" href="http://www.lightandmatter.com/banner.css" media="all"#{$self_closing_tag}>
+STUFF
+
 if $test_mode then
   stylesheet = 'file:///home/bcrowell/Lightandmatter/lm.css'
 else
-  stylesheet = 'http://www.lightandmatter.com/lm.css'
+  if $config['standalone']==0 then
+    stylesheet = 'http://www.lightandmatter.com/lm.css'
+  else
+    stylesheet = '../standalone.css'
+    banner_css = ''
+  end
 end
 
 mathjax_in_head = ''
@@ -1791,7 +1827,7 @@ if !$wiki then
 print <<STUFF
   <head>
     <title>#{$chapter_title}</title>
-    <link rel="stylesheet" type="text/css" href="http://www.lightandmatter.com/banner.css" media="all"#{$self_closing_tag}>
+    #{banner_css}
     <link rel="stylesheet" type="text/css" href="#{stylesheet}" media="all"#{$self_closing_tag}>
     <meta http-equiv="Content-Type" content="#{mime}; charset=utf-8"#{$self_closing_tag}>
     #{mathjax_in_head}

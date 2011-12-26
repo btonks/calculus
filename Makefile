@@ -55,8 +55,8 @@ web:
 	@[ `which footex` ] || echo "******** footex is not installed, so html cannot be generated; get footex from http://www.lightandmatter.com/footex/footex.html"
 	@[ `which footex` ] || exit 1
 	scripts/prep_web.pl
-	WOPT='--html5' scripts/make_web.pl # html 5
 	WOPT='--modern' scripts/make_web.pl # xhtml
+	WOPT='--html5' scripts/make_web.pl # html 5
 	scripts/make_web.pl # html 4
 
 handheld:
@@ -64,7 +64,8 @@ handheld:
 	@rm -Rf calc_handheld
 	mkdir calc_handheld
 	scripts/prep_web.pl
-	HTML_DIR='calc_handheld' WOPT='--modern --override_config_with="handheld.config"' scripts/make_web.pl
+	HANDHELD=1 HTML_DIR='calc_handheld' WOPT='--modern --override_config_with="handheld.config"' scripts/make_web.pl
+	cp standalone.css calc_handheld
 
 very_clean: clean
 	rm -f calc.pdf calc_lulu.pdf

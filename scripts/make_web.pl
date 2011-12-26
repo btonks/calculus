@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use XML::Parser;
 
 my $wopt = '';
 if (exists $ENV{WOPT}) {$wopt = $ENV{WOPT}}
@@ -19,6 +20,10 @@ print "make_web.pl, no_write=$no_write, wiki=$wiki, xhtml=$xhtml\n";
 
 my $html_dir = "/home/bcrowell/Generated/html_books/calc";
 if (exists $ENV{HTML_DIR}) {$html_dir = $ENV{HTML_DIR}}
+
+# For handheld versions, there are no server rewrites, so filenames should all be .html.
+my $handheld = 0;
+if (exists $ENV{HANDHELD}) {$handheld = $ENV{HANDHELD}}
 
 # duplicated in translate_to_html.rb, but different number of ../'s
 my $banner_html = <<BANNER;
@@ -64,25 +69,41 @@ foreach my $tex(<ch*/ch*temp.temp>) {
       system($cmd);
     }
     my $html = "$dir/ch$ch";
+    my $ext;
     if ($xhtml) {
-      $html = $html . '.xhtml';
+      $ext = '.xhtml';
     }
     else {  
       if ($wiki) {
-        $html = $html . '.wiki';
+        $ext = '.wiki';
       }
       else {
         if ($html5) {
-          $html = $html . '.html5';
+          $ext = '.html5';
         }
         else {
-          $html = $html . '.html';
+          $ext = '.html';
         }  
       }
     }
+    if ($handheld) {$ext = '.html'}
+    $html = $html . $ext;
     my $c = "CHAPTER='$ch' OWN_FIGS='ch$ch/figs' scripts/translate_to_html.rb $wopt <$tex >$html";
     print "$c\n";
     system($c);
+    if ($xhtml) {
+      local $/; open(F,"<$html"); my $x=<F>; close F;
+      eval {XML::Parser->new->parse($x)};  
+      if ($@) {   
+        print "fatal error ===============> file $html output by /translate_to_html.rb is not well formed xml\n";
+        XML::Parser->new->parse($x); # will print error message
+        die;
+      }
+      else {
+        if ($no_write) {unlink($html)} # delete temporary file
+      }
+    }
+
   }
   else {
     die "make_web.pl is upset, why doesn't $tex have chapter number?";

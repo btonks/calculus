@@ -44,8 +44,8 @@ foreach my $in(<ch*/ch*.tex>) {
   # convert from:
   # \startcodeeg \begin{Code} ... \end{Code}
   $t =~ s/\\(startcodeeg|finishcodeeg|restartLineNumbers)//g;
-  $t =~ s/\\begin{Code}/<tt>/g;
-  $t =~ s/\\end{Code}/<\/tt>/g;
+  $t =~ s/\\begin{Code}/\\begin{listing}/g;
+  $t =~ s/\\end{Code}/\\end{listing}/g;
   $t =~ s/\s*\\cc{(.*)}/" ".no_less_thans($1)."<br\/>"/ge;
   $t =~ s/\s*\\cc(.*)/" ".no_less_thans($1)."<br\/>"/ge;
   $t =~ s/\\ii{(.*)}(.*)/"".no_less_thans($1)." ".no_less_thans($2)."<br\/>"/ge; # $2 if for possible \cc line that got joined on
