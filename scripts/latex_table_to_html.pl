@@ -4,6 +4,10 @@ use strict;
 use File::Temp qw/ tempfile tempdir /;
 use Digest::MD5;
 use File::Copy;
+use JSON;
+
+my $config = from_json(get_input("temp.config")); # hash ref
+my $forbid_mathml = ($config->{'forbid_mathml'}==1);
 
 if (!@ARGV) {
   print <<USAGE;
@@ -59,11 +63,11 @@ my  $input = get_input($raw_file);
       open(FILE,">$t") or die "error $!, opening $t for output";
       print FILE $math;
       close FILE;
-      if ($fmt eq 'html') {
+      if ($fmt eq 'html' || $forbid_mathml) {
         my $mm = `footex --prepend-file $sty --html $t`;
         $m=$mm if $mm ne '';
       }
-      if ($fmt eq 'xhtml') {
+      if ($fmt eq 'xhtml' && !$forbid_mathml) {
         my $mm = `footex --prepend-file $sty --mathml $t`;
         $m='<math xmlns="http://www.w3.org/1998/Math/MathML">'.$mm.'</math>' if $mm ne '';
       }
@@ -138,9 +142,9 @@ if (-d $temp_dir) {
 sub get_input {
   my $file = shift;
   local $/;
-  die "file $file doesn't exist" unless -e $file;
+  die "latex_table_to_html.pl: file $file doesn't exist" unless -e $file;
   open(FILE,"<$file") or die "error $! opening $file for input";
-  $input = <FILE>;
+  my $input = <FILE>;
   close FILE;
   return $input;
 }

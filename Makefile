@@ -24,6 +24,8 @@ SHOW_ERRORS = \
         close F; \
         exit(1)
 DO_PDFLATEX = echo "$(DO_PDFLATEX_RAW)" ; perl -e 'if (system("$(DO_PDFLATEX_RAW)")) {$(SHOW_ERRORS)}'
+GENERIC_OPTIONS_FOR_CALIBRE =  --authors "Benjamin Crowell" --language en --title "Calculus"
+WEB_DIR = /home/bcrowell/Lightandmatter/calc
 
 # Since book1 comes first, it's the default target --- you can just do ``make'' to make it.
 
@@ -64,8 +66,23 @@ handheld:
 	@rm -Rf calc_handheld
 	mkdir calc_handheld
 	scripts/prep_web.pl
-	HANDHELD=1 HTML_DIR='calc_handheld' WOPT='--modern --override_config_with="handheld.config"' scripts/make_web.pl
+	WOPT='--modern --override_config_with="handheld.config"' scripts/make_web.pl
 	cp standalone.css calc_handheld
+	make epub
+	make mobi
+	@echo "To post the books, do 'make post_handheld'."
+
+post_handheld:
+	cp calc.epub $(WEB_DIR)
+	cp calc.mobi $(WEB_DIR)
+
+epub:
+	# Before doing this, do a "make handheld".
+	ebook-convert calc_handheld/index.html calc.epub $(GENERIC_OPTIONS_FOR_CALIBRE) --no-default-epub-cover
+
+mobi:
+	# Before doing this, do a "make handheld".
+	ebook-convert calc_handheld/index.html calc.mobi $(GENERIC_OPTIONS_FOR_CALIBRE) --rescale-images
 
 very_clean: clean
 	rm -f calc.pdf calc_lulu.pdf
@@ -88,14 +105,11 @@ clean:
 	rm -f */*/a.a
 	rm -f junk
 	rm -f err
-	# ... done.
-	rm -f calc_lulu.pdf
-	rm -f calc.pdf
-	rm -f temp.pdf
-	rm -f ch*/ch*temp.temp
+	rm -f calc_lulu.pdf calc.pdf *.epub *.mobi *.azw
+	rm -f temp.pdf ch*/ch*temp.temp temp.config
 
 post:
-	cp calc.pdf /home/bcrowell/Lightandmatter/calc
+	cp calc.pdf $(WEB_DIR)
 
 prepress:
 	# The following makes Lulu not complain about missing fonts:

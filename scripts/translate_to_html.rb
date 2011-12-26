@@ -72,9 +72,10 @@
 #    all_figs_inline                 boolean, 0 or 1
 #    max_fig_width_pixels            -1 normally, >0 for handheld readers
 #    allow_png                       boolean, 1 normally, may be 0 for handheld readers
-#    forbid_mathml                   boolean, 0 or 1, set to 1 to generate xhtml with equations as html or bitmaps, as for epub 2
+#    forbid_mathml                   boolean, 0 or 1, set to 1 to generate xhtml with equations as html or bitmaps, as for epub 2; also used by latex_table_to_html.pl
 #    forbid_images_inside_text       boolean, 0 or 1, set to 1 for formats like epub 2
 #    standalone                      boolean, 0 or 1, set to 1 if everything like CSS files, etc., has to be local, not at a URL
+#    scale_for_bitmapped_equations   normally 100, may need to be more like 150 or 200 for handheld devices
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
@@ -228,6 +229,9 @@ $config.keys.each { |k|
   $stderr.print "#{k}=#{$config[k]} "
 }
 $stderr.print "\n"
+
+# Write a copy of all the config variables to a temporary file, for use by any other scripts such as latex_table_to_html.pl that might need the info.
+File.open("temp.config",'w') { |f| f.print JSON.generate($config)}
 
 $chapter_toc = "<div class=\"container\">Contents#{$br}\n"
 
@@ -989,6 +993,8 @@ end
 def handle_math_one(foo,math_type,allow_bitmap)
   tex = foo.clone
 
+  #if foo=~/xdot/ then $stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, matches xdot\n" end # qwe
+
   if tex=='' then
     $stderr.print "warning, null string passed to handle_math_one\n"
     return ''
@@ -1008,9 +1014,11 @@ def handle_math_one(foo,math_type,allow_bitmap)
 
   html = handle_math_one_html(tex.clone,math_type)
   return html if html!=nil
+  if !allow_bitmap && $config['standalone']==1 then return handle_math_one_desperate_fallback(tex.clone) end
   return nil if !allow_bitmap
   html = handle_math_one_bitmap(tex.clone,math_type)
   return html if html!=nil
+  #$stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, didn't do fallback\n" # qwe
   return nil
 end
 
@@ -1118,6 +1126,33 @@ def handle_math_one_html(tex,math_type)
     return y
 end
 
+# Translate one particular equation to xhtml, trying to create something half-way legible if all else fails.
+# This is meant only for use in math that occurs inline in ebooks that don't support mathml.
+def handle_math_one_desperate_fallback(tex)
+  debug = false
+
+  if debug then $stderr.print "=================== in handle_math_one_desperate_fallback, input=#{tex}\n" end # qwe
+
+  m = tex.clone
+
+  m.gsub!(/\&\=/,'=') # we don't try to handle alignment
+  m.gsub!(/_\\zu{o}/,'_o')
+  m.gsub!(/\\(quad|qquad)/,' ') # we don't try to handle spacing
+  m.gsub!(/\\[ :,]/,' ')
+  m.gsub!(/\\(?:text|zu){([A-Za-z]+)}/) {$1} 
+  m.gsub!(/\\(?:vc|mathbf){([A-Za-z]+)}/) {"<b>#{$1}</b>"}
+
+  m.gsub!(/\\(?:sqrt){([A-Za-z]+)}/) {"&radic;#{$1}"}
+  m.gsub!(/\\xdot/,"x<sup>&middot;</sup>")
+  m.gsub!(/\\Ddot{x}/,"x&uml;")
+  m.gsub!(/\\int/,"&int;")
+  m.gsub!(/\\infty/,"&infin;")
+
+  if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end # qwe
+
+  return m
+end
+
 
 
 # <b>F</b>=<i>qTEXTb</i>0001<i>v</i>&times;<i>B</i>
@@ -1169,7 +1204,8 @@ def handle_math_one_bitmap(tex,math_type)
         else
           if ! $no_write then
             if !File.exist?(temp) then $stderr.print "error, temp file #{temp} doesn't exist"; exit(-1) end
-            unless system("#{$config['script_dir']}/equation_to_image.pl #{temp} #{$config['sty_dir']}/lmmath.sty >/dev/null") then $stderr.print "error, #{$?}"; exit(-1) end
+            scale = $config['scale_for_bitmapped_equations']
+            unless system("#{$config['script_dir']}/equation_to_image.pl #{temp} #{$config['sty_dir']}/lmmath.sty #{scale}>/dev/null") then $stderr.print "error, #{$?}"; exit(-1) end
             unless system("mv #{temp_png} #{eq_file}") then $stderr.print "WARNING, error #{$?}, probably tex4ht isn't installed\n" end
           end
         end
@@ -1673,7 +1709,7 @@ if $test_mode then
 end
 
 $ch = ENV['CHAPTER']
-$want_chapter_toc = !($config['book']=='1np' and $ch=='00') && !$wiki
+$want_chapter_toc = !$wiki && $config['standalone']==0
 
 tex = $stdin.gets(nil) # nil means read whole file
 
@@ -1775,7 +1811,7 @@ end
 
 if $modern && !$html5 && !$wiki then
   if $config['forbid_mathml']==1 then
-    doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" >'
+    doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
   else
     doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd" >'
   end
@@ -1836,6 +1872,7 @@ print <<STUFF
 STUFF
 
 # duplicated in run_eruby.pl, ****************** but with a different number of ../'s before banner.jpg ******************************
+if $config['standalone']==0 then
 print <<BANNER
   <div class="banner">
     <div class="banner_contents">
@@ -1853,10 +1890,14 @@ print <<BANNER
     </div>
   </div>
 BANNER
+end
 
+if $config['standalone']==0 then
 print "<table style=\"width:#{$ad_width_pixels}px;\"><tr><td>" + $disclaimer_html + "</td></tr></table>\n"
   # ... people are probably more likely to read ad if it looks same width as this block of text, looks like part of page
 end
+
+end # if not wiki
 
 if $wiki then
   print <<HEAD
@@ -1867,7 +1908,7 @@ end # if wiki
 if $test_mode then
   $stderr.print "***************** not putting an ad in #{$config['book']}, ch. #{$ch}, for testing purposes\n"
 else
-  print $google_ad_html + "\n"
+  if $config['standalone']==0 then print $google_ad_html + "\n" end
 end
 
 if $want_chapter_toc then print $chapter_toc + "</div>" end

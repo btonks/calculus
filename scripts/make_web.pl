@@ -2,6 +2,7 @@
 
 use strict;
 use XML::Parser;
+use JSON;
 
 my $wopt = '';
 if (exists $ENV{WOPT}) {$wopt = $ENV{WOPT}}
@@ -16,17 +17,20 @@ if ($wopt=~/\-\-modern/) {$xhtml=1}
 my $html5 = 0;
 if ($wopt=~/\-\-html5/) {$html5=1}
 
+my $config = from_json(get_input("temp.config")); # hash ref
+my $forbid_mathml = ();
+
 print "make_web.pl, no_write=$no_write, wiki=$wiki, xhtml=$xhtml\n";
 
-my $html_dir = "/home/bcrowell/Generated/html_books/calc";
-if (exists $ENV{HTML_DIR}) {$html_dir = $ENV{HTML_DIR}}
+my $html_dir = $config->{'html_dir'};
+my $standalone = $config->{'standalone'}; # For handheld versions, there are no server rewrites, so filenames should all be .html.
 
-# For handheld versions, there are no server rewrites, so filenames should all be .html.
-my $handheld = 0;
-if (exists $ENV{HANDHELD}) {$handheld = $ENV{HANDHELD}}
+# print STDERR "in make_web.pl, standalone=$standalone=\n";
 
 # duplicated in translate_to_html.rb, but different number of ../'s
-my $banner_html = <<BANNER;
+my $banner_html = '';
+if ($standalone==0) {
+$banner_html = <<BANNER;
   <div class="banner">
     <div class="banner_contents">
         <div class="banner_logo" id="logo_div"><img src="http://www.lightandmatter.com/logo.png" alt="Light and Matter logo" id="logo_img"></div>
@@ -43,9 +47,18 @@ my $banner_html = <<BANNER;
     </div>
   </div>
 BANNER
+}
+else {
+$banner_html = <<BANNER;
+<p><b>Calculus</b></p>
+<p><b>Benjamin Crowell</b></p>
+<p>This book's web page is <a href="http://www.lightandmatter.com/calc/">lightandmatter.com/calc</a>. This is my attempt to make a version of the
+book for handheld e-book readers, despite what is, as of 2011, their poor support for math.</p>
+BANNER
+}
 #---------
 #   Note:
-#     The index is always html, even if we're generating xhtml.
+#     The index is normally html, even if we're generating xhtml. (Index is xhtml for handheld formats.)
 #     Also, translate_to_html.rb generates links to chapter files named .html, not .xhtml,
 #     even when we're generating xhtml output. This is because mod_rewrite is intended to
 #     redirect users to the .xhtml only if they can handle it.
@@ -53,7 +66,22 @@ BANNER
 my $index = $html_dir . '/index.html';
 if (!$no_write && !$wiki) {
   open(FILE,">$index") or die "error opening $index for output; perhaps you need to create the book's main directory?";
-  print FILE "<html><head><title>html version of book</title>    <link rel=\"stylesheet\" type=\"text/css\" href=\"http://www.lightandmatter.com/banner.css\" media=\"all\"></head><body>\n";
+  if ($standalone==0) {
+    print FILE "<html><head><title>html version of $config->{'title'}</title>    <link rel=\"stylesheet\" type=\"text/css\" href=\"http://www.lightandmatter.com/banner.css\" media=\"all\"></head><body>\n";
+  }
+  else {
+    print FILE <<STUFF;
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>$config->{'title'}</title>
+    <link rel="stylesheet" type="text/css" href="standalone.css" media="all"/>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
+  </head>
+  <body>
+STUFF
+  }
   print FILE $banner_html;
   close FILE;
 }
@@ -86,7 +114,7 @@ foreach my $tex(<ch*/ch*temp.temp>) {
         }  
       }
     }
-    if ($handheld) {$ext = '.html'}
+    if ($standalone==1) {$ext = '.html'}
     $html = $html . $ext;
     my $c = "CHAPTER='$ch' OWN_FIGS='ch$ch/figs' scripts/translate_to_html.rb $wopt <$tex >$html";
     print "$c\n";
@@ -111,5 +139,20 @@ foreach my $tex(<ch*/ch*temp.temp>) {
 }
 
 open(FILE,">>$index") or die "error opening $index";
+if ($standalone==1) {
+print FILE <<COPYRIGHT;
+<p>(c) 2009-2011 Benjamin Crowell, <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC-BY-SA</a> license.</p>
+COPYRIGHT
+}
 print FILE "</body></html>\n";
 close FILE;
+
+sub get_input {
+  my $file = shift;
+  local $/;
+  die "make_web.pl: file $file doesn't exist" unless -e $file;
+  open(FILE,"<$file") or die "error $! opening $file for input";
+  my $input = <FILE>;
+  close FILE;
+  return $input;
+}
