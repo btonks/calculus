@@ -78,6 +78,7 @@
 #    forbid_images_inside_text       boolean, 0 or 1, set to 1 for formats like epub 2
 #    standalone                      boolean, 0 or 1, set to 1 if everything like CSS files, etc., has to be local, not at a URL
 #    scale_for_bitmapped_equations   normally 100, may need to be more like 150 or 200 for handheld devices
+#    forbid_anchors_and_links        don't generate any of these except in TOC; used for handheld output, because they confuse calibre and upset epubcheck
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
@@ -222,7 +223,7 @@ config_files.each {|config_file|
         value = c[k]
         if k=~/_dir\Z/ then
           value.gsub!(/~/,ENV['HOME']) 
-          if ! FileTest.directory?(value) then fatal_error("#{var}=#{value}, but #{value} either does not exist or is not a directory") end
+          if ! FileTest.directory?(value) && !$write_config_and_exit then fatal_error("#{k}=#{value}, but #{value} either does not exist or is not a directory") end
         end
         $config[k] = value # override any earlier value that was set
       }
@@ -253,11 +254,11 @@ $margin_width = 80 # mm
 $tex_math_trivial = "lt gt perp times sim ne le perp le nabla alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau upsilon phi chi psi omega Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa Lambda Mu Nu Xi Omicron Pi Rho Sigma Tau Upsilon Phi Chi Psi Omega".split(/ /)
   # ... tex math symbols that have exactly the same names as html entities, e.g., \propto and &propto;
 $tex_math_nontrivial = {'infty'=>'infin'  , 'leq'=>'le' , 'geq'=>'ge' , 'partial'=>'part' , 'cdot'=>'sdot' , 'unitdot'=>'sdot'  ,  'propto'=>'prop',
-                        'approx'=>'asymp' , 'rightarrow'=>'rarr'  ,  'flat'=>'#x266D'  ,  'degunit'=>'deg' ,  'ldots'=>'hellip'}
+                        'approx'=>'asymp' , 'rightarrow'=>'rarr'   ,  'degunit'=>'deg' ,  'ldots'=>'hellip' }
   # ... nontrivial ones; trivial ones will now be appended to this list:
 $tex_math_trivial_not_entities = "sin cos tan ln log exp".split(/ /)
 $tex_math_not_entities = {'munit'=>'m' , 'sunit'=>'s' , 'kgunit'=>'kg' , 'nunit'=>'N' , 'junit'=>'J' , 'der'=>'d'  ,  'pm'=>'&#177;' ,  'degcunit'=>'&deg;C' , 'parallel'=>'||',
-                          'sharp'=>'&#x266F;'
+                          'sharp'=>'&#x266F;' , 'flat'=>'#x266D'   , 'ell'=>'&#8467;'
 }
 $tex_math_not_in_mediawiki = {'munit'=>'\text{m}' , 'sunit'=>'\text{s}' , 'kgunit'=>'\text{kg}' , 'gunit'=>'\text{g}' , 'nunit'=>'\text{N}',
                               'junit'=>'\text{J}' , 'der'=>'d'  ,  'degcunit'=>'\ensuremath{\,^{\circ}}C' ,
@@ -588,7 +589,7 @@ def parse_section(tex)
           if x=='homework' then 
             d = "<b>#{hw}</b>. " + d
             hw+=1
-            if args[1]!='' && !$wiki then top = top + "<a #{$anchor}=\"hw:#{arg}\"></a>" end
+            if args[1]!='' && !$wiki && $config['forbid_anchors_and_links']==0 then top = top + "<a #{$anchor}=\"hw:#{arg}\"></a>" end
             if args[3]=='1' then d = d + " &int;" end
           end
           if x=='reading' then top = top + "<b>#{args[1]}</b>, <i>#{args[2]}</i>. " end
@@ -1135,6 +1136,7 @@ end
 # This is meant only for use in math that occurs inline in ebooks that don't support mathml.
 def handle_math_one_desperate_fallback(tex)
   debug = false
+  curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
 
   if debug then $stderr.print "=================== in handle_math_one_desperate_fallback, input=#{tex}\n" end # qwe
 
@@ -1147,11 +1149,14 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\\(?:text|zu){([A-Za-z]+)}/) {$1} 
   m.gsub!(/\\(?:vc|mathbf){([A-Za-z]+)}/) {"<b>#{$1}</b>"}
 
-  m.gsub!(/\\(?:sqrt){([A-Za-z]+)}/) {"&radic;#{$1}"}
-  m.gsub!(/\\xdot/,"x<sup>&middot;</sup>")
+  m.gsub!(/\\(?:sqrt){(#{curly})}/) {"&radic;#{$1}"} # If possible, strip of the curly braces.
+  m.gsub!(/\\sqrt/) {"&radic;"}                      # ... otherwise, still do something with it.
+  m.gsub!(/_([A-Za-z0-9])/) {"<sub>#{$1}</sub>"}
+  m.gsub!(/\^([A-Za-z0-9])/) {"<sup>#{$1}</sup>"}
+  m.gsub!(/\\xdot/,"\\dot{x}")
+  m.gsub!(/\\dot{([A-Za-z])}/) {"#{$1}<sup>&middot;</sup>"}
   m.gsub!(/\\Ddot{x}/,"x&uml;")
-  m.gsub!(/\\int/,"&int;")
-  m.gsub!(/\\infty/,"&infin;")
+  m = replace_list(m,$tex_symbol_replacement_list)
 
   if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end # qwe
 
@@ -1309,11 +1314,11 @@ def parse_eensy_weensy(t)
   tex.gsub!(/\\label{([^}]+)}/) {
     x=$1
     unless x=~/^splits:/ then # kludge to avoid malformed xhtml resulting from \label in a paragraph by itself
-      "<a #{$anchor}=\"#{x}\"></a>"
+      if $config['forbid_anchors_and_links']==0 then "<a #{$anchor}=\"#{x}\"></a>" else '' end
     end
   }
 
-  tex.gsub!(/\\url{(#{curly})}/) {"<a href=\"#{$1}\">#{$1}</a>"}
+  tex.gsub!(/\\url{(#{curly})}/) {$config['forbid_anchors_and_links']==0 ? "<a href=\"#{$1}\">#{$1}</a>" : ''}
 
   # footnotes:
   tex.gsub!(/\\footnote{(#{curly})}/) {
@@ -1322,7 +1327,7 @@ def parse_eensy_weensy(t)
     n = $footnote_ctr
     label = "footnote" + n.to_s
     $footnote_stack.push([n,label,parse_para(text)])
-    "<a href=\"\##{label}\"><sup>#{n}</sup></a>"
+    $config['forbid_anchors_and_links']==0 ? "<a href=\"\##{label}\"><sup>#{n}</sup></a>" : ''
   }
 
   parse_references!(tex)
@@ -1365,7 +1370,7 @@ def parse_references!(tex)
           url = "../ch#{t}/ch#{t}.html" + url
         end
       end
-      y="<a href=\"#{url}\">#{number}</a>"
+      y=($config['forbid_anchors_and_links']==0 ? "<a href=\"#{url}\">#{number}</a>" : '')
     else
       $stderr.print "warning, undefined reference #{x}\n"
       y=''
@@ -1585,7 +1590,8 @@ def parse(t,level,current_section)
         if pc=~/<math/ then h="ZZZ_PROTECT_MATHML_IN_CAPTIONS_"+hash_function(pc); protect_mathml_in_captions[h]=pc.clone; pc=h end
         c="<p class=\"caption\">#{l}#{pc}</p>" 
       end
-      i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}><a #{$anchor}=\"fig:#{name}\"></a>"
+      a = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"fig:#{name}\"></a>" : '')
+      i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}>#{a}"
       if all_figs_inline then 
         x = "<p>"+i+"</p>"+c
       else
@@ -1634,7 +1640,10 @@ def parse(t,level,current_section)
         if level==4 then sec_type="Subsubsection" end
         ll = "#{sec_type}#{label}"
         parse_itty_bitty_stuff!(title)
-        if level==2 and !(title=~/^Homework/) then $chapter_toc = $chapter_toc + "<a href=\"\##{ll}\">#{sec_type} #{label} - #{title}</a>#{$br}\n" end
+        if level==2 and !(title=~/^Homework/) then 
+          t = "#{sec_type} #{label} - #{title}"
+          $chapter_toc = $chapter_toc + ($config['forbid_anchors_and_links']==0 ? "<a href=\"\##{ll}\">#{t}</a>#{$br}\n" : "#{t}\n")
+        end
         if $wiki then
           h_start = wiki_style_section(level)
           h_end   = wiki_style_section(level)
@@ -1643,7 +1652,7 @@ def parse(t,level,current_section)
         else
           h_start = "<h#{level}>"
           h_end   = "</h#{level}>"
-          s_name = "<a #{$anchor}=\"#{ll}\"></a>"
+          s_name = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"#{ll}\"></a>" : '')
           s_num = s + ' '
         end
         "#{h_start}#{s_name}#{s_num}#{title}#{h_end}\n"
@@ -1972,7 +1981,8 @@ if $footnote_ctr>0 then
     n = f[0]
     label = f[1]
     text = f[2]
-    print "<div><a #{$anchor}=\"#{label}\"></a>[#{n}] #{text}</div>\n"
+    a = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"#{label}\"></a>" : '')
+    print "<div>#{a}[#{n}] #{text}</div>\n"
   }
 end
 
