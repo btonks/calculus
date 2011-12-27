@@ -7,7 +7,8 @@
 #
 #
 #         Always edit the version of this file in ~/Documents/programming/translate_to_html/translate_to_html.rb --
-#         it will automatically get copied over into the various projects the next time I do a "make."
+#         it will automatically get copied over into the various projects the next time I do a "make" or a
+#         "make preflight".
 #
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1318,7 +1319,7 @@ def parse_eensy_weensy(t)
     end
   }
 
-  tex.gsub!(/\\url{(#{curly})}/) {$config['forbid_anchors_and_links']==0 ? "<a href=\"#{$1}\">#{$1}</a>" : ''}
+  tex.gsub!(/\\url{(#{curly})}/) {$config['forbid_anchors_and_links']==0 ? "<a href=\"#{$1}\">#{$1}</a>" : $1}
 
   # footnotes:
   tex.gsub!(/\\footnote{(#{curly})}/) {
@@ -1327,7 +1328,8 @@ def parse_eensy_weensy(t)
     n = $footnote_ctr
     label = "footnote" + n.to_s
     $footnote_stack.push([n,label,parse_para(text)])
-    $config['forbid_anchors_and_links']==0 ? "<a href=\"\##{label}\"><sup>#{n}</sup></a>" : ''
+    fn = "<sup>#{n}</sup>"
+    $config['forbid_anchors_and_links']==0 ? "<a href=\"\##{label}\">#{fn}</a>" : fn
   }
 
   parse_references!(tex)
@@ -1370,7 +1372,7 @@ def parse_references!(tex)
           url = "../ch#{t}/ch#{t}.html" + url
         end
       end
-      y=($config['forbid_anchors_and_links']==0 ? "<a href=\"#{url}\">#{number}</a>" : '')
+      y=($config['forbid_anchors_and_links']==0 ? "<a href=\"#{url}\">#{number}</a>" : number)
     else
       $stderr.print "warning, undefined reference #{x}\n"
       y=''
@@ -1575,6 +1577,7 @@ def parse(t,level,current_section)
   if level>$config['highest_section_level'] then return [ [parse_section(tex),''] ] end
   #------------------------------------------------------------------------------------------------------------------------------------
   marg_stuff = ''
+  end_of_caption_marker = "<!-- ZZZ_END_OF_CAPTION -->"
   if level==$config['spew_figs_at_level'] then
     non_marg_stuff = ''
     tex.gsub!(/END_CAPTION\n*/,"END_CAPTION\n") # the newline is because without it, the code below will eat too much with each regex match
@@ -1588,7 +1591,7 @@ def parse(t,level,current_section)
       if caption=~/\A\s*\Z/ then c='' else 
         pc=parse_para(caption)
         if pc=~/<math/ then h="ZZZ_PROTECT_MATHML_IN_CAPTIONS_"+hash_function(pc); protect_mathml_in_captions[h]=pc.clone; pc=h end
-        c="<p class=\"caption\">#{l}#{pc}</p>" 
+        c="<p class=\"caption\">#{l}#{pc}</p>#{end_of_caption_marker}"  
       end
       a = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"fig:#{name}\"></a>" : '')
       i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}>#{a}"
@@ -1662,6 +1665,10 @@ def parse(t,level,current_section)
     if level==1 then secnum=$ch.to_i end
     current_section.push(secnum)
     section.gsub!(/\\marg{(#{curly})}/) {"<p>#{$1}</p>"} # occurs in EM 5, opener
+    # kludgy fix for bug that causes paragraphs not to have <p></p> after caption:
+      section.gsub!(/#{end_of_caption_marker}(\n?<p)/) {$1} # When multiple figures are in a row, don't do this more than once, producing illegal nested p tags.
+      section.gsub!(/#{end_of_caption_marker}\n?(([^\n]+(?<!-->)\n)+)/) {"<!-- ZZZ_TWO_NEWLINES --><p>#{$1}</p>\n\n"} # \n\n is cosmetic; if I put it in now, it gets munged later
+      section.gsub!(/#{end_of_caption_marker}/) {""} # Clean up ones that fell at end of section.
     if !(section=~/\A\s*\Z/) then
       result.concat(parse(section,level+1,current_section))
     end
@@ -1815,6 +1822,7 @@ tex.gsub!(/&(?![a-zA-Z0-9#]+;)/,"&amp;")
 tex.gsub!(/<\/h1>\n*<\/p>/,"</h1>") # happens in NP, which has part I, II, ...; see above in handling for mypart
 tex.gsub!(/<td>([^<>]+)<\/t>/) {"<td>#{$1}<\/td>"}; # bug in htlatex?
 tex.gsub!(/KEEP_INDENTATION_(\d+)_SPACES/) {replicate_string(' ',$1.to_i)}
+tex.gsub!(/<!-- ZZZ_TWO_NEWLINES -->/,"\n\n")
 
 if $wiki then
   tex.gsub!(/PROTECT_TEX_MATH_FOR_MEDIAWIKI(.*)ZZZ/) {$protect_tex_math_for_mediawiki[$1]}
