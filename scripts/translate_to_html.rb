@@ -252,6 +252,12 @@ $text_width_pixels = 500
 $ad_width_pixels = 728
 $margin_width = 80 # mm
 
+# In normal web-browser html, it makes sense logically to have displayed math in divs inside paragraphs, and I think it's legal.
+# But in handheld-device formats, this can lead to problems, so break the math out into separate divs that aren't enclosed in p tags.
+$no_displayed_math_inside_paras = $config['forbid_mathml']==1 && $config['forbid_images_inside_text']==1
+$begin_div_not_p = "<!-- ZZZ_BEGIN_DIV_NOT_P -->"
+$end_div_not_p   = "<!-- ZZZ_END_DIV_NOT_P -->"
+
 $tex_math_trivial = "lt gt perp times sim ne le perp le nabla alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau upsilon phi chi psi omega Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa Lambda Mu Nu Xi Omicron Pi Rho Sigma Tau Upsilon Phi Chi Psi Omega".split(/ /)
   # ... tex math symbols that have exactly the same names as html entities, e.g., \propto and &propto;
 $tex_math_nontrivial = {'infty'=>'infin'  , 'leq'=>'le' , 'geq'=>'ge' , 'partial'=>'part' , 'cdot'=>'sdot' , 'unitdot'=>'sdot'  ,  'propto'=>'prop',
@@ -478,7 +484,6 @@ def parse_macros_outside_para!(tex)
 end
 
 def parse_section(tex)
-
   parse_macros_outside_para!(tex)
   curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
 
@@ -629,6 +634,14 @@ def parse_section(tex)
   tex.gsub!(/(\\begin{tabular})\n*/) {"\n\n"+$1}
   tex.gsub!(/\n*(\\end{tabular})/) {$1+"\n\n"}
 
+  # Bug fix for case like \section{foo}\label{bar}, which becomes incorrectly joined together with the following paragraph. See calc, ch 1, subsec "A derivative."
+  tex.gsub!(/(<h\d>[^<]+<\/h\d>\s*\n\\label{[^}]+}\n)([A-Z])/) {"#{$1}\n#{$2}"}
+
+# <h3> A derivative</h3>
+# \label{scaling}
+# That proves that $\xdot(1)=1$, but it was a lot of work, and we don't want to do
+
+
   # Break it up into paragraphs, parse each paragraph, surround paras with <p> tags, but make sure not to make <p></p> pairs that surround one half of a <div></div> pair.
   # So far, the low-level parsing of equations and tables hasn't happened, so we don't have any of those divs yet. All we have is higher level ones, like
   # <div class="eg">. The way those were produced above, we made sure each <div> or </div> was on a line by itself, with blank lines above and below it.
@@ -636,10 +649,13 @@ def parse_section(tex)
   # Bug: if parse_para returns something with nested divs in it, the code below won't work properly.
   result = ''
   tex.split(/\n{2,}/).each { |para|
+    debug = (para=~/That proves that/)
+    if debug then $stderr.print "******** para\n#{para}\n********\n" end # qwe
     if para=~/^(<div|<\/div)/ then
       p = para
     else
       cooked = parse_para(para)
+      if debug then $stderr.print "******** cooked\n#{cooked}\n********\n" end # qwe
       #$stderr.print "cooked=============\n#{cooked}\n==============\n" if debug
       if para=~/<h\d/ or para=~/<p[^a-z]/ then # bug, won't work with wiki output
         p = cooked
@@ -941,10 +957,15 @@ def handle_math(tex,inline_only=false,allow_bitmap=true)
     tex.split(r[x]).each { |m|
       if !(m=~/\A\s*\Z/) then # not pure whitespace
         if inside then
-          n+=1;
+          n = n+1
           math[n] = m
           math_type[n] = x
-          result = result + "MATH#{n}\."
+          mm = "MATH#{n}\."
+          if $no_displayed_math_inside_paras && x!='equation' then
+            result = result + $begin_div_not_p + mm + $end_div_not_p
+          else
+            result = result + mm
+          end
         else
           result = result + m
         end
@@ -1000,7 +1021,7 @@ end
 def handle_math_one(foo,math_type,allow_bitmap)
   tex = foo.clone
 
-  #if foo=~/xdot/ then $stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, matches xdot\n" end # qwe
+  #if foo=~/xdot/ then $stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, matches xdot\n" end
 
   if tex=='' then
     $stderr.print "warning, null string passed to handle_math_one\n"
@@ -1025,7 +1046,7 @@ def handle_math_one(foo,math_type,allow_bitmap)
   return nil if !allow_bitmap
   html = handle_math_one_bitmap(tex.clone,math_type)
   return html if html!=nil
-  #$stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, didn't do fallback\n" # qwe
+  #$stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, didn't do fallback\n"
   return nil
 end
 
@@ -1117,7 +1138,7 @@ def handle_math_one_html(tex,math_type)
         y.gsub!(/\n/,' ')
         y = y + "\n" + '<math xmlns="http://www.w3.org/1998/Math/MathML">'+(f.gets(nil))+'</math>' # nil means read whole file
       }
-      y.gsub!(/<mtext>([^<]*)<mtext>([^<]*)<\/mtext>([^<]*)<\/mtext>/) {"<mtext>#{$1}#{$2}#{$3}</mtext>"} #qwe
+      y.gsub!(/<mtext>([^<]*)<mtext>([^<]*)<\/mtext>([^<]*)<\/mtext>/) {"<mtext>#{$1}#{$2}#{$3}</mtext>"}
     end
 
     if $wiki then
@@ -1139,7 +1160,7 @@ def handle_math_one_desperate_fallback(tex)
   debug = false
   curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
 
-  if debug then $stderr.print "=================== in handle_math_one_desperate_fallback, input=#{tex}\n" end # qwe
+  if debug then $stderr.print "=================== in handle_math_one_desperate_fallback, input=#{tex}\n" end
 
   m = tex.clone
 
@@ -1159,7 +1180,7 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\\Ddot{x}/,"x&uml;")
   m = replace_list(m,$tex_symbol_replacement_list)
 
-  if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end # qwe
+  if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end
 
   return m
 end
@@ -1665,10 +1686,16 @@ def parse(t,level,current_section)
     if level==1 then secnum=$ch.to_i end
     current_section.push(secnum)
     section.gsub!(/\\marg{(#{curly})}/) {"<p>#{$1}</p>"} # occurs in EM 5, opener
+
     # kludgy fix for bug that causes paragraphs not to have <p></p> after caption:
-      section.gsub!(/#{end_of_caption_marker}(\n?<p)/) {$1} # When multiple figures are in a row, don't do this more than once, producing illegal nested p tags.
+    if true then
+      #if section=~/and its derivative cos/ then $stderr.print "\n********\n#{section}\n********\n"; exit(-1) end
+      section.gsub!(/#{end_of_caption_marker}(\n?(<p|\\begin))/) {$1} # When multiple figures are in a row, don't do this more than once, producing illegal nested p tags. Ditto
+                                                                  # for a figure immediately followed by an example, etc.
       section.gsub!(/#{end_of_caption_marker}\n?(([^\n]+(?<!-->)\n)+)/) {"<!-- ZZZ_TWO_NEWLINES --><p>#{$1}</p>\n\n"} # \n\n is cosmetic; if I put it in now, it gets munged later
       section.gsub!(/#{end_of_caption_marker}/) {""} # Clean up ones that fell at end of section.
+    end
+
     if !(section=~/\A\s*\Z/) then
       result.concat(parse(section,level+1,current_section))
     end
@@ -1823,6 +1850,10 @@ tex.gsub!(/<\/h1>\n*<\/p>/,"</h1>") # happens in NP, which has part I, II, ...; 
 tex.gsub!(/<td>([^<>]+)<\/t>/) {"<td>#{$1}<\/td>"}; # bug in htlatex?
 tex.gsub!(/KEEP_INDENTATION_(\d+)_SPACES/) {replicate_string(' ',$1.to_i)}
 tex.gsub!(/<!-- ZZZ_TWO_NEWLINES -->/,"\n\n")
+
+tex.gsub!(/#{$begin_div_not_p}(<div class="equation">([^\n])+)#{$end_div_not_p}\n/) {"</p>#{$1}<p>"}
+tex.gsub!(/#{$begin_div_not_p}/,'')
+tex.gsub!(/#{$end_div_not_p}/,'')
 
 if $wiki then
   tex.gsub!(/PROTECT_TEX_MATH_FOR_MEDIAWIKI(.*)ZZZ/) {$protect_tex_math_for_mediawiki[$1]}

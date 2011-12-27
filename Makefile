@@ -85,6 +85,9 @@ mobi:
 	# Before doing this, do a "make handheld".
 	ebook-convert calc_handheld/index.html calc.mobi $(GENERIC_OPTIONS_FOR_CALIBRE) --rescale-images --cover=ch00/figs/handheld-cover.jpg
 
+epubcheck:
+	java -jar /usr/bin/epubcheck/epubcheck.jar calc.epub 2>err
+
 very_clean: clean
 	rm -f calc.pdf calc_lulu.pdf
 	rm -Rf calc_handheld
