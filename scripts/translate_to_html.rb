@@ -635,12 +635,11 @@ def parse_section(tex)
   tex.gsub!(/\n*(\\end{tabular})/) {$1+"\n\n"}
 
   # Bug fix for case like \section{foo}\label{bar}, which becomes incorrectly joined together with the following paragraph. See calc, ch 1, subsec "A derivative."
+  # Looks like this at this point:
+  #   <h3> A derivative</h3>
+  #   \label{scaling}
+  #   That proves that $\xdot(1)=1$, but it was a lot of work, and we don't want to do
   tex.gsub!(/(<h\d>[^<]+<\/h\d>\s*\n\\label{[^}]+}\n)([A-Z])/) {"#{$1}\n#{$2}"}
-
-# <h3> A derivative</h3>
-# \label{scaling}
-# That proves that $\xdot(1)=1$, but it was a lot of work, and we don't want to do
-
 
   # Break it up into paragraphs, parse each paragraph, surround paras with <p> tags, but make sure not to make <p></p> pairs that surround one half of a <div></div> pair.
   # So far, the low-level parsing of equations and tables hasn't happened, so we don't have any of those divs yet. All we have is higher level ones, like
@@ -649,13 +648,12 @@ def parse_section(tex)
   # Bug: if parse_para returns something with nested divs in it, the code below won't work properly.
   result = ''
   tex.split(/\n{2,}/).each { |para|
-    debug = (para=~/That proves that/)
-    if debug then $stderr.print "******** para\n#{para}\n********\n" end # qwe
+    #if para=~/a remarkable fact/ then $stderr.print "********\n#{para}\n********\n" end # qwe
+    debug = false
     if para=~/^(<div|<\/div)/ then
       p = para
     else
       cooked = parse_para(para)
-      if debug then $stderr.print "******** cooked\n#{cooked}\n********\n" end # qwe
       #$stderr.print "cooked=============\n#{cooked}\n==============\n" if debug
       if para=~/<h\d/ or para=~/<p[^a-z]/ then # bug, won't work with wiki output
         p = cooked
@@ -1200,6 +1198,9 @@ def handle_math_one_bitmap(tex,math_type)
     m.gsub!(/\\indices{(#{curly})}/) {$1} # has to strip curly braces off, not just delete the macro
     # if you really try to do an align environment, it wants to make separate bitmaps for each column
     t = {'inline'=>'equation*', 'equation'=>'equation*' , 'align'=>'equation*', 'multline'=>'multline*' , 'gather'=>'gather*'}[math_type]    
+    if (math_type=='equation' || math_type=='inline') && tex=~/\\\\/ then
+      fatal_error("double backslash not allowed in equation environment: #{tex}")
+    end
     # stuff that's illegal in equation environment:
     m.gsub!(/\&/,'')
     m.gsub!(/\\intertext{([^}]+)}/) {" \\text{#{$1}} "} 
@@ -1207,7 +1208,9 @@ def handle_math_one_bitmap(tex,math_type)
     m.split(/\\\\/).each { |e|
       original = e.clone
       e.gsub!(/\n/,' ') # empty lines upset tex
-      if !(e=~/\A\s*\Z/) then
+      if (e=~/\A\s*\Z/) then
+        fatal_error("double backslash not allowed after final line in displayed math: #{tex}")
+      else
       eq_dir = html_subdir('math')
       eq_base = 'eq_' + hash_equation(e) + '.png'
       eq_file = eq_dir + '/' + eq_base
@@ -1241,8 +1244,8 @@ def handle_math_one_bitmap(tex,math_type)
             unless system("mv #{temp_png} #{eq_file}") then $stderr.print "WARNING, error #{$?}, probably tex4ht isn't installed\n" end
           end
         end
-        end # if not null string
       end # end if file doesn't exist yet
+      end # if not null string
       plain_equation = original
       plain_equation.gsub!(/[\n"]/,'')
       plain_equation.gsub!(/</,'&lt;')
@@ -1696,6 +1699,9 @@ def parse(t,level,current_section)
       section.gsub!(/#{end_of_caption_marker}/) {""} # Clean up ones that fell at end of section.
     end
 
+    section.gsub!(/\n*(\\begin{(important|lessimportant))}/) {"\n\n#{$1}"}
+    section.gsub!(/(\\end{(important|lessimportant))}\n*/) {"#{$1}\n\n"}
+
     if !(section=~/\A\s*\Z/) then
       result.concat(parse(section,level+1,current_section))
     end
@@ -1854,6 +1860,25 @@ tex.gsub!(/<!-- ZZZ_TWO_NEWLINES -->/,"\n\n")
 tex.gsub!(/#{$begin_div_not_p}(<div class="equation">([^\n])+)#{$end_div_not_p}\n/) {"</p>#{$1}<p>"}
 tex.gsub!(/#{$begin_div_not_p}/,'')
 tex.gsub!(/#{$end_div_not_p}/,'')
+
+# for human-readability, keep lines from getting too long:
+tex.gsub!(/(?<!\n)(<div)/) {"\n#{$1}"}
+tex.gsub!(/\n{0,1}(<p[^ ])/) {"\n\n#{$1}"}
+tex.gsub!(/(<\/p>)\n{0,1}/) {"#{$1}\n\n"}
+
+# ultra-kludge: depend on the formatting of the code at this point to let us to a final cleanup of a small number of cases where the $begin_div_not_p kludge didn't work:
+if $no_displayed_math_inside_paras then
+  paras = []
+  tex.split(/\n{2,}/).each { |para|
+    if para=~/\A<p/ && para=~/<\/p>\Z/ then
+      old = para.clone()
+      para.gsub!(/^(<div)(.*)(<\/div>)$/) {"</p>\n\n#{$1}#{$2}#{$3}<!-- I will come to your emotional rescue. -->\n\n<p>"}
+      #if old!=para then $stderr.print "******** changed from:\n#{old}\n******** to:\n#{para}\n********\n" end
+    end
+    paras.push(para)
+  }
+  tex = paras.join("\n\n")
+end
 
 if $wiki then
   tex.gsub!(/PROTECT_TEX_MATH_FOR_MEDIAWIKI(.*)ZZZ/) {$protect_tex_math_for_mediawiki[$1]}
