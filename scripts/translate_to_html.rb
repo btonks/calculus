@@ -229,7 +229,7 @@ if !($override_config_with.nil?) then config_files.push($override_config_with) e
 
 config_files.each {|config_file|
   if ! File.exist?(config_file) then
-    $stderr.print "warning, config file #{config_file} does not exist\n" unless $silent
+    #$stderr.print "warning, config file #{config_file} does not exist\n" unless $silent
   else
     File.open(config_file,'r') { |f|
       j = f.gets(nil) # nil means read whole file
@@ -293,8 +293,10 @@ $tex_math_trivial = "lt gt perp times sim ne le perp le nabla alpha beta gamma d
 $tex_math_nontrivial = {'infty'=>'infin'  , 'leq'=>'le' , 'geq'=>'ge' , 'partial'=>'part' , 'cdot'=>'sdot' , 'unitdot'=>'sdot'  ,  'propto'=>'prop',
                         'approx'=>'asymp' , 'rightarrow'=>'rarr'   ,  'degunit'=>'deg' ,  'ldots'=>'hellip' }
   # ... nontrivial ones; trivial ones will now be appended to this list:
-$tex_math_trivial_not_entities = "sin cos tan ln log exp".split(/ /)
-$tex_math_not_entities = {'munit'=>'m' , 'sunit'=>'s' , 'kgunit'=>'kg' , 'nunit'=>'N' , 'junit'=>'J' , 'der'=>'d'  ,  'pm'=>'&#177;' ,  'degcunit'=>'&deg;C' , 'parallel'=>'||',
+$tex_math_trivial_not_entities = "sin cos tan ln log exp arg".split(/ /)
+$tex_math_not_entities = {'munit'=>'m' , 'sunit'=>'s' , 'kgunit'=>'kg' , 'nunit'=>'N' , 'junit'=>'J' , 
+                          'der'=>'d'  , # cases like "\der x" are special-cased elsewhere to avoid rendering with a space like "d x"
+                          'pm'=>'&#177;' ,  'degcunit'=>'&deg;C' , 'parallel'=>'||',
                           'sharp'=>'&#x266F;' , 'flat'=>'#x266D'   , 'ell'=>'&#8467;'
 }
 $tex_math_not_in_mediawiki = {'munit'=>'\text{m}' , 'sunit'=>'\text{s}' , 'kgunit'=>'\text{kg}' , 'gunit'=>'\text{g}' , 'nunit'=>'\text{N}',
@@ -460,6 +462,7 @@ def parse_itty_bitty_stuff!(tex)
   tex.gsub!(/\\photocredit{(#{curly})}/) {" (#{$1})"}
   tex.gsub!(/\\textbf{(#{curly})}/) {"<b>#{$1}</b>"}
   tex.gsub!(/\\(?:textit|emph){(#{curly})}/) {"<i>#{$1}</i>"}
+  tex.gsub!(/{\s*\\footnotesize\s+(#{curly})\s*}/) {"<span style=\"font-size: small;\">#{$1}</span>"}
   if $wiki then
     tex.gsub!(/\\mypart{(#{curly})}/) {"\n\n=#{$1}=\n\n"} # extra newlines prevent confusion with <p></p> tags in NP 2, 6
     tex.gsub!(/\\formatlikesubsection{(#{curly})}/) {"===#{$1}==="}
@@ -526,11 +529,12 @@ def parse_section(tex)
   }
 
   # Optional arguments are confusing, so replace them with {} that are always there.
-  envs = ['important','lessimportant']
+  envs = ['important','lessimportant','hwwithsoln']
   r = {}
   envs.each { |x|
     r[x] = /\\(?:begin|end){#{x}}/
   }  
+  debug = tex=~/The product  rule/
   envs.each { |x|
     result = ''
     inside = false # even if the environment starts at the beginning of the string, split() gives us a null string as our first string
@@ -554,10 +558,12 @@ def parse_section(tex)
   tex.gsub!(/egwide/,'eg')
   tex.gsub!(/\\begin{description}/,'\\begin{itemize}')
   tex.gsub!(/\\end{description}/,'\\end{itemize}')
+  tex.gsub!(/\\begin{hwwithsoln}{([^}]*)}/) {"\\begin{homework}{#{$1}}{}{}"}
+  tex.gsub!(/\\end{hwwithsoln}/) {'\\end{homework}'}
   hw = 1
   # hwsection and summary are actually not needed in the following, since we change them to mysection using regexes early on
   envs = ['homework','eg','optionaltopic','selfcheck','dq','summary','vocab','notation','othernotation','summarytext','hwsection',
-        'enumerate','itemize','important','lessimportant','dialogline',
+        'enumerate','itemize','important','lessimportant','hwwithsoln','dialogline',
         'exploring','reading','egnoheader','listing','verbatim','exsection']
   r = {}
   s = {}
@@ -568,7 +574,7 @@ def parse_section(tex)
     r[x] = Regexp.new(z)
   }  
   envs.each { |x|
-    nargs = {'eg'=>1,'optionaltopic'=>1,'important'=>1,'lessimportant'=>1,'selfcheck'=>1,'homework'=>3,'dialogline'=>1,'reading'=>2,'listing'=>1}[x]
+    nargs = {'eg'=>1,'optionaltopic'=>1,'important'=>1,'lessimportant'=>1,'hwwithsoln'=>1,'selfcheck'=>1,'homework'=>3,'dialogline'=>1,'reading'=>2,'listing'=>1}[x]
     use_arg_as_title = {'eg'=>true,'optionaltopic'=>true,'important'=>true,'lessimportant'=>true}[x]
     generate_header = {'summary'=>[2,'Summary'],'vocab'=>[3,'Vocabulary'],'notation'=>[3,'Notation'],'othernotation'=>[3,'Other Notation'],
                        'summarytext'=>[3,'Summary'],'hwsection'=>[2,'Homework Problems'],
@@ -624,7 +630,7 @@ def parse_section(tex)
             top = "\n\n<div class=\"#{x}\">\n\n"
             bottom = "\n\n</div>\n\n"
           end
-          if x=='homework' then 
+          if x=~/\A(homework|hwwithsoln|hw)\Z/ then 
             d = "<b>#{hw}</b>. " + d
             hw+=1
             if args[1]!='' && !$wiki && $config['forbid_anchors_and_links']==0 then top = top + "<a #{$anchor}=\"hw:#{arg}\"></a>" end
@@ -681,7 +687,6 @@ def parse_section(tex)
   # Bug: if parse_para returns something with nested divs in it, the code below won't work properly.
   result = ''
   tex.split(/\n{2,}/).each { |para|
-    #if para=~/a remarkable fact/ then $stderr.print "********\n#{para}\n********\n" end # qwe
     debug = false
     if para=~/^(<div|<\/div)/ then
       p = para
@@ -1201,6 +1206,8 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\\[ :,]/,' ')
   m.gsub!(/\\(?:text|zu){([A-Za-z]+)}/) {$1} 
   m.gsub!(/\\(?:vc|mathbf){([A-Za-z]+)}/) {"<b>#{$1}</b>"}
+  m.gsub!(/\\ge/,'>=')
+  m.gsub!(/\\le/,'&lt;=')
 
   m.gsub!(/\\(?:sqrt){(#{curly})}/) {"&radic;#{$1}"} # If possible, strip of the curly braces.
   m.gsub!(/\\sqrt/) {"&radic;"}                      # ... otherwise, still do something with it.
@@ -1209,6 +1216,7 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\\xdot/,"\\dot{x}")
   m.gsub!(/\\dot{([A-Za-z])}/) {"#{$1}<sup>&middot;</sup>"}
   m.gsub!(/\\(Ddot|ddot){([A-Za-z])}/) {"#{$2}&uml;"}
+  m.gsub!(/\\bar{([A-Za-z])}/) {"#{$1}<sup>-</sup>"}
   m = replace_list(m,$tex_symbol_replacement_list)
 
   if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end
@@ -1357,6 +1365,7 @@ def parse_eensy_weensy(t)
 
   # macros that are easy to process:
   tex.gsub!(/\\(?:emph|optionalchapternote){(#{curly})}/) {"<i>#{$1}</i>"}
+  tex.gsub!(/\\(?:givecredit){(#{curly})}/) {" [#{$1}] "}
   tex.gsub!(/\\epigraph(?:long|longfitbyline)?{(#{curly})}{(#{curly})}/) {"#{$1} -- <i>#{$2}</i>"}
   tex.gsub!(/\\\//,' ')
   tex.gsub!(/\\\\/,$br)
@@ -1725,6 +1734,7 @@ def parse(t,level,current_section)
     current_section.push(secnum)
     section.gsub!(/\\marg{(#{curly})}/) {"<p>#{$1}</p>"} # occurs in EM 5, opener
 
+
     # kludgy fix for bug that causes paragraphs not to have <p></p> after caption:
     if true then
       #if section=~/and its derivative cos/ then $stderr.print "\n********\n#{section}\n********\n"; exit(-1) end
@@ -1734,8 +1744,8 @@ def parse(t,level,current_section)
       section.gsub!(/#{end_of_caption_marker}/) {""} # Clean up ones that fell at end of section.
     end
 
-    section.gsub!(/\n*(\\begin{(important|lessimportant))}/) {"\n\n#{$1}"}
-    section.gsub!(/(\\end{(important|lessimportant))}\n*/) {"#{$1}\n\n"}
+    section.gsub!(/\n*(\\begin{(important|lessimportant)})/) {"\n\n#{$1}"}
+    section.gsub!(/(\\end{(important|lessimportant)})\n*/) {"#{$1}\n\n"}
 
     if !(section=~/\A\s*\Z/) then
       result.concat(parse(section,level+1,current_section))
@@ -2064,12 +2074,9 @@ chipmunk.scan(/(\\\w+({[^}]*})?)/) {
       ['align','equation','multline','gather'].each { |e| if whole=~/^\\(begin|end){#{e}\*?}/ then math_ok=true end}
     end
   end
+  whole.gsub!(/\n.*/,'') # if it inadvertently eats thousands of lines and thinks it's one macro, don't print it all
   if !math_ok then macros_not_handled[whole]=1 end
 }
-#tex.split(/alt=\"[^"]*\"/).each { |x|
-#  curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
-#  x.scan(/(\\\w+({[^}]*})?)/) {macros_not_handled[$1]=1}
-#}
 unless macros_not_handled.keys.empty? then $stderr.print "Warning: the following macros were not handled in this chapter: "+macros_not_handled.keys.join(' ')+"\n" end
 
 if $footnote_ctr>0 then

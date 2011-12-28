@@ -54,6 +54,7 @@ test:
 	perl -e 'if (system("pdflatex -interaction=$(MODE) $(BOOK) >$(TERMINAL_OUTPUT)")) {print "error\n"} else {print "no error\n"}'
 
 web:
+	@make preflight
 	@[ `which footex` ] || echo "******** footex is not installed, so html cannot be generated; get footex from http://www.lightandmatter.com/footex/footex.html"
 	@[ `which footex` ] || exit 1
 	scripts/translate_to_html.rb --write_config_and_exit
