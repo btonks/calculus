@@ -56,13 +56,15 @@ test:
 web:
 	@[ `which footex` ] || echo "******** footex is not installed, so html cannot be generated; get footex from http://www.lightandmatter.com/footex/footex.html"
 	@[ `which footex` ] || exit 1
+	scripts/translate_to_html.rb --write_config_and_exit
 	scripts/prep_web.pl
 	WOPT='--modern' scripts/make_web.pl # xhtml
 	WOPT='--html5' scripts/make_web.pl # html 5
 	scripts/make_web.pl # html 4
 
 handheld:
-	# see meki/zzz_misc/publishing for notes on how far I've progressed with this
+	# see meki/zzz_misc/publishing for notes on this
+	make preflight
 	scripts/translate_to_html.rb --write_config_and_exit --modern --override_config_with="handheld.config"
 	@rm -Rf calc_handheld
 	mkdir calc_handheld

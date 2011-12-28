@@ -215,20 +215,23 @@ if !($override_config_with.nil?) then config_files.push($override_config_with) e
 
 config_files.each {|config_file|
   if ! File.exist?(config_file) then
-     $stderr.print "warning, config file #{config_file} does not exist\n" 
+    $stderr.print "warning, config file #{config_file} does not exist\n" 
   else
     File.open(config_file,'r') { |f|
       j = f.gets(nil) # nil means read whole file
       c = JSON.parse(j)
       c.keys.each { |k|
         value = c[k]
-        if k=~/_dir\Z/ then
-          value.gsub!(/~/,ENV['HOME']) 
-          if ! FileTest.directory?(value) && !$write_config_and_exit then fatal_error("#{k}=#{value}, but #{value} either does not exist or is not a directory") end
-        end
+        if k=~/_dir\Z/ then value.gsub!(/~/,ENV['HOME']) end
         $config[k] = value # override any earlier value that was set
       }
     }
+  end
+}
+$config.keys.each { |k|
+  if k=~/_dir\Z/ then
+    value = $config[k]
+    if ! FileTest.directory?(value) && !$write_config_and_exit then fatal_error("#{k}=#{value}, but #{value} either does not exist or is not a directory") end
   end
 }
 $config.keys.each { |k|
