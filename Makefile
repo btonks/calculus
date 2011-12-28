@@ -66,8 +66,8 @@ handheld:
 	# see meki/zzz_misc/publishing for notes on this
 	make preflight
 	scripts/translate_to_html.rb --write_config_and_exit --modern --override_config_with="handheld.config"
-	@rm -Rf calc_handheld
-	mkdir calc_handheld
+	rm -f calc_handheld/ch*/*.html calc_handheld/index.html
+	mkdir -p calc_handheld
 	scripts/prep_web.pl
 	WOPT='--modern --override_config_with="handheld.config"' scripts/make_web.pl
 	cp standalone.css calc_handheld
@@ -98,6 +98,7 @@ clean:
 	# Sometimes we get into a state where LaTeX is unhappy, and erasing these cures it:
 	rm -f *aux *idx *ilg *ind *log *toc
 	rm -f ch*/*aux
+	rm -f temp.* temp_mathml.*
 	# Shouldn't exist in subdirectories:
 	rm -f */*.log
 	# Emacs backup files:

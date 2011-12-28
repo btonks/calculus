@@ -53,6 +53,8 @@
 #                            After reading standard config files, read foo.config as well, and overwrite any options previously set.
 #  --write_config_and_exit
 #                            Just writes temp.config.
+#  --util="foo"
+#                            Provides certain utility functions rather than doing a format conversion to html.
 # notes on handheld output:
 #   see calc book for example of handheld.config
 #   the idea is to output xhtml that calibre can convert to epub, etc.
@@ -80,6 +82,9 @@
 #    standalone                      boolean, 0 or 1, set to 1 if everything like CSS files, etc., has to be local, not at a URL
 #    scale_for_bitmapped_equations   normally 100, may need to be more like 150 or 200 for handheld devices
 #    forbid_anchors_and_links        don't generate any of these except in TOC; used for handheld output, because they confuse calibre and upset epubcheck
+#    text_width_pixels               
+#    ad_width_pixels                 
+#    margin_width_mm                 
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
@@ -143,6 +148,9 @@
 #===============================================================================================================================
 #===============================================================================================================================
 
+require "digest/md5"
+require "date"
+
 def fatal_error(message)
   $stderr.print "error in translate_to_html.rb: #{message}\n"
   exit(-1)
@@ -162,7 +170,8 @@ opts = GetoptLong.new(
   [ "--redo_all_tables",       GetoptLong::NO_ARGUMENT ],
   [ "--no_write",              GetoptLong::NO_ARGUMENT ],
   [ "--override_config_with",  GetoptLong::REQUIRED_ARGUMENT ],
-  [ "--write_config_and_exit", GetoptLong::NO_ARGUMENT ]
+  [ "--write_config_and_exit", GetoptLong::NO_ARGUMENT ],
+  [ "--util",                  GetoptLong::REQUIRED_ARGUMENT ]
 )
 
 opts_hash = Hash.new
@@ -180,8 +189,13 @@ $redo_all_tables       = opts_hash['--redo_all_tables']!=nil
 $no_write              = opts_hash['--no_write']!=nil
 $override_config_with  = opts_hash['--override_config_with']
 $write_config_and_exit  = opts_hash['--write_config_and_exit']
+$util                  = opts_hash['--util']
 
-$stderr.print "modern=#{$modern} test=#{$test_mode} redo_all_equations=#{$redo_all_equations} redo_all_tables=#{$redo_all_tables} no_write=#{$no_write} mathjax=#{$mathjax} wiki=#{$wiki} html5=#{$html4}\n"
+$silent = $write_config_and_exit || $util=~/[a-z]/
+
+unless $silent then
+  $stderr.print "modern=#{$modern} test=#{$test_mode} redo_all_equations=#{$redo_all_equations} redo_all_tables=#{$redo_all_tables} no_write=#{$no_write} mathjax=#{$mathjax} wiki=#{$wiki} html5=#{$html4}\n"
+end
 
 $xhtml = $modern
 # xhtml requires, e.g., <meta ... />, but html requires <meta ...>
@@ -202,7 +216,7 @@ $br = "<br#{$self_closing_tag}>"
 #===============================================================================================================================
 #===============================================================================================================================
 
-require "digest/md5"
+
 
 # Anything set to nil below is mandatory. Anything non-nil is a default.
 $config = {}
@@ -215,7 +229,7 @@ if !($override_config_with.nil?) then config_files.push($override_config_with) e
 
 config_files.each {|config_file|
   if ! File.exist?(config_file) then
-    $stderr.print "warning, config file #{config_file} does not exist\n" 
+    $stderr.print "warning, config file #{config_file} does not exist\n" unless $silent
   else
     File.open(config_file,'r') { |f|
       j = f.gets(nil) # nil means read whole file
@@ -231,17 +245,30 @@ config_files.each {|config_file|
 $config.keys.each { |k|
   if k=~/_dir\Z/ then
     value = $config[k]
-    if ! FileTest.directory?(value) && !$write_config_and_exit then fatal_error("#{k}=#{value}, but #{value} either does not exist or is not a directory") end
+    if ! FileTest.directory?(value) && !$silent then fatal_error("#{k}=#{value}, but #{value} either does not exist or is not a directory") end
   end
 }
-$config.keys.each { |k|
-  $stderr.print "#{k}=#{$config[k]} "
-}
-$stderr.print "\n"
+unless $silent then
+  $config.keys.each { |k|
+    $stderr.print "#{k}=#{$config[k]} "
+  }
+  $stderr.print "\n"
+end
 
 # Write a copy of all the config variables to a temporary file, for use by any other scripts such as latex_table_to_html.pl that might need the info.
 File.open("temp.config",'w') { |f| f.print JSON.generate($config)}
 if $write_config_and_exit then exit(0) end
+
+if $util=~/[a-z]/ then
+  if $util=='ebook_title_footer' then
+    today = Date.today()
+    print <<-FOOTER;
+      <p>(c) #{today.year} Benjamin Crowell, <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC-BY-SA</a> license.
+      File generated #{today.year}-#{today.mon}-#{today.mday}.</p>
+    FOOTER
+  end
+  exit(0)
+end
 
 $chapter_toc = "<div class=\"container\">Contents#{$br}\n"
 
@@ -251,9 +278,9 @@ $ch = nil
 $chapter_title = nil
 $count_eg = 0
 
-$text_width_pixels = 500
-$ad_width_pixels = 728
-$margin_width = 80 # mm
+$text_width_pixels = $config['text_width_pixels']
+$ad_width_pixels = $config['ad_width_pixels']
+$margin_width_mm = $config['margin_width_mm']
 
 # In normal web-browser html, it makes sense logically to have displayed math in divs inside paragraphs, and I think it's legal.
 # But in handheld-device formats, this can lead to problems, so break the math out into separate divs that aren't enclosed in p tags.
@@ -453,6 +480,8 @@ def parse_itty_bitty_stuff!(tex)
   tex.gsub!(/\\pagebreak/,'')
   tex.gsub!(/\\smspacebetweenfigs/,'')
   tex.gsub!(/\\raggedright/,'')
+  tex.gsub!(/\\thompson/,' [Thompson, 1919] ')
+  tex.gsub!(/\\granville/,' [Granville, 1911] ')
 
   # environments that we don't care about:
   tex.gsub!(/\\(begin|end){(preface|longnoteafterequation|flushleft)}/,'')
@@ -608,6 +637,7 @@ def parse_section(tex)
           if at_bottom[x]!=nil then bottom=at_bottom[x] end
           if stick_at_end[x]!=nil then bottom = stick_at_end[x]+bottom end
           if x=='listing' or x=='verbatim' then
+            d.gsub!(/(<br>|<br\/>|<i>|<\/i>)/,'')
             d.gsub!('<','&lt;')
             d.gsub!('>','&gt;')
             d.gsub!(/\n\s*\n/,"\nKEEP_BLANK_LINE\n")
@@ -1178,7 +1208,7 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\^([A-Za-z0-9])/) {"<sup>#{$1}</sup>"}
   m.gsub!(/\\xdot/,"\\dot{x}")
   m.gsub!(/\\dot{([A-Za-z])}/) {"#{$1}<sup>&middot;</sup>"}
-  m.gsub!(/\\Ddot{x}/,"x&uml;")
+  m.gsub!(/\\(Ddot|ddot){([A-Za-z])}/) {"#{$2}&uml;"}
   m = replace_list(m,$tex_symbol_replacement_list)
 
   if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end
@@ -1201,7 +1231,7 @@ def handle_math_one_bitmap(tex,math_type)
     m.gsub!(/\\indices{(#{curly})}/) {$1} # has to strip curly braces off, not just delete the macro
     # if you really try to do an align environment, it wants to make separate bitmaps for each column
     t = {'inline'=>'equation*', 'equation'=>'equation*' , 'align'=>'equation*', 'multline'=>'multline*' , 'gather'=>'gather*'}[math_type]    
-    if (math_type=='equation' || math_type=='inline') && tex=~/\\\\/ then
+    if (math_type=='equation' || math_type=='inline') && tex=~/\\\\/ && !(tex=~/\\begin{matrix}/)then
       fatal_error("double backslash not allowed in equation environment: #{tex}")
     end
     # stuff that's illegal in equation environment:
@@ -1546,7 +1576,7 @@ def find_figure(name,width_type)
       width,height=$1.to_f,$2.to_f
        target_width = -1
       if width_type=='raw' then target_width = width end
-      if width_type=='narrow' then target_width = ($margin_width/25.4)*72 end
+      if width_type=='narrow' then target_width = ($margin_width_mm/25.4)*72 end
       if width_type=='wide' or width_type=='fullpage' then target_width = $text_width_pixels end
       if target_width == -1 then
         target_width = 100
@@ -1595,6 +1625,8 @@ def parse(t,level,current_section)
   tex = t.clone
 
   protect_mathml_in_captions = {} # fix for bug with improperly nested mathml being generated in Calculus when captions contain mathml
+
+  tex.gsub!(/\\der ([A-Za-z])/) {"d#{$1}"} # otherwise we get "d x"
 
   # The following is so that text right before or right after an enumerate or itemize will be in its own paragraph:
   tex.gsub!(/(\\end{(enumerate|itemize)})/) {$1+"\n"}

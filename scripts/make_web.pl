@@ -140,9 +140,7 @@ foreach my $tex(<ch*/ch*temp.temp>) {
 
 open(FILE,">>$index") or die "error opening $index";
 if ($standalone==1) {
-print FILE <<COPYRIGHT;
-<p>(c) 2009-2011 Benjamin Crowell, <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC-BY-SA</a> license.</p>
-COPYRIGHT
+  print FILE `scripts/translate_to_html.rb --util="ebook_title_footer"`;
 }
 print FILE "</body></html>\n";
 close FILE;
