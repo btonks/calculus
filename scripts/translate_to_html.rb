@@ -277,6 +277,7 @@ $section_level_num = {'chapter'=>1,'section'=>2,'subsection'=>3,'subsubsection'=
 $ch = nil
 $chapter_title = nil
 $count_eg = 0
+$hide_figs = {}
 
 $text_width_pixels = $config['text_width_pixels']
 $ad_width_pixels = $config['ad_width_pixels']
@@ -945,6 +946,7 @@ def handle_math(tex,inline_only=false,allow_bitmap=true)
 
   if false then # I think this is no longer necessary now that I'm using footex, and in fact it causes problems.
   #--------------------- locate displayed math with intertext or multiple lines, and split into smaller pieces ----------------------------
+  ############################### DEACTIVATED BY IF FALSE ABOVE #####################
   # This has to come before inline ($...$) math, because sometimes displayed math has \text{...$...$...} inside it.
   envs = ['align','equation','multline','gather','align*','equation*','multline*','gather*']
   r = {}
@@ -962,6 +964,8 @@ def handle_math(tex,inline_only=false,allow_bitmap=true)
     tex.split(r[x]).each { |m|
       if !(m=~/\A\s*\Z/) then # not pure whitespace
         if inside then 
+          debug = m=~/\\vc{v} &= \\frac{\\der/
+          debug = true
           m.gsub!(/\\\\\s*\\intertext{(#{curly})}/) {"\\end{#{x}}\n#{$1}\n\\begin{#{x}}"}
           m.gsub!(/\\\\/,"\\end{#{x}}\n\\begin{#{x}}")
           result = result + "\\begin{#{x}}"
@@ -1026,6 +1030,7 @@ def handle_math(tex,inline_only=false,allow_bitmap=true)
       m=math[n]
     else
       if math_type[n]!='inline' and !( m=~/<div/) then
+        # begin_equation() and end_equation() produce <div> tags
         m = begin_equation() + m + end_equation() # already has divs in it if it's not inline and was parsed into bitmaps
       end
     end
@@ -1076,6 +1081,7 @@ def handle_math_one(foo,math_type,allow_bitmap)
 
   tex.gsub!(/\\(begin|end){split}/,'') # we don't handle these (they occur inside other math environments)
 
+  debug = foo=~/\\vc{v} &= \\frac{\\de/
   html = handle_math_one_html(tex.clone,math_type)
   return html if html!=nil
   if !allow_bitmap && $config['standalone']==1 then return handle_math_one_desperate_fallback(tex.clone) end
@@ -1104,6 +1110,7 @@ end
 # math_type = 'inline', 'align', or 'equation', or 'multline', or 'gather'
 def handle_math_one_html(tex,math_type)
   debug = false
+
   original = tex.clone
   if original=~/<\/?i>/ then
     $stderr.print "huh? m has <i> in it, getting ready to produce tex code\n#{original}\n"
@@ -1239,8 +1246,8 @@ def handle_math_one_bitmap(tex,math_type)
     m.gsub!(/\\indices{(#{curly})}/) {$1} # has to strip curly braces off, not just delete the macro
     # if you really try to do an align environment, it wants to make separate bitmaps for each column
     t = {'inline'=>'equation*', 'equation'=>'equation*' , 'align'=>'equation*', 'multline'=>'multline*' , 'gather'=>'gather*'}[math_type]    
-    if (math_type=='equation' || math_type=='inline') && tex=~/\\\\/ && !(tex=~/\\begin{matrix}/)then
-      fatal_error("double backslash not allowed in equation environment: #{tex}")
+    if (math_type=='equation' || math_type=='inline') && tex=~/\\\\/ && !(tex=~/\\begin{matrix}/) then
+      $stderr.print "double backslash not allowed in equation environment: #{tex}\n...This may not be a LaTeX error if it has intertext, but may cause parser to generate invalid xhtml.\n"
     end
     # stuff that's illegal in equation environment:
     m.gsub!(/\&/,'')
@@ -1250,7 +1257,7 @@ def handle_math_one_bitmap(tex,math_type)
       original = e.clone
       e.gsub!(/\n/,' ') # empty lines upset tex
       if (e=~/\A\s*\Z/) then
-        fatal_error("double backslash not allowed after final line in displayed math: #{tex}")
+        $stderr.print "double backslash not allowed after final line in displayed math: #{tex}\n...This may not be a LaTeX error if it has intertext, but may cause parser to generate invalid xhtml.\n"
       else
       eq_dir = html_subdir('math')
       eq_base = 'eq_' + hash_equation(e) + '.png'
@@ -1650,33 +1657,32 @@ def parse(t,level,current_section)
     non_marg_stuff = ''
     tex.gsub!(/END_CAPTION\n*/,"END_CAPTION\n") # the newline is because without it, the code below will eat too much with each regex match
     # The following code assumes that each ZZZWEB thingie is on a separate line; if there aren't newlines between them, it eats too much and goes nuts.
-    tex.gsub!(/ZZZWEB\:fig,([^,]+),(\w+),(\d),([^\n]*)END_CAPTION/) {
-      name,width,anon,caption = $1,$2,$3.to_i,$4
-      #if name=='zzzfake' then $stderr.print "zzzfake------------\n#{name}\n#{width}\n#{anon}\n#{caption}-------\n" end
-      if anon==0 then $fig_ctr += 1 ; l=alphalph($fig_ctr).to_s+' / ' else l='' end
-      if name=='zzzfake' then $fig_ctr += 1 end # kludge, I don't understand why this is needed, but it is, or else EM1 figures get out of step at the end
-      whazzat = find_figure(name,width) # has the side-effect of copying or converting it if necessary
-      if caption=~/\A\s*\Z/ then c='' else 
-        pc=parse_para(caption)
-        if pc=~/<math/ then h="ZZZ_PROTECT_MATHML_IN_CAPTIONS_"+hash_function(pc); protect_mathml_in_captions[h]=pc.clone; pc=h end
-        c="<p class=\"caption\">#{l}#{pc}</p>#{end_of_caption_marker}"  
-      end
-      a = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"fig:#{name}\"></a>" : '')
-      i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}>#{a}"
-      if all_figs_inline then 
-        x = "<p>"+i+"</p>"+c
-      else
-        x = i+c
-      end
-      if name=='zzzfake' then x=c end
-      x
-    }
     in_marg = false # even if it starts with a marg, split() gives us a null string for the first chunk()
-    tex.split(/ZZZWEB\:(?:end\_)?marg/).each { |marg|
-      if in_marg && !all_figs_inline then
-        marg_stuff = marg_stuff + marg 
+    tex.split(/ZZZWEB\:(?:end\_)?marg/).each { |x|
+      inline = !in_marg || all_figs_inline
+      x.gsub!(/ZZZWEB\:fig,([^,]+),(\w+),(\d),([^\n]*)END_CAPTION/) {
+        name,width,anon,caption = $1,$2,$3.to_i,$4
+        #if name=='zzzfake' then $stderr.print "zzzfake------------\n#{name}\n#{width}\n#{anon}\n#{caption}-------\n" end
+        if anon==0 then $fig_ctr += 1 ; l=alphalph($fig_ctr).to_s+' / ' else l='' end
+        if name=='zzzfake' then $fig_ctr += 1 end # kludge, I don't understand why this is needed, but it is, or else EM1 figures get out of step at the end
+        whazzat = find_figure(name,width) # has the side-effect of copying or converting it if necessary
+        if caption=~/\A\s*\Z/ then c='' else 
+          pc=parse_para(caption)
+          if pc=~/<math/ then h="ZZZ_PROTECT_MATHML_IN_CAPTIONS_"+hash_function(pc); protect_mathml_in_captions[h]=pc.clone; pc=h end
+          c="<p class=\"caption\">#{l}#{pc}</p>#{end_of_caption_marker}"  
+        end
+        a = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"fig:#{name}\"></a>" : '')
+        i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}>#{a}"
+        if name=='zzzfake' then i='' end
+        y="<!--BEGIN_IMG--><p>"+i+"</p>"+c+"<!--END_IMG-->"
+        h = "HIDE_FIG_"+hash_function(y)+"_HERE"
+        $hide_figs[h] = y
+        "\n\n#{h}\n\n"
+      }
+      if inline then
+        non_marg_stuff = non_marg_stuff + x
       else
-        non_marg_stuff = non_marg_stuff + marg
+        marg_stuff = marg_stuff + x
       end
       in_marg = !in_marg
     }
@@ -1910,6 +1916,10 @@ tex.gsub!(/#{$end_div_not_p}/,'')
 tex.gsub!(/(?<!\n)(<div)/) {"\n#{$1}"}
 tex.gsub!(/\n{0,1}(<p[^ ])/) {"\n\n#{$1}"}
 tex.gsub!(/(<\/p>)\n{0,1}/) {"#{$1}\n\n"}
+
+tex.gsub!(/(HIDE_FIG_[0-9a-f]+_HERE)/) {$hide_figs[$1]}
+tex.gsub!("<p><!--BEGIN_IMG-->") {''}
+tex.gsub!("<!--END_IMG--></p>") {''}
 
 # ultra-kludge: depend on the formatting of the code at this point to let us to a final cleanup of a small number of cases where the $begin_div_not_p kludge didn't work:
 if $no_displayed_math_inside_paras then

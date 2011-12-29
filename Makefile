@@ -31,6 +31,7 @@ WEB_DIR = /home/bcrowell/Lightandmatter/calc
 
 book1:
 	@make preflight
+	@scripts/translate_to_html.rb --write_config_and_exit
 	@$(DO_PDFLATEX)
 	@scripts/harvest_aux_files.rb
 	@rm -f $(TERMINAL_OUTPUT) # If pdflatex has a nonzero exit code, we don't get here, so the output file is available for inspection.
@@ -40,6 +41,7 @@ index:
 
 book:
 	@make preflight
+	@scripts/translate_to_html.rb --write_config_and_exit
 	make clean
 	@$(DO_PDFLATEX)
 	@scripts/harvest_aux_files.rb
@@ -57,7 +59,7 @@ web:
 	@make preflight
 	@[ `which footex` ] || echo "******** footex is not installed, so html cannot be generated; get footex from http://www.lightandmatter.com/footex/footex.html"
 	@[ `which footex` ] || exit 1
-	scripts/translate_to_html.rb --write_config_and_exit
+	@scripts/translate_to_html.rb --write_config_and_exit
 	scripts/prep_web.pl
 	WOPT='--modern' scripts/make_web.pl # xhtml
 	WOPT='--html5' scripts/make_web.pl # html 5
