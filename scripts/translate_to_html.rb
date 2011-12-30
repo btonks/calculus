@@ -278,6 +278,7 @@ $ch = nil
 $chapter_title = nil
 $count_eg = 0
 $hide_figs = {}
+$hide_envs = {}
 
 $text_width_pixels = $config['text_width_pixels']
 $ad_width_pixels = $config['ad_width_pixels']
@@ -530,7 +531,7 @@ def parse_section(tex)
   }
 
   # Optional arguments are confusing, so replace them with {} that are always there.
-  envs = ['important','lessimportant','hwwithsoln']
+  envs = ['important','lessimportant']
   r = {}
   envs.each { |x|
     r[x] = /\\(?:begin|end){#{x}}/
@@ -559,12 +560,11 @@ def parse_section(tex)
   tex.gsub!(/egwide/,'eg')
   tex.gsub!(/\\begin{description}/,'\\begin{itemize}')
   tex.gsub!(/\\end{description}/,'\\end{itemize}')
-  tex.gsub!(/\\begin{hwwithsoln}{([^}]*)}/) {"\\begin{homework}{#{$1}}{}{}"}
-  tex.gsub!(/\\end{hwwithsoln}/) {'\\end{homework}'}
   hw = 1
   # hwsection and summary are actually not needed in the following, since we change them to mysection using regexes early on
+  # hwwithsoln is taken care of in prep_web.pl to homework
   envs = ['homework','eg','optionaltopic','selfcheck','dq','summary','vocab','notation','othernotation','summarytext','hwsection',
-        'enumerate','itemize','important','lessimportant','hwwithsoln','dialogline',
+        'enumerate','itemize','important','lessimportant','dialogline',
         'exploring','reading','egnoheader','listing','verbatim','exsection']
   r = {}
   s = {}
@@ -575,7 +575,7 @@ def parse_section(tex)
     r[x] = Regexp.new(z)
   }  
   envs.each { |x|
-    nargs = {'eg'=>1,'optionaltopic'=>1,'important'=>1,'lessimportant'=>1,'hwwithsoln'=>1,'selfcheck'=>1,'homework'=>3,'dialogline'=>1,'reading'=>2,'listing'=>1}[x]
+    nargs = {'eg'=>1,'optionaltopic'=>1,'important'=>1,'lessimportant'=>1,'selfcheck'=>1,'homework'=>3,'dialogline'=>1,'reading'=>2,'listing'=>1}[x]
     use_arg_as_title = {'eg'=>true,'optionaltopic'=>true,'important'=>true,'lessimportant'=>true}[x]
     generate_header = {'summary'=>[2,'Summary'],'vocab'=>[3,'Vocabulary'],'notation'=>[3,'Notation'],'othernotation'=>[3,'Other Notation'],
                        'summarytext'=>[3,'Summary'],'hwsection'=>[2,'Homework Problems'],
@@ -587,6 +587,9 @@ def parse_section(tex)
     # The following are used for environments that are *not* going to become divs:
     at_top = {'enumerate'=>'<ol>' ,'itemize'=>'<ul>','listing'=>'<pre>','verbatim'=>'<pre>'}
     at_bottom = {'enumerate'=>'</ol>','itemize'=>'</ul>','listing'=>'</pre>','verbatim'=>'</pre>'}
+    will_not_be_a_div = at_top[x]!=nil
+    # Normally we hide what's inside an environment from the parser so it doesn't get confused. Don't do it on ones that won't be divs, because it doesn't work on those:
+    no_hiding = will_not_be_a_div
     result = ''
     inside = false # even if the environment starts at the beginning of the string, split() gives us a null string as our first string
     tex.split(r[x]).each { |d|
@@ -611,7 +614,7 @@ def parse_section(tex)
           end
           arg = args[1]
           #if d=~/Kepler/ then $stderr.print "((((#{d}))))" end
-          if use_arg_as_title and arg!=nil and arg.length>0 and arg=~/[a-z]/ then # sometimes length is 1, but character is non-printing??
+          if use_arg_as_title and arg!=nil and arg.length>0 then
             arg = handle_math(arg)
             front = ''
             if stick_in_front_of_header[x]!=nil then
@@ -631,7 +634,7 @@ def parse_section(tex)
             top = "\n\n<div class=\"#{x}\">\n\n"
             bottom = "\n\n</div>\n\n"
           end
-          if x=~/\A(homework|hwwithsoln|hw)\Z/ then 
+          if x=~/\A(homework|hw)\Z/ then 
             d = "<b>#{hw}</b>. " + d
             hw+=1
             if args[1]!='' && !$wiki && $config['forbid_anchors_and_links']==0 then top = top + "<a #{$anchor}=\"hw:#{arg}\"></a>" end
@@ -656,7 +659,14 @@ def parse_section(tex)
             d.sub!('</li>','') # get rid of bogus closing tag at first item
             d = d + '</li>' # add closing tag on last item
           end
-          result = result + top + d + bottom
+          unless no_hiding then
+            y = top + parse_section(d) + bottom 
+            h = "HIDE_ENV_"+hash_function(y)+"_HERE"
+            $hide_envs[h] = y
+            result = result + "\n\n#{h}\n\n"
+          else
+            result = result + top + d + bottom 
+          end
         else # not inside
           result = result + d
         end
@@ -735,6 +745,8 @@ def parse_section(tex)
 
   tex.gsub!(/KEEP_BLANK_LINE/,'')
   tex.gsub!(/KEEP_PERCENT/,'%')
+  tex.gsub!(/\\&/,"&amp;")
+  tex.gsub!(/&(?!#?\w+;)/,"&amp;")
 
   return tex
 end
@@ -1215,6 +1227,9 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\\(?:vc|mathbf){([A-Za-z]+)}/) {"<b>#{$1}</b>"}
   m.gsub!(/\\ge/,'>=')
   m.gsub!(/\\le/,'&lt;=')
+  m.gsub!(/\\frac{([A-Za-z0-9]+)}{([A-Za-z0-9])}/) {"<sup>#{$1}</sup>/<sub>#{$2}</sub>"}
+  m.gsub!(/\\frac{([A-Za-z0-9]+)}{([0-9]{2,})}/) {"<sup>#{$1}</sup>/<sub>#{$2}</sub>"}
+  m.gsub!(/\\frac{([A-Za-z0-9]+)}{([A-Za-z0-9]{2,})}/) {"<sup>#{$1}</sup>/<sub>(#{$2})</sub>"} # needs parens
 
   m.gsub!(/\\(?:sqrt){(#{curly})}/) {"&radic;#{$1}"} # If possible, strip of the curly braces.
   m.gsub!(/\\sqrt/) {"&radic;"}                      # ... otherwise, still do something with it.
@@ -1918,8 +1933,13 @@ tex.gsub!(/\n{0,1}(<p[^ ])/) {"\n\n#{$1}"}
 tex.gsub!(/(<\/p>)\n{0,1}/) {"#{$1}\n\n"}
 
 tex.gsub!(/(HIDE_FIG_[0-9a-f]+_HERE)/) {$hide_figs[$1]}
-tex.gsub!("<p><!--BEGIN_IMG-->") {''}
-tex.gsub!("<!--END_IMG--></p>") {''}
+tex.gsub!(/(HIDE_ENV_[0-9a-f]+_HERE)/) {$hide_envs[$1]}
+tex.gsub!(/<p><!--BEGIN_IMG-->/) {''}
+tex.gsub!(/<!--END_IMG--><\/p>/) {''}
+tex.gsub!(/<p>\s*(<div\s+class="[^"]*"\s*>)/) {$1}
+tex.gsub!(/(<\/div>)\s*<\/p>/) {$1}
+tex.gsub!(/(Example \d+): ZZZ_NO_EG_TITLE/) {$1}
+
 
 # ultra-kludge: depend on the formatting of the code at this point to let us to a final cleanup of a small number of cases where the $begin_div_not_p kludge didn't work:
 if $no_displayed_math_inside_paras then

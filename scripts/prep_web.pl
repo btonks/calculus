@@ -4,7 +4,7 @@ use strict;
 
 # Takes the .tex file for each chapter and converts it into the form that
 # translate_to_html.rb wants.
-
+# Reads ch*/ch*.tex, writes ch*/ch*temp.temp
 
 local $/; # slurp whole file
 
@@ -33,13 +33,16 @@ foreach my $in(<ch*/ch*.tex>) {
   # convert from:
   # \begin{hw}[2]\label{hw:holditch}
   # \begin{hwwithsoln}{integrate-sin-cancel}
+  # \begin{hwwithsoln}[2]{sum-of-iterated-sine}
   # to:
   # \begin{homework}{tossup}{1}{} ... name, dificulty, calc-based
 
-  $t =~ s/\\begin{hwwithsoln}{([^}]+)}/\\begin{homework}{$1}{1}{}/g;
+  $t =~ s/\\begin{hwwithsoln}(\[(\d)\])?{([^}]+)}/\\begin{homework}{$3}{$2 ? $2 : 1}{}/g;
   $t =~ s/\\begin{hw}(\[(\d)\])?(\\label{hw:([^}]+)})?/"\\begin{homework}{$4}{".($2  ? $2 : 1)."}{}"/eg;
   $t =~ s/\\end{hw}/\\end{homework}/g;
   $t =~ s/\\end{hwwithsoln}/\\hwsoln\\end{homework}/g;
+
+  $t =~ s/\\begin{eg}/\\begin{eg}{ZZZ_NO_EG_TITLE}/g; # Calc's form has no args, but LM's form has 1 mandatory arg
 
   # convert from:
   # \startcodeeg \begin{Code} ... \end{Code}
