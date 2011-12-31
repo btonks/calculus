@@ -24,7 +24,7 @@ SHOW_ERRORS = \
         close F; \
         exit(1)
 DO_PDFLATEX = echo "$(DO_PDFLATEX_RAW)" ; perl -e 'if (system("$(DO_PDFLATEX_RAW)")) {$(SHOW_ERRORS)}'
-GENERIC_OPTIONS_FOR_CALIBRE =  --authors "Benjamin Crowell" --language en --title "Calculus"
+GENERIC_OPTIONS_FOR_CALIBRE =  --authors "Benjamin Crowell" --language en --title "Calculus" --toc-filter="[0-9]\.[0-9]"
 WEB_DIR = /home/bcrowell/Lightandmatter/calc
 
 # Since book1 comes first, it's the default target --- you can just do ``make'' to make it.
@@ -69,18 +69,31 @@ handheld:
 	# see meki/zzz_misc/publishing for notes on this
 	make preflight
 	scripts/translate_to_html.rb --write_config_and_exit --modern --override_config_with="handheld.config"
-	rm -f calc_handheld/ch*/*.html calc_handheld/index.html
+	rm -f calc_handheld/ch*/*html calc_handheld/index.*html
 	mkdir -p calc_handheld
 	scripts/prep_web.pl
 	WOPT='--modern --override_config_with="handheld.config"' scripts/make_web.pl
 	cp standalone.css calc_handheld
 	make epub
 	make mobi
+	make epub3
 	@echo "To post the books, do 'make post_handheld'."
+
+epub3:
+	make preflight
+	scripts/translate_to_html.rb --write_config_and_exit --html5 --override_config_with="handheld.config,epub3.config"
+	rm -f calc_handheld/ch*/*html calc_handheld/index.html
+	mkdir -p calc_handheld
+	scripts/prep_web.pl
+	WOPT='--html5 --override_config_with="handheld.config,epub3.config"' scripts/make_web.pl
+	cp standalone.css calc_handheld
+	ebook-convert calc_handheld/index.html calc_epub3.epub $(GENERIC_OPTIONS_FOR_CALIBRE) --no-default-epub-cover --cover=ch00/figs/handheld-cover.jpg
+	scripts/translate_to_html.rb --util="patch_epub3:calc_epub3.epub"
 
 post_handheld:
 	cp calc.epub $(WEB_DIR)
 	cp calc.mobi $(WEB_DIR)
+	cp calc_epub3.epub $(WEB_DIR)
 
 epub:
 	# Before doing this, do a "make handheld".

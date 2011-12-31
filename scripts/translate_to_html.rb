@@ -10,6 +10,9 @@
 #         it will automatically get copied over into the various projects the next time I do a "make" or a
 #         "make preflight".
 #
+#         When making a new version, test it by building html for all books, and also by making epub of calc and doing
+#         a "make epubcheck".
+#
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
@@ -49,8 +52,8 @@
 #                            Only prevents writing to the toc and writing external files for equations.
 #                            To prevent writing to the html file for each chapter, you also need to
 #                            add the x parameter on the command line for run_eruby.pl in lm.make.
-#  --override_config_with="foo.config"
-#                            After reading standard config files, read foo.config as well, and overwrite any options previously set.
+#  --override_config_with="foo.config,bar.config"
+#                            After reading standard config files, read foo.config and bar.config as well, and overwrite any options previously set.
 #  --write_config_and_exit
 #                            Just writes temp.config.
 #  --util="foo"
@@ -85,6 +88,8 @@
 #    text_width_pixels               
 #    ad_width_pixels                 
 #    margin_width_mm                 
+#    mime_type                       normally a null string, but otherwise forces the mime type to be what's given
+#    html_file_extension             normally a null string, but otherwise forces the file extension to be what's given; if given, string should include the leading dot
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
@@ -150,6 +155,7 @@
 
 require "digest/md5"
 require "date"
+require "tmpdir"
 
 def fatal_error(message)
   $stderr.print "error in translate_to_html.rb: #{message}\n"
@@ -225,7 +231,7 @@ config_dir = 'config'
 if ! FileTest.directory?(config_dir) then config_dir = '../config' end
 
 config_files = ["#{config_dir}/default.config","#{config_dir}/repo.config","this.config"]
-if !($override_config_with.nil?) then config_files.push($override_config_with) end
+if !($override_config_with.nil?) then config_files.concat($override_config_with.split(/,/)) end
 
 config_files.each {|config_file|
   if ! File.exist?(config_file) then
@@ -267,6 +273,48 @@ if $util=~/[a-z]/ then
       File generated #{today.year}-#{today.mon}-#{today.mday}.</p>
     FOOTER
   end
+  if $util=~/patch_epub3:(.*)/ then
+    infile = $1
+    unless File.exist?(infile) then fatal_error("in patch_epub3: input file #{infile} does not exist") end
+    Dir.mktmpdir { |tmpdir|
+      unless system("unzip -qq #{infile} -d #{tmpdir}") then fatal_error("in patch_epub3: unable to unzip file #{infile}") end
+      package_document = "#{tmpdir}/content.opf"
+      # EPUB 3.0 spec, section 4.3.4, says we need to declare mathml property in manifest file:
+      xml = ''
+      File.open(package_document,'r') { |f|
+        xml = f.gets(nil) # nil means read whole file
+        xml.gsub!(/(<item\s+([^\/]|"[^"]*")*\/>)/) {
+          item = $1 # e.g., item=<item href="ch01_split_000.xhtml" id="html15" media-type="application/xhtml+xml"/>
+          if item=~/media-type="application\/xhtml\+xml"/ then # don't do images, just html
+            #$stderr.print "item=#{item}\n"
+            if item=~/properties="[^"]*"/ then
+              item.gsub!(/properties="([^"]*)"/) {p=$1.clone; 'properties="'+(p=~/mathml/ ? p : p+" mathml")+'"'}
+            else
+              item.gsub!(/<item/,'<item properties="mathml"')
+            end
+            #$stderr.print "changed item to #{item}\n"
+          end # if html
+          item
+        }
+      }
+      File.open(package_document,'w') { |f| f.print xml }
+      Dir.entries(tmpdir).each { |x|
+        file = "#{tmpdir}/#{x}"
+        if file=~/html\Z/ then
+          #$stderr.print "file #{file}\n"
+          html = ''
+          File.open(file,'r') { |f| html = f.gets(nil) } # nil means read whole file
+          # first line output by claibre 0.7.44 looks like this: <?xml version='1.0' encoding='utf-8'?>
+          if html=~/\A<\?xml/ then
+            html.gsub!(/\A[^\n]*/) {"<!DOCTYPE html>"}
+          end
+          File.open(file,'w') { |f| f.print html}
+        end
+      }
+      File.rename(infile,"before_patch_epub3.epub")
+      unless system("zip -rqj #{infile} #{tmpdir}") then fatal_error("in patch_epub3: unable to rezip file #{infile}") end
+    }
+  end
   exit(0)
 end
 
@@ -279,6 +327,7 @@ $chapter_title = nil
 $count_eg = 0
 $hide_figs = {}
 $hide_envs = {}
+$hide_mathml_in_captions = {} # fix for bug with improperly nested mathml being generated in Calculus when captions contain mathml
 
 $text_width_pixels = $config['text_width_pixels']
 $ad_width_pixels = $config['ad_width_pixels']
@@ -1655,8 +1704,6 @@ end
 def parse(t,level,current_section)
   tex = t.clone
 
-  protect_mathml_in_captions = {} # fix for bug with improperly nested mathml being generated in Calculus when captions contain mathml
-
   tex.gsub!(/\\der ([A-Za-z])/) {"d#{$1}"} # otherwise we get "d x"
 
   # The following is so that text right before or right after an enumerate or itemize will be in its own paragraph:
@@ -1683,7 +1730,7 @@ def parse(t,level,current_section)
         whazzat = find_figure(name,width) # has the side-effect of copying or converting it if necessary
         if caption=~/\A\s*\Z/ then c='' else 
           pc=parse_para(caption)
-          if pc=~/<math/ then h="ZZZ_PROTECT_MATHML_IN_CAPTIONS_"+hash_function(pc); protect_mathml_in_captions[h]=pc.clone; pc=h end
+          if pc=~/<math/ then h="HIDE_MATHML_IN_CAPTIONS_"+hash_function(pc)+"_HERE"; $hide_mathml_in_captions[h]=pc.clone; pc=h end
           c="<p class=\"caption\">#{l}#{pc}</p>#{end_of_caption_marker}"  
         end
         a = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"fig:#{name}\"></a>" : '')
@@ -1774,7 +1821,7 @@ def parse(t,level,current_section)
     current_section.pop
     secnum += 1
   }
-  result.each { |s| 0.upto(1) { |i| protect_mathml_in_captions.each { |k,v| unless s[i].nil? then s[i].gsub!(/#{k}/,v) end  } } }
+  result.each { |s| 0.upto(1) { |i| $hide_mathml_in_captions.each { |k,v| unless s[i].nil? then s[i].gsub!(/#{k}/,v) end  } } } # this gets checked for again at end
   #------------------------------------------------------------------------------------------------------------------------------------
   curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
   if level==$config['spew_figs_at_level'] then
@@ -1913,6 +1960,7 @@ parse(tex,1,[]).each {|s|
 }
 tex = result
 
+
 tex.gsub!(/ {2,}/,' ') # multiple spaces
 tex.gsub!(/<p>\s*<\/p>/,'') # peepholer to get rid of <p></p> pairs
 tex.gsub!(/\n{3,}/,"\n\n") # 3 or more newlines in a row
@@ -1920,7 +1968,6 @@ tex.gsub!(/\\&/,"&amp;")
 tex.gsub!(/&(?![a-zA-Z0-9#]+;)/,"&amp;")
 tex.gsub!(/<\/h1>\n*<\/p>/,"</h1>") # happens in NP, which has part I, II, ...; see above in handling for mypart
 tex.gsub!(/<td>([^<>]+)<\/t>/) {"<td>#{$1}<\/td>"}; # bug in htlatex?
-tex.gsub!(/KEEP_INDENTATION_(\d+)_SPACES/) {replicate_string(' ',$1.to_i)}
 tex.gsub!(/<!-- ZZZ_TWO_NEWLINES -->/,"\n\n")
 
 tex.gsub!(/#{$begin_div_not_p}(<div class="equation">([^\n])+)#{$end_div_not_p}\n/) {"</p>#{$1}<p>"}
@@ -1932,13 +1979,19 @@ tex.gsub!(/(?<!\n)(<div)/) {"\n#{$1}"}
 tex.gsub!(/\n{0,1}(<p[^ ])/) {"\n\n#{$1}"}
 tex.gsub!(/(<\/p>)\n{0,1}/) {"#{$1}\n\n"}
 
-tex.gsub!(/(HIDE_FIG_[0-9a-f]+_HERE)/) {$hide_figs[$1]}
-tex.gsub!(/(HIDE_ENV_[0-9a-f]+_HERE)/) {$hide_envs[$1]}
+1.upto(10) { |i| # Allow for nesting 10 deep.
+  tex.gsub!(/(HIDE_ENV_[0-9a-f]+_HERE)/) {$hide_envs[$1]}
+  tex.gsub!(/(HIDE_FIG_[0-9a-f]+_HERE)/) {$hide_figs[$1]}
+  tex.gsub!(/(HIDE_MATHML_IN_CAPTIONS_[0-9a-f]+_HERE)/) {$hide_mathml_in_captions[$1]}
+}
 tex.gsub!(/<p><!--BEGIN_IMG-->/) {''}
 tex.gsub!(/<!--END_IMG--><\/p>/) {''}
 tex.gsub!(/<p>\s*(<div\s+class="[^"]*"\s*>)/) {$1}
 tex.gsub!(/(<\/div>)\s*<\/p>/) {$1}
 tex.gsub!(/(Example \d+): ZZZ_NO_EG_TITLE/) {$1}
+
+tex.gsub!(/KEEP_INDENTATION_(\d+)_SPACES/) {replicate_string(' ',$1.to_i)}
+tex.gsub!(/<!-- ZZZ_END_OF_CAPTION -->/,"")
 
 
 # ultra-kludge: depend on the formatting of the code at this point to let us to a final cleanup of a small number of cases where the $begin_div_not_p kludge didn't work:
@@ -1978,7 +2031,7 @@ end
 
 if $html5 then
   print <<STUFF
-<!doctype html>
+<!DOCTYPE html>
 <html>
 STUFF
   mime = 'text/html'
@@ -2011,6 +2064,8 @@ mathjax_in_head = ''
 if $mathjax then
   mathjax_in_head = '<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>'
 end
+
+if $config['mime_type']=~/\w/ then mime=$config['mime_type'] end
 
 if !$wiki then
 print <<STUFF
@@ -2150,7 +2205,8 @@ File.open("#{$config['html_dir']}/index.html",'a') do |f|
       oh_my_god_another_kludge = '0'
     end
   end
-  f.print "<p><a href=\"ch#{$ch}/ch#{kludge}.html\">#{oh_my_god_another_kludge} #{and_more_kludge}</a></p>\n"
-  # ------->!!!! Link to .html, even if we're generating a file that will be called .xhtml. Mod_rewrite will redirect them if it's appropriate.
+  ext = ".html" # ------->!!!! Link to .html, even if we're generating a file that will be called .xhtml. Mod_rewrite will redirect them if it's appropriate.
+  if $config['standalone']==1 && $config['html_file_extension']=~/\w/ then ext=$config['html_file_extension'] end
+  f.print "<p><a href=\"ch#{$ch}/ch#{kludge}#{ext}\">#{oh_my_god_another_kludge} #{and_more_kludge}</a></p>\n"
 end
 end

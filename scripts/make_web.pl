@@ -115,6 +115,7 @@ foreach my $tex(<ch*/ch*temp.temp>) {
       }
     }
     if ($standalone==1) {$ext = '.html'}
+    if (($config->{'html_file_extension'})=~/\w/) { $ext=$config->{'html_file_extension'} }
     $html = $html . $ext;
     my $c = "CHAPTER='$ch' OWN_FIGS='ch$ch/figs' scripts/translate_to_html.rb $wopt <$tex >$html";
     print "$c\n";
