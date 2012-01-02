@@ -88,7 +88,7 @@ epub3:
 	WOPT='--html5 --override_config_with="handheld.config,epub3.config"' scripts/make_web.pl
 	cp standalone.css calc_handheld
 	ebook-convert calc_handheld/index.html calc_epub3.epub $(GENERIC_OPTIONS_FOR_CALIBRE) --no-default-epub-cover --cover=ch00/figs/handheld-cover.jpg
-	scripts/translate_to_html.rb --util="patch_epub3:calc_epub3.epub"
+	scripts/translate_to_html.rb --override_config_with="handheld.config,epub3.config" --util="patch_epub3:calc_epub3.epub"
 
 post_handheld:
 	cp calc.epub $(WEB_DIR)

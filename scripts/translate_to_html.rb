@@ -90,6 +90,8 @@
 #    margin_width_mm                 
 #    mime_type                       normally a null string, but otherwise forces the mime type to be what's given
 #    html_file_extension             normally a null string, but otherwise forces the file extension to be what's given; if given, string should include the leading dot
+#    mathml_plus_fallback            boolean, 0 or 1, normally 0; for epub 3's "switch" mechanism; see http://idpf.org/epub/30/spec/epub30-contentdocs.html#sec-xhtml-epub-switch
+#    mathml_with_epub3_switch        boolean, 0 or 1, normally 0; for epub 3's "switch" mechanism; see http://idpf.org/epub/30/spec/epub30-contentdocs.html#sec-xhtml-epub-switch
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
@@ -287,12 +289,15 @@ if $util=~/[a-z]/ then
           item = $1 # e.g., item=<item href="ch01_split_000.xhtml" id="html15" media-type="application/xhtml+xml"/>
           if item=~/media-type="application\/xhtml\+xml"/ then # don't do images, just html
             #$stderr.print "item=#{item}\n"
-            if item=~/properties="[^"]*"/ then
-              item.gsub!(/properties="([^"]*)"/) {p=$1.clone; 'properties="'+(p=~/mathml/ ? p : p+" mathml")+'"'}
+            p = ["mathml"]
+            if $config['mathml_with_epub3_switch']==1 then p.push("switch") end
+            if item=~/properties="([^"]*)"/ then 
+              p.concat($1.split(/\s+/))
             else
-              item.gsub!(/<item/,'<item properties="mathml"')
+              item.gsub!(/<item/,'<item properties=""')
             end
-            #$stderr.print "changed item to #{item}\n"
+            item.gsub!(/(properties="[^"]*")/) {"properties=\"#{p.uniq.join(' ')}\""}
+            #$stderr.print "p=#{p.join(' ')}, changed item to #{item}\n"
           end # if html
           item
         }
@@ -304,7 +309,7 @@ if $util=~/[a-z]/ then
           #$stderr.print "file #{file}\n"
           html = ''
           File.open(file,'r') { |f| html = f.gets(nil) } # nil means read whole file
-          # first line output by claibre 0.7.44 looks like this: <?xml version='1.0' encoding='utf-8'?>
+          # first line output by calibre 0.7.44 looks like this: <?xml version='1.0' encoding='utf-8'?>
           if html=~/\A<\?xml/ then
             html.gsub!(/\A[^\n]*/) {"<!DOCTYPE html>"}
           end
@@ -312,7 +317,14 @@ if $util=~/[a-z]/ then
         end
       }
       File.rename(infile,"before_patch_epub3.epub")
-      unless system("zip -rqj #{infile} #{tmpdir}") then fatal_error("in patch_epub3: unable to rezip file #{infile}") end
+      # zip options: -r recursive, -q quiet --quiet --recurse-paths --show-files
+      old_dir = Dir.getwd
+      Dir.chdir(tmpdir)
+      # Mimetype file has to come first. The "extra field" is not allowed, hence the -X.
+      unless system("zip --quiet -X #{infile} mimetype") then Dir.chdir(old_dir); fatal_error("in patch_epub3: unable to rezip file #{infile}") end
+      unless system("zip --quiet -X --recurse-paths #{infile} *") then Dir.chdir(old_dir); fatal_error("in patch_epub3: unable to rezip file #{infile}") end
+      Dir.chdir(old_dir)
+      File.rename("#{tmpdir}/#{infile}","#{old_dir}/#{infile}")
     }
   end
   exit(0)
@@ -1123,14 +1135,7 @@ end
 def handle_math_one(foo,math_type,allow_bitmap)
   tex = foo.clone
 
-  #if foo=~/xdot/ then $stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, matches xdot\n" end
-
-  if tex=='' then
-    $stderr.print "warning, null string passed to handle_math_one\n"
-    return ''
-  end
-
-  debug = false # tex=~/\{1\}\{2\}/
+  if tex=='' then  $stderr.print "warning, null string passed to handle_math_one\n"; return '' end
 
   if $mathjax then
     if math_type=='inline' then
@@ -1143,14 +1148,50 @@ def handle_math_one(foo,math_type,allow_bitmap)
   tex.gsub!(/\\(begin|end){split}/,'') # we don't handle these (they occur inside other math environments)
 
   debug = foo=~/\\vc{v} &= \\frac{\\de/
-  html = handle_math_one_html(tex.clone,math_type)
-  return html if html!=nil
-  if !allow_bitmap && $config['standalone']==1 then return handle_math_one_desperate_fallback(tex.clone) end
-  return nil if !allow_bitmap
-  html = handle_math_one_bitmap(tex.clone,math_type)
-  return html if html!=nil
-  #$stderr.print "=================== in handle_math_one, input=#{foo}, standalone=#{$config['standalone']}, didn't do fallback\n"
-  return nil
+  html = handle_math_one_html(tex.clone,math_type) # may return either plain html or html with mathml, if config says that's allowed
+
+  use_desperate_fallback_if_necessary = !allow_bitmap && $config['standalone']==1
+
+  # $stderr.print "mathml_plus_fallback=#{$config['mathml_plus_fallback']} html.nil?=#{html.nil?} contains_mathml=#{contains_mathml(html)}\n"
+
+  if $config['mathml_plus_fallback']==1 && html!=nil && contains_mathml(html) then
+    # http://idpf.org/epub/30/spec/epub30-contentdocs.html#sec-xhtml-epub-switch
+    # namespace is http://www.idpf.org/2007/ops
+    fallback = ''
+    if $config['mathml_with_epub3_switch']==0 then fatal_error("mathml_plus_fallback=1, but mathml_with_epub3_switch=0, and I don't have any other fallback mechanism") end
+    if use_desperate_fallback_if_necessary then fallback=handle_math_one_desperate_fallback(tex.clone) else fallback=handle_math_one_bitmap(tex.clone,math_type) end
+    # http://idpf.org/epub/20/spec/OPS_2.0.1_draft.htm#Section2.6.3.1.1
+    # http://www.dessci.com/en/reference/ebooks/EPUBMath_spec.htm
+    # http://code.google.com/p/epub-revision/source/browse/trunk/test/xhtml/valid/switch-001.xhtml?r=2949
+    # http://www.w3schools.com/xml/xml_namespaces.asp
+    # It doesn't matter if you do the xmlns: in a particular element or in a parent element such as the <html> tag.
+    # This page implies that epubcheck can handle case/switch: http://code.google.com/p/epubcheck/issues/detail?id=132
+    #  ... but when I do it, epubcheck is upset.
+    # Doesn't actually work in calibre 0.7.44: http://www.mobileread.com/forums/showthread.php?p=1905534#post1905534
+    return (<<-SWITCH
+      <epub:switch xmlns:epub="http://www.idpf.org/2007/ops"> 
+        <epub:case required-namespace="http://www.w3.org/1998/Math/MathML">
+          #{html}
+        </epub:case>
+        <epub:default>
+          #{fallback}
+        </epub:default>
+      </epub:switch>
+    SWITCH
+    ).gsub(/\n/,' ')
+  else
+    # no fallback
+    return html if html!=nil
+    if use_desperate_fallback_if_necessary then return handle_math_one_desperate_fallback(tex.clone) end
+    return nil if !allow_bitmap
+    html = handle_math_one_bitmap(tex.clone,math_type)
+    return html if html!=nil
+    return nil
+  end
+end
+
+def contains_mathml(html)
+  return (html=~/<math/)!=nil
 end
 
 def prep_math_for_mathjax(math)
@@ -1303,6 +1344,7 @@ end
 # if the type isn't inline, then we put div's around the equation(s)
 def handle_math_one_bitmap(tex,math_type)
     m = tex.clone
+    scale = $config['scale_for_bitmapped_equations']
 
     if m=~/\\(begin|end){array}/ then return nil end # can't handle these because they contain \\ inside
 
@@ -1324,7 +1366,7 @@ def handle_math_one_bitmap(tex,math_type)
         $stderr.print "double backslash not allowed after final line in displayed math: #{tex}\n...This may not be a LaTeX error if it has intertext, but may cause parser to generate invalid xhtml.\n"
       else
       eq_dir = html_subdir('math')
-      eq_base = 'eq_' + hash_equation(e) + '.png'
+      eq_base = 'eq_' + hash_equation(e,scale) + '.png'
       eq_file = eq_dir + '/' + eq_base
       if $redo_all_equations || ! File.exist?(eq_file) then
         temp = 'temp.tex'
@@ -1351,7 +1393,6 @@ def handle_math_one_bitmap(tex,math_type)
         else
           if ! $no_write then
             if !File.exist?(temp) then $stderr.print "error, temp file #{temp} doesn't exist"; exit(-1) end
-            scale = $config['scale_for_bitmapped_equations']
             unless system("#{$config['script_dir']}/equation_to_image.pl #{temp} #{$config['sty_dir']}/lmmath.sty #{scale}>/dev/null") then $stderr.print "error, #{$?}"; exit(-1) end
             unless system("mv #{temp_png} #{eq_file}") then $stderr.print "WARNING, error #{$?}, probably tex4ht isn't installed\n" end
           end
@@ -1383,12 +1424,12 @@ def end_equation
 end
 
 
-def hash_equation(foo)
+def hash_equation(foo,scale)
   tex = foo.clone
   # strip any leading or trailing dollar signs or spaces:
   tex.gsub!(/^[$ ]+/,'')
   tex.gsub!(/[$ ]+$/,'')
-  return hash_function(tex)
+  return hash_function(hash_function(tex)+scale.to_s)
 end
 
 def hash_function(x)
