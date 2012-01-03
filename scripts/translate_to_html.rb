@@ -164,6 +164,14 @@ def fatal_error(message)
   exit(-1)
 end
 
+def file_contains(file,regexp)
+  File.open(file,'r') { |f|
+    x = f.gets(nil) # nil means read whole file
+    return (regexp =~ x)!=nil
+  }
+  return nil
+end
+
 require 'json'
 
 require 'getoptlong' # pickaxe book, p. 452
@@ -280,35 +288,64 @@ if $util=~/[a-z]/ then
     unless File.exist?(infile) then fatal_error("in patch_epub3: input file #{infile} does not exist") end
     Dir.mktmpdir { |tmpdir|
       unless system("unzip -qq #{infile} -d #{tmpdir}") then fatal_error("in patch_epub3: unable to unzip file #{infile}") end
-      package_document = "#{tmpdir}/content.opf"
-      # EPUB 3.0 spec, section 4.3.4, says we need to declare mathml property in manifest file:
+      # -
+      # EPUB 3.0 spec, Section 2.1.1 says, "The XHTML Content Document filename should use the file extension .xhtml." But it's only a "should," not a "must."
+      # I doubt that epub 3-compatible readers would care. Sample files at http://code.google.com/p/epub-revision/downloads/list have, e.g., ".xml" in Cosmo magazine.
+      # This seems to be a non-issue, and calibre often outputs files named .xhtml anyway, so I'm not worrying about it.
+      # -
+      # EPUB 3.0 spec, section 4.3.4, says we need to declare mathml and switch properties in manifest file if we use them.
+      # Also, change <package> tag so it declares this as EPUB 3.0:
+      #   Calibre outputs:       <package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+      #   Moby Dick example has: <package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="en" unique-identifier="pub-id">
+      # This stuff seems to be important. If I don't change <package>, epubcheck complains. If I don't include properties (or include them for files
+      # that don't actually use the relevant property), it complains.
+      # The unique-identifier is sort of like an ISBN you assign yourself, but more granular.
+      # Note that <switch> mechanism is (a) broken when I generate it for displayed math, (b) further mangled by calibre, (c) not implemented by readers. All of this
+      # makes it not at all useful. The only reason I'd want to use it would be in order to distribute a single epub that could be read by both old and new
+      # readers. But old readers don't understand switch, so they display math twice, and new readers don't need switch if they have mathml.
+      # -
+      package_document = "#{tmpdir}/content.opf" # this is what calibre generates; other people's epubs can have it in, e.g., OPS/package.opf
       xml = ''
       File.open(package_document,'r') { |f|
         xml = f.gets(nil) # nil means read whole file
+        new_pkg = '<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="en" unique-identifier="uuid_id">'
+        xml.gsub!(/<package[^>]+>/,new_pkg)
         xml.gsub!(/(<item\s+([^\/]|"[^"]*")*\/>)/) {
           item = $1 # e.g., item=<item href="ch01_split_000.xhtml" id="html15" media-type="application/xhtml+xml"/>
           if item=~/media-type="application\/xhtml\+xml"/ then # don't do images, just html
             #$stderr.print "item=#{item}\n"
-            p = ["mathml"]
-            if $config['mathml_with_epub3_switch']==1 then p.push("switch") end
+            if item=~/href="([^"]+)"/ then html_file="#{tmpdir}/#{$1}" end
+            p = []
+            if file_contains(html_file,/<math/)==true then p.push("mathml") end
+            if file_contains(html_file,/<switch/)==true then p.push("switch") end
             if item=~/properties="([^"]*)"/ then 
               p.concat($1.split(/\s+/))
             else
               item.gsub!(/<item/,'<item properties=""')
             end
             item.gsub!(/(properties="[^"]*")/) {"properties=\"#{p.uniq.join(' ')}\""}
+            item.gsub!(/(properties=""\s*)/,' ')
             #$stderr.print "p=#{p.join(' ')}, changed item to #{item}\n"
           end # if html
           item
         }
       }
       File.open(package_document,'w') { |f| f.print xml }
+      # -
+      # It's supposed to be xhtml 5, which I interpreted to mean that it should start with <!DOCTYPE html>. But sample
+      # files at http://code.google.com/p/epub-revision/downloads/list have:
+      #       <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"> ... cosmo
+      #       <?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"> ... moby dick
+      #       So I don't think that part of the following code is actually necessary.
+      # Epubcheck complains about <meta http-equiv="content-type" ... /> stuff -- so filter it out.
+      # -
       Dir.entries(tmpdir).each { |x|
         file = "#{tmpdir}/#{x}"
         if file=~/html\Z/ then
           #$stderr.print "file #{file}\n"
           html = ''
           File.open(file,'r') { |f| html = f.gets(nil) } # nil means read whole file
+          html.gsub!(/<meta[^>]+\/>/,'')
           # first line output by calibre 0.7.44 looks like this: <?xml version='1.0' encoding='utf-8'?>
           if html=~/\A<\?xml/ then
             html.gsub!(/\A[^\n]*/) {"<!DOCTYPE html>"}
@@ -316,6 +353,9 @@ if $util=~/[a-z]/ then
           File.open(file,'w') { |f| f.print html}
         end
       }
+      # -
+      # Zip it up.
+      # -
       File.rename(infile,"before_patch_epub3.epub")
       # zip options: -r recursive, -q quiet --quiet --recurse-paths --show-files
       old_dir = Dir.getwd
