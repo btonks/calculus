@@ -87,9 +87,12 @@ IO.foreach(file_name) {
       }
       temp.close
       #system("diff ch#{chapter}/figs/#{fig}.eps temp")
-      shell = "cd ch#{chapter}/figs && mv ../../temp #{fig}.eps && #{EPSTOPDF} #{fig}.eps && pdftoppm -r 300 #{fig}.pdf temp && convert temp-000001.ppm #{fig}.png"
+      shell = "cd ch#{chapter}/figs && mv ../../temp #{fig}.eps && #{EPSTOPDF} #{fig}.eps && pdftoppm -r 300 #{fig}.pdf temp && mv -f temp-1.ppm temp-000001.ppm && convert temp-000001.ppm #{fig}.png"
+                     # ... older versions of pdftoppm make temp-000001.ppm, newer ones temp-1.ppm
+      print '  '+shell+"\n"
       unless system(shell) then $stderr.print "error, #{$?}"; exit(-1) end
       shell = "cd ch#{chapter}/figs &&  rm temp-000001.ppm #{fig}.pdf #{fig}.eps #{cmd_file}"
+      print '  '+shell+"\n"
       unless system(shell) then $stderr.print "error, #{$?}"; exit(-1) end
     end
   end

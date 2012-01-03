@@ -147,3 +147,14 @@ post_source:
 
 preflight:
 	@perl -e 'foreach $$f(<scripts/custom/*>) {system($$f)}'
+
+setup:
+	chmod +x scripts/* gen_graph.rb 
+	@echo "If the following command doesn't give a compiler error, you have a sufficiently up to date version of ruby."
+	ruby -e 'print ("ab" =~ /(?<!a)b/)'
+	@echo "If the following command doesn't give a compiler error, you have a sufficiently up to date version of libjson-perl."
+	@echo "If your version of the library is too old, you can uninstall it and then install the latest version by doing 'cpan JSON'."
+	perl -e 'use JSON 2.0'
+
+graphs:
+	gen_graph.rb ch*/ch*.tex

@@ -6,6 +6,7 @@ machine. Basically you just need to install some open-source
 software. The following are the relevant packages on a Debian-based
 system such as Ubuntu:
   texlive-full
+  gnuplot
   pdftk
   m4
   inkscape
@@ -16,11 +17,13 @@ system such as Ubuntu:
 
 Go to the main directory (the one where you found this README).
 
-Make sure you have at least inkscape 0.47 and ruby 1.9. Set all the scripts
-to be executable.
+Do
+  make setup
+This will check that you have at least inkscape 0.47 and ruby 1.9 and set all
+the scripts to be executable.
 
 Then:
-  gen_graph.rb ch*/ch*.tex
+  make graphs
   make book
 
 I haven't tried compiling the books on MacOS X or Windows. I suspect
