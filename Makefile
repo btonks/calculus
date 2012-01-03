@@ -156,5 +156,7 @@ setup:
 	@echo "If your version of the library is too old, you can uninstall it and then install the latest version by doing 'cpan JSON'."
 	perl -e 'use JSON 2.0'
 
-graphs:
+figures:
 	gen_graph.rb ch*/ch*.tex
+	# The following requires Inkscape 0.47 or later.
+	perl -e 'foreach my $$f(<ch*/figs/*.svg>) {$$g=$$f; $$g=~s/\.svg$$/.pdf/; unless (-e $$g) {print "g=$$g\n"; $$c="inkscape --export-text-to-path --export-pdf=$$g $$f  --export-area-drawing"; print "$$c\n"; system($$c)}}'

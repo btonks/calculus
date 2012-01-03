@@ -23,7 +23,7 @@ This will check that you have at least inkscape 0.47 and ruby 1.9 and set all
 the scripts to be executable.
 
 Then:
-  make graphs
+  make figures
   make book
 
 I haven't tried compiling the books on MacOS X or Windows. I suspect
