@@ -1100,7 +1100,7 @@ def handle_math(tex,inline_only=false,allow_bitmap=true)
     debug = false # math[n]=~/\{1\}\{2\}/
     m = handle_math_one(math[n],math_type[n],(allow_bitmap && !($config['forbid_images_inside_text']==1 && math_type[n]=='inline')))
     if m==nil then
-      m=math[n]
+      m=math[n].gsub(/</,"&lt;")
     else
       if math_type[n]!='inline' and !( m=~/<div/) then
         # begin_equation() and end_equation() produce <div> tags
@@ -1180,7 +1180,7 @@ def handle_math_one(foo,math_type,allow_bitmap)
     SWITCH
     ).gsub(/\n/,' ')
   else
-    # no fallback
+    # not producing multiple versions using epub switch
     return html if html!=nil
     if use_desperate_fallback_if_necessary then return handle_math_one_desperate_fallback(tex.clone) end
     return nil if !allow_bitmap
@@ -1302,7 +1302,7 @@ end
 # Translate one particular equation to xhtml, trying to create something half-way legible if all else fails.
 # This is meant only for use in math that occurs inline in ebooks that don't support mathml.
 def handle_math_one_desperate_fallback(tex)
-  debug = false
+  debug = false # tex=~/omega/ && tex=~/intertext/
   curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
 
   if debug then $stderr.print "=================== in handle_math_one_desperate_fallback, input=#{tex}\n" end
@@ -1330,6 +1330,9 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\\(Ddot|ddot){([A-Za-z])}/) {"#{$2}&uml;"}
   m.gsub!(/\\bar{([A-Za-z])}/) {"#{$1}<sup>-</sup>"}
   m = replace_list(m,$tex_symbol_replacement_list)
+
+  m.gsub!(/</,'&lt;')
+  m.gsub!(/>/,'&gt;')
 
   if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end
 

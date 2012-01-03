@@ -770,10 +770,16 @@ slowly, so an extraordinarily large number of terms would be required in order t
 to the sum. In fact, it is impossible to carry out a straightforward numerical evaluation of this sum because it would
 require such an enormous number of terms that the rounding errors would overwhelm the result.
 
-(c) Split the sum into two sums, one for the 1103 term and one for the $26390k$. The ratio of the two factorials is always less than $4^{4k}$, so
+(c) This converges by the ratio test, because the ratio of successive terms approaches 0.
+
+(d) Split the sum into two sums, one for the 1103 term and one for the $26390k$. The ratio of the two factorials is always less than $4^{4k}$, so
 discarding constant factors, the first sum is less than a geometric series with $x=(4/396)^4<1$, and must therefore converge. The second sum is less than a series of the form $kx^k$.
 This one also converges, by the integral test. (It has to be integrated with respect to $k$, not $x$, and the integration can be done by parts.) Since both separate sums converge,
 the entire sum converges. This bizarre-looking expression was formulated and shown to equal $1/\pi$ by the self-taught genius Srinivasa Ramanujan (1887-1920).
+
+\hwsolnhdr{inconclusive-ratio-test}
+E.g., $\sum_{n=0}^\infty \sin n$ diverges, but the ratio test won't establish that, because
+the limit $\lim_{n\rightarrow\infty}|\sin(n+1)/\sin(n)|$ does not exist.
 
 \hwsolnhdr{sum-of-iterated-sine}
 There are certainly some special values of $x$ for which it does converge, such as 0 and $\pi$.
