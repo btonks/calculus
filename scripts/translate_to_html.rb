@@ -1372,10 +1372,14 @@ def handle_math_one_desperate_fallback(tex)
   m.gsub!(/\\bar{([A-Za-z])}/) {"#{$1}<sup>-</sup>"}
   m = replace_list(m,$tex_symbol_replacement_list)
 
-  m.gsub!(/</,'&lt;')
-  m.gsub!(/>/,'&gt;')
+  # Make sure nothing gets sent back with a raw < or > in it. But don't mung the <sup> and <sub> tags that I myself generated.
+  m.gsub!(/<(?!\/?(sup|sub)>)/,'&lt;')
+  # ruby bug makes this give errors:
+  #m.gsub!(/(?<!<\/?(sup|sub))>/,'&gt;') # causes error
+  # workaround for ruby bug:
+  m.gsub!(/(?<!su[pb])>/,'&gt;')
 
-  if debug then $stderr.print "===================in handle_math_one_desperate_fallback, output=#{m}\n" end
+  if debug then $stderr.print "===================in handle_math_one_desperate_fallback, old=#{old}, output=#{m}\n" end
 
   return m
 end
