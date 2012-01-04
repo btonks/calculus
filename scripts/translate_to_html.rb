@@ -1195,6 +1195,7 @@ def handle_math_one(foo,math_type,allow_bitmap)
   # $stderr.print "mathml_plus_fallback=#{$config['mathml_plus_fallback']} html.nil?=#{html.nil?} contains_mathml=#{contains_mathml(html)}\n"
 
   if $config['mathml_plus_fallback']==1 && html!=nil && contains_mathml(html) then
+    # The following doesn't really work. Later stages mangle the structure, and calibre mangles it further. Don't use.
     # http://idpf.org/epub/30/spec/epub30-contentdocs.html#sec-xhtml-epub-switch
     # namespace is http://www.idpf.org/2007/ops
     fallback = ''
