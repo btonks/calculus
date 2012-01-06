@@ -207,13 +207,15 @@ $override_config_with  = opts_hash['--override_config_with']
 $write_config_and_exit  = opts_hash['--write_config_and_exit']
 $util                  = opts_hash['--util']
 
+$xhtml = $modern
+$format = {'wiki'=>$wiki,'xhtml'=>$xhtml,'modern'=>$modern,'html5'=>$html5}
+
 $silent = $write_config_and_exit || $util=~/[a-z]/
 
 unless $silent then
   $stderr.print "modern=#{$modern} test=#{$test_mode} redo_all_equations=#{$redo_all_equations} redo_all_tables=#{$redo_all_tables} no_write=#{$no_write} mathjax=#{$mathjax} wiki=#{$wiki} html5=#{$html4}\n"
 end
 
-$xhtml = $modern
 # xhtml requires, e.g., <meta ... />, but html requires <meta ...>
 if $xhtml then
   $self_closing_tag = '/'
@@ -224,17 +226,10 @@ else
 end
 $br = "<br#{$self_closing_tag}>"
 
-#===============================================================================================================================
-#===============================================================================================================================
-#===============================================================================================================================
-#                                                globals
-#===============================================================================================================================
-#===============================================================================================================================
-#===============================================================================================================================
+#--------------------------------------------------------------------------------
+#          config files
+#--------------------------------------------------------------------------------
 
-
-
-# Anything set to nil below is mandatory. Anything non-nil is a default.
 $config = {}
 
 config_dir = 'config'
@@ -264,16 +259,22 @@ $config.keys.each { |k|
     if ! FileTest.directory?(value) && !$silent then fatal_error("#{k}=#{value}, but #{value} either does not exist or is not a directory") end
   end
 }
-unless $silent then
-  $config.keys.each { |k|
-    $stderr.print "#{k}=#{$config[k]} "
-  }
-  $stderr.print "\n"
+if false then
+  unless $silent then
+    $config.keys.each { |k|
+      $stderr.print "#{k}=#{$config[k]} "
+    }
+    $stderr.print "\n"
+  end
 end
 
 # Write a copy of all the config variables to a temporary file, for use by any other scripts such as latex_table_to_html.pl that might need the info.
 File.open("temp.config",'w') { |f| f.print JSON.generate($config)}
 if $write_config_and_exit then exit(0) end
+
+#--------------------------------------------------------------------------------
+#          utility functions
+#--------------------------------------------------------------------------------
 
 if $util=~/[a-z]/ then
   if $util=='ebook_title_footer' then
@@ -370,6 +371,138 @@ if $util=~/[a-z]/ then
   exit(0)
 end
 
+#=====================================================================================================================
+#       html boilerplate
+#=====================================================================================================================
+
+# format = wiki,xhtml,modern,html5
+def boilerplate(what,format)
+unless format.keys.sort.join(',')=="html5,modern,wiki,xhtml" then fatal_error("format has illegal set of keys #{format.keys.sort.join(',')} in boilerplate") end
+#----------------------------------------------------------------------------------------------------
+#     google_ad_html
+#----------------------------------------------------------------------------------------------------
+  if what=='google_ad_html' then
+if !format['wiki'] then
+  # The special-casing is to get adsense to work with xhtml, since document.write() doesn't work in xhtml. This is shown inside an <object> tag in the xhtml.
+  if format['xhtml'] then
+    # In the following, I don't need to give an IE-compatible alternative to the object tag, since the xhtml version will never be shown to IE anyway.
+    return <<'AD'
+	<!-- ============== ad =============== -->
+          <div id="ads">
+          <object data="http://www.lightandmatter.com/adsense_for_xhtml.html" type="text/html"  width="728" height="90">
+          </object>
+          </div>
+AD
+  else
+    # If I change the following, I also need to change it in http://www.lightandmatter.com/adsense_for_xhtml.html :
+    return <<'AD'
+          <!-- ============== ad =============== -->
+          <script type="text/javascript"><!--
+          google_ad_client = "pub-2202341256191765";
+          google_ad_width = 728;
+          google_ad_height = 90;
+          google_ad_format = "728x90_as";
+          google_ad_type = "text";
+          google_ad_channel ="";
+          google_color_border = "dddddd";
+          google_color_bg = "FFFFFF";
+          google_color_link = "444444";
+          google_color_text = "000000";
+          google_color_url = "000000";
+          //--></script>
+
+          <script type="text/javascript"
+                    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+          </script>
+AD
+  end
+else
+  return ''
+end
+
+  end
+#----------------------------------------------------------------------------------------------------
+#     valid_icon
+#----------------------------------------------------------------------------------------------------
+if what=='valid_icon' then
+# In the following, the main point of the icon is to allow me to tell, for testing purposes, whether I'm seeing the xhtml version
+# or the html version. I'm not displaying any icon for the html version, since that would just clutter up the page.
+if format['modern'] and !format['html5'] then
+  return '<p><img src="http://www.w3.org/Icons/valid-xhtml11-blue.png" alt="Valid XHTML 1.1 Strict" height="31" width="88"/></p>'
+else
+  #return '<p><img src="http://www.w3.org/Icons/valid-html401-blue" alt="Valid HTML 4.01 Strict" height="31" width="88"/></p>'
+  return ''
+end
+end
+#----------------------------------------------------------------------------------------------------
+#     disclaimer_html
+#----------------------------------------------------------------------------------------------------
+if what=='disclaimer_html' then
+if format['wiki'] then
+return <<DISCLAIMER
+    <p>This is the wiki version of #{$config['title']}, by Benjamin Crowell. 
+    This version may have some formatting problems.
+    For serious reading, you want the printer-friendly <a href="#{$config['url']}">Adobe Acrobat version</a>.</p>
+    <p>(c) 1998-2009 Benjamin Crowell, licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike license</a>.
+     Photo credits are given at the end of the Adobe Acrobat version.</p>
+    </div>
+DISCLAIMER
+else
+return <<DISCLAIMER
+    <div class="topstuff">
+    #{boilerplate('valid_icon',format)}
+    <p>You are viewing the html version of <b>#{$config['title']}</b>, by Benjamin Crowell. This version is only designed for casual browsing, and may have
+    some formatting problems.
+    For serious reading, you want the <a href="#{$config['url']}">Adobe Acrobat version</a>.</p>
+    <p><a href="..">Table of Contents</a></p>
+    <p>(c) 1998-2011 Benjamin Crowell, licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike license</a>.
+     Photo credits are given at the end of the Adobe Acrobat version.</p>
+    </div>
+DISCLAIMER
+end
+end
+#-----
+end # boilerplate
+#===================================================================================================================================================
+
+
+#------------------------------------------------------------------------------------------------------------------------------------------------
+# "Hiding" mechanism. The idea here is that I basically did this whole program as a glorified series of regex substitutions, but sometimes that's
+# not adequate, because processing at a higher level in the structural hierarchy screws up something at a lower level. To avoid that, sometimes
+# we need to "hide" lower-level stuff so it won't get messed with. The most common difficulty is that paragraphing gets messed up. We get ill-formed
+# <p></p> tags, or nested ones, or things inside them that can't go inside them.
+#------------------------------------------------------------------------------------------------------------------------------------------------
+
+$hide = {}
+$hide_types = [
+  'env',                    # once we've translated a whole environment (like \begin{eg}...\end{eg}), don't screw it up
+  'fig',                    # ...similarly for figures
+  'mathml_in_captions',     # fix for bug with improperly nested mathml being generated in Calculus when captions contain mathml
+  'tex_math_for_mediawiki'  # Normally all tex math has to be translated to html. But if we're outputting mediawiki source, we need to keep it as tex.
+] # order is significant; at end, when they're expanded, we go in this order (repeating in case they're nested)
+$hide_types.each { |t| $hide[t] = {} }
+
+def hide_code(hash,type)
+  return "HIDE_"+type.upcase+"_"+hash+"_HERE"
+end
+
+def hide(text,type)
+  if !($hide_types.include?(type)) then fatal_error("illegal type=#{type} in hide()") end
+  h = hide_code(hash_function(text),type)
+  $hide[type][h] = text
+  return h
+end
+
+#===============================================================================================================================
+#===============================================================================================================================
+#===============================================================================================================================
+#                                                globals
+#===============================================================================================================================
+#===============================================================================================================================
+#===============================================================================================================================
+$want_chapter_toc = !$wiki && $config['standalone']==0
+
+
 $chapter_toc = "<div class=\"container\">Contents#{$br}\n"
 
 $section_level_num = {'chapter'=>1,'section'=>2,'subsection'=>3,'subsubsection'=>4,'subsubsubsection'=>5}
@@ -377,9 +510,6 @@ $section_level_num = {'chapter'=>1,'section'=>2,'subsection'=>3,'subsubsection'=
 $ch = nil
 $chapter_title = nil
 $count_eg = 0
-$hide_figs = {}
-$hide_envs = {}
-$hide_mathml_in_captions = {} # fix for bug with improperly nested mathml being generated in Calculus when captions contain mathml
 
 $text_width_pixels = $config['text_width_pixels']
 $ad_width_pixels = $config['ad_width_pixels']
@@ -426,82 +556,11 @@ $tex_math_to_html.each {|x,y|
   $tex_symbol_replacement_list[/\\#{x}/] = y
 }
 
-if !$wiki then
-  # The special-casing is to get adsense to work with xhtml, since document.write() doesn't work in xhtml. This is shown inside an <object> tag in the xhtml.
-  if $xhtml then
-    # In the following, I don't need to give an IE-compatible alternative to the object tag, since the xhtml version will never be shown to IE anyway.
-    $google_ad_html = <<'AD'
-	<!-- ============== ad =============== -->
-          <div id="ads">
-          <object data="http://www.lightandmatter.com/adsense_for_xhtml.html" type="text/html"  width="728" height="90">
-          </object>
-          </div>
-AD
-  else
-    # If I change the following, I also need to change it in http://www.lightandmatter.com/adsense_for_xhtml.html :
-    $google_ad_html = <<'AD'
-          <!-- ============== ad =============== -->
-          <script type="text/javascript"><!--
-          google_ad_client = "pub-2202341256191765";
-          google_ad_width = 728;
-          google_ad_height = 90;
-          google_ad_format = "728x90_as";
-          google_ad_type = "text";
-          google_ad_channel ="";
-          google_color_border = "dddddd";
-          google_color_bg = "FFFFFF";
-          google_color_link = "444444";
-          google_color_text = "000000";
-          google_color_url = "000000";
-          //--></script>
-
-          <script type="text/javascript"
-                    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-          </script>
-AD
-  end
-else
-  $google_ad_html = ''
-end
-
-# In the following, the main point of the icon is to allow me to tell, for testing purposes, whether I'm seeing the xhtml version
-# or the html version. I'm not displaying any icon for the html version, since that would just clutter up the page.
-if $modern and !$html5 then
-  valid_icon = '<p><img src="http://www.w3.org/Icons/valid-xhtml11-blue.png" alt="Valid XHTML 1.1 Strict" height="31" width="88"/></p>'
-else
-  #valid_icon = '<p><img src="http://www.w3.org/Icons/valid-html401-blue" alt="Valid HTML 4.01 Strict" height="31" width="88"/></p>'
-  valid_icon = ''
-end
-
-if $wiki then
-$disclaimer_html = <<DISCLAIMER
-    <p>This is the wiki version of #{$config['title']}, by Benjamin Crowell. 
-    This version may have some formatting problems.
-    For serious reading, you want the printer-friendly <a href="#{$config['url']}">Adobe Acrobat version</a>.</p>
-    <p>(c) 1998-2009 Benjamin Crowell, licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike license</a>.
-     Photo credits are given at the end of the Adobe Acrobat version.</p>
-    </div>
-DISCLAIMER
-else
-$disclaimer_html = <<DISCLAIMER
-    <div class="topstuff">
-    #{valid_icon}
-    <p>You are viewing the html version of <b>#{$config['title']}</b>, by Benjamin Crowell. This version is only designed for casual browsing, and may have
-    some formatting problems.
-    For serious reading, you want the <a href="#{$config['url']}">Adobe Acrobat version</a>.</p>
-    <p><a href="..">Table of Contents</a></p>
-    <p>(c) 1998-2011 Benjamin Crowell, licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike license</a>.
-     Photo credits are given at the end of the Adobe Acrobat version.</p>
-    </div>
-DISCLAIMER
-end
 
 $ref = {}
 $fig_ctr = 0
 $footnote_ctr = 0
 $footnote_stack = []
-
-$protect_tex_math_for_mediawiki = {}
 
 #===============================================================================================================================
 #===============================================================================================================================
@@ -510,6 +569,161 @@ $protect_tex_math_for_mediawiki = {}
 #===============================================================================================================================
 #===============================================================================================================================
 #===============================================================================================================================
+
+def preprocess(tex)
+  curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
+
+  # Convert summary and hwsection environments into sections, which is what they really are, anyway.
+  ['summary','hwsection'].each { |s|
+    a = {'summary'=>'Summary','hwsection'=>'Homework Problems'}[s]
+    begin
+      tex.gsub!(/\\begin{#{s}}((.|\n)*)\\end{#{s}}/) {"\\mysection{*#{a}}#{$1}"} # The * warns later code not to produce a section number in the header.
+    rescue ArgumentError
+      $stderr.print "Illegal character in input. This typically happens with things like octal 322 for curly quotes. Can troubleshoot by running it through clean_up_text and then doing a diff.\n"
+      raise
+    end
+  }
+
+  tex.gsub!(/mysubsectionnotoc/) {"mysubsection"}
+  tex.gsub!(/(myoptionalsection)(\[\d\])?{/) {"mysection{?"} # ? marks it as optional
+  tex.gsub!(/(myoptionalcalcsection)(\[\d\])?{/) {"mysection{@"} # @ marks it as calc-based, optional
+  tex.gsub!(/(mycalcsection)(\[\d\])?{/) {"mysection{@"} # @ marks it as calc-based, optional
+
+  # remove comments and indexing (indexing is evil when it occurs inside sectioning, messes everything up)
+  # First, preserve percent signs inside listing and verbatim environments:
+  r = {}
+  s = {}
+  envs = ['listing','verbatim']
+  envs.each { |x|
+    pat = x
+    s[x] = "\\\\(?:begin|end){#{pat}}"
+    z = s[x].clone  # workaround for bug in the ruby interpreter, which causes the first 8 bytes of the regex string to be overwritten with garbage
+    r[x] = Regexp.new(z)
+  }  
+  envs.each { |x|
+    result = ''
+    inside = false # even if the environment starts at the beginning of the string, split() gives us a null string as our first string
+    tex.split(r[x]).each { |d|
+      if !(d=~/\A\s*\Z/) then
+        if inside then
+          d.gsub!(/%/,'KEEP_PERCENT')
+          d = "\\begin{#{x}}" + d + "\\end{#{x}}"
+        end
+        result = result + d
+      end
+      inside = !inside
+    } # end loop over d
+    tex = result
+  } # end loop over x
+
+  tex.gsub!(/\\index{#{curly}}/,'')
+
+  # Get rid of comments:
+  tex.gsub!(/(?<!\\)%[^\n]*(\n?[ \t]*)?/,'')
+
+  # remove whitespace from lines consisting of nothing but whitespace
+  tex.gsub!(/^[ \t]+$/,'')
+
+  # kludge, fix:
+  tex.gsub!(/myoptionalsection/,'mysection')
+
+  # minipages inside figures aren't necessary in html, and confuse the parser
+  tex.gsub!(/\\begin{minipage}\[[a-z]\]{\d+[a-z]*}/,'')
+  tex.gsub!(/\\end{minipage}/,'')
+  # ... and, e.g., make it do something sensible with non-graphical figures, as in EM 1
+  tex.gsub!(/\\docaption{(#{curly})}/) {"ZZZWEB:fig,zzzfake,narrow,1,#{newlines_to_spaces($1)}END_CAPTION"} # name,width,anon,caption
+
+  return tex
+end
+
+def process(tex)
+  result = ''
+  parse(tex,1,[]).each {|s|
+    t,m = s[0],s[1]
+    m = '<div class="margin">' + parse_para(m) + '</div>'  unless m=~/\A\s*\Z/
+    # FIXME: The following is meant to get the divs *after* the <h2> for a section, so that the css "clear" mechanism works properly.
+    # This should really be handled by making parse return an array of triplets, (h,t,m), rather than (t,m).
+    h = ''
+    1.upto(2) { |i|
+      if t =~ /^(\s*<h#{i}>(?:<a #{$anchor}=[^>]+><\/a>)?(?:[^<>]+)<\/h#{i}>)((.|\n)*)/ then
+        h,t=$1,$2
+      end
+    }
+    result = result + h + m + t # m has to come first, because that causes it to be positioned as close as possible to the top of the section
+  }
+  return result
+end
+
+def postprocess(tex)
+  curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
+  tex.gsub!(/ {2,}/,' ') # multiple spaces
+  tex.gsub!(/<p>\s*<\/p>/,'') # peepholer to get rid of <p></p> pairs
+  tex.gsub!(/\n{3,}/,"\n\n") # 3 or more newlines in a row
+  tex.gsub!(/\\&/,"&amp;")
+  tex.gsub!(/&(?![a-zA-Z0-9#]+;)/,"&amp;")
+  tex.gsub!(/<\/h1>\n*<\/p>/,"</h1>") # happens in NP, which has part I, II, ...; see above in handling for mypart
+  tex.gsub!(/<td>([^<>]+)<\/t>/) {"<td>#{$1}<\/td>"}; # bug in htlatex?
+  tex.gsub!(/<!-- ZZZ_TWO_NEWLINES -->/,"\n\n")
+
+  tex.gsub!(/#{$begin_div_not_p}(<div class="equation">([^\n])+)#{$end_div_not_p}\n/) {"</p>#{$1}<p>"}
+  tex.gsub!(/#{$begin_div_not_p}/,'')
+  tex.gsub!(/#{$end_div_not_p}/,'')
+
+  # for human-readability, keep lines from getting too long:
+  tex.gsub!(/(?<!\n)(<div)/) {"\n#{$1}"}
+  tex.gsub!(/\n{0,1}(<p[^ ])/) {"\n\n#{$1}"}
+  tex.gsub!(/(<\/p>)\n{0,1}/) {"#{$1}\n\n"}
+
+  1.upto(10) { |i| # Allow for nesting 10 deep.
+    $hide_types.each { |type|
+      pat = "(#{hide_code('[0-9a-f]+)',type)}"
+      tex.gsub!(/(#{hide_code('[0-9a-f]+',type)})/) {
+        #$stderr.print "replacing #{pat} with #{$1}"
+        $hide[type][$1]
+      }
+    }
+  }
+  tex.gsub!(/<p><!--BEGIN_IMG-->/) {''}
+  tex.gsub!(/<!--END_IMG--><\/p>/) {''}
+  tex.gsub!(/<p>\s*(<div\s+class="[^"]*"\s*>)/) {$1}
+  tex.gsub!(/(<\/div>)\s*<\/p>/) {$1}
+  tex.gsub!(/(Example \d+): ZZZ_NO_EG_TITLE/) {$1}
+
+  tex.gsub!(/KEEP_INDENTATION_(\d+)_SPACES/) {replicate_string(' ',$1.to_i)}
+  tex.gsub!(/<!-- ZZZ_END_OF_CAPTION -->/,"")
+
+
+  # ultra-kludge: depend on the formatting of the code at this point to let us to a final cleanup of a small number of cases where the $begin_div_not_p kludge didn't work:
+  if $no_displayed_math_inside_paras then
+    paras = []
+    tex.split(/\n{2,}/).each { |para|
+      if para=~/\A<p/ && para=~/<\/p>\Z/ then
+        old = para.clone()
+        para.gsub!(/^(<div)(.*)(<\/div>)$/) {"</p>\n\n#{$1}#{$2}#{$3}<!-- I will come to your emotional rescue. -->\n\n<p>"}
+        #if old!=para then $stderr.print "******** changed from:\n#{old}\n******** to:\n#{para}\n********\n" end
+      end
+      paras.push(para)
+    }
+    tex = paras.join("\n\n")
+  end
+
+  tex.gsub!(/\\\$/,'$') # Do this here to avoid confusion with $...$ for math.
+
+  if $wiki then
+    ['p','a','div'].each { |x|
+      tex.gsub!(/<#{x}(\s+[^>]*)?>/,'')
+      tex.gsub!(/<\/#{x}>/,'')
+    }
+    #tex.gsub!(/<img src="(figs|math)\/([^"]*)"([^>]*)>/) {"[http://www.lightandmatter.com/html_books/#{$config['book']}/ch#{$ch}/#{$1}/#{$2} figure #{$2} needs to be imported]"}
+    tex.gsub!(/<img src="(figs|math)\/([^"]*)"([^>]*)>/) {"{{Missing_fig|book=#{$config['book']}|ch=#{$ch}|file=#{$2}}} - "}
+    tex.gsub!(/(\n+)\s+/) {$1}
+    tex.gsub!(/<br>\n?{2,}\s+/,"<br>\n")
+  end
+
+  if !$wiki then tex =  "<div class=\"container\">\n"+tex+"</div>\n" end
+
+  return tex
+end
 
 def html_subdir(subdir)
   d = $config['html_dir'] + '/ch' + $ch + '/' + subdir
@@ -762,9 +976,7 @@ def parse_section(tex)
           end
           unless no_hiding then
             y = top + parse_section(d) + bottom 
-            h = "HIDE_ENV_"+hash_function(y)+"_HERE"
-            $hide_envs[h] = y
-            result = result + "\n\n#{h}\n\n"
+            result = result + "\n\n#{hide(y,'env')}\n\n"
           else
             result = result + top + d + bottom 
           end
@@ -1332,9 +1544,7 @@ def handle_math_one_html(tex,math_type)
       surround = (math_type!='inline' && math_type!='equation') 
       t = 'temp_mathml'
       if surround then original = "\\begin{#{math_type}}" + original + "\\end{#{math_type}}" end # mediawiki's texvc can handle these; see http://en.wikipedia.org/wiki/Help:Displaying_a_formula
-      key = hash_function(original)
-      $protect_tex_math_for_mediawiki[key] = '<math>'+original+'</math>'
-      y = "\nPROTECT_TEX_MATH_FOR_MEDIAWIKI" + key + "ZZZ"
+      y = "\n" + hide('<math>'+original+'</math>','tex_math_for_mediawiki')
     end
 
     return y
@@ -1374,9 +1584,11 @@ def handle_math_one_desperate_fallback(tex)
 
   # Make sure nothing gets sent back with a raw < or > in it. But don't mung the <sup> and <sub> tags that I myself generated.
   m.gsub!(/<(?!\/?(sup|sub)>)/,'&lt;')
-  # ruby bug makes this give errors:
+  # The following gives an error because of a limitation in ruby's regex engine:
   #m.gsub!(/(?<!<\/?(sup|sub))>/,'&gt;') # causes error
-  # workaround for ruby bug:
+  # See http://stackoverflow.com/questions/3479131/problem-with-quantifiers-and-look-behind . (The same regex *does* work in perl 5.10.1, but
+  # others fail, e.g., /(?<=\w*)o/.
+  # workaround:
   m.gsub!(/(?<!su[pb])>/,'&gt;')
 
   if debug then $stderr.print "===================in handle_math_one_desperate_fallback, old=#{old}, output=#{m}\n" end
@@ -1819,16 +2031,14 @@ def parse(t,level,current_section)
         whazzat = find_figure(name,width) # has the side-effect of copying or converting it if necessary
         if caption=~/\A\s*\Z/ then c='' else 
           pc=parse_para(caption)
-          if pc=~/<math/ then h="HIDE_MATHML_IN_CAPTIONS_"+hash_function(pc)+"_HERE"; $hide_mathml_in_captions[h]=pc.clone; pc=h end
+          if pc=~/<math/ then pc=hide(pc,'mathml_in_captions') end
           c="<p class=\"caption\">#{l}#{pc}</p>#{end_of_caption_marker}"  
         end
         a = ($config['forbid_anchors_and_links']==0 ? "<a #{$anchor}=\"fig:#{name}\"></a>" : '')
         i = "<img src=\"figs/#{whazzat}\" alt=\"#{name}\"#{$self_closing_tag}>#{a}"
         if name=='zzzfake' then i='' end
         y="<!--BEGIN_IMG--><p>"+i+"</p>"+c+"<!--END_IMG-->"
-        h = "HIDE_FIG_"+hash_function(y)+"_HERE"
-        $hide_figs[h] = y
-        "\n\n#{h}\n\n"
+        "\n\n#{hide(y,'fig')}\n\n"
       }
       if inline then
         non_marg_stuff = non_marg_stuff + x
@@ -1910,7 +2120,7 @@ def parse(t,level,current_section)
     current_section.pop
     secnum += 1
   }
-  result.each { |s| 0.upto(1) { |i| $hide_mathml_in_captions.each { |k,v| unless s[i].nil? then s[i].gsub!(/#{k}/,v) end  } } } # this gets checked for again at end
+  result.each { |s| 0.upto(1) { |i| $hide['mathml_in_captions'].each { |k,v| unless s[i].nil? then s[i].gsub!(/#{k}/,v) end  } } } # this gets checked for again at end
   #------------------------------------------------------------------------------------------------------------------------------------
   curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
   if level==$config['spew_figs_at_level'] then
@@ -1931,179 +2141,10 @@ def newlines_to_spaces(s)
   return x
 end
 
-#===============================================================================================================================
-#===============================================================================================================================
-#===============================================================================================================================
-#                                                main
-#===============================================================================================================================
-#===============================================================================================================================
-#===============================================================================================================================
-
-
-
-
-# Code similar to this is duplicated in eruby_util.rb.
-refs_file = 'save.ref'
-unless File.exist?(refs_file) then
-  $stderr.print "File #{refs_file} doesn't exist. Do a 'make book' to create it."
-  exit(-1)
-end
-File.open(refs_file,'r') do |f|
-  # lines look like this:
-  #    fig:entropygraphb,h,255
-  t = f.gets(nil) # nil means read whole file
-  t.scan(/(.*),(.*),(.*)/) { |label,number,page|
-    $ref[label] = [number,page.to_i]
-  }
-end
-
-
-
-
-if $test_mode then
-  $stderr.print "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< test mode >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
-end
-
-$ch = ENV['CHAPTER']
-$want_chapter_toc = !$wiki && $config['standalone']==0
-
-tex = $stdin.gets(nil) # nil means read whole file
-
-# Convert summary and hwsection environments into sections, which is what they really are, anyway.
-['summary','hwsection'].each { |s|
-  a = {'summary'=>'Summary','hwsection'=>'Homework Problems'}[s]
-  begin
-    tex.gsub!(/\\begin{#{s}}((.|\n)*)\\end{#{s}}/) {"\\mysection{*#{a}}#{$1}"} # The * warns later code not to produce a section number in the header.
-  rescue ArgumentError
-    $stderr.print "Illegal character in input. This typically happens with things like octal 322 for curly quotes. Can troubleshoot by running it through clean_up_text and then doing a diff.\n"
-    raise
-  end
-}
-
-
-tex.gsub!(/mysubsectionnotoc/) {"mysubsection"}
-tex.gsub!(/(myoptionalsection)(\[\d\])?{/) {"mysection{?"} # ? marks it as optional
-tex.gsub!(/(myoptionalcalcsection)(\[\d\])?{/) {"mysection{@"} # @ marks it as calc-based, optional
-tex.gsub!(/(mycalcsection)(\[\d\])?{/) {"mysection{@"} # @ marks it as calc-based, optional
-
-curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
-
-# remove comments and indexing (indexing is evil when it occurs inside sectioning, messes everything up)
-# First, preserve percent signs inside listing and verbatim environments:
-r = {}
-s = {}
-envs = ['listing','verbatim']
-envs.each { |x|
-  pat = x
-  s[x] = "\\\\(?:begin|end){#{pat}}"
-  z = s[x].clone  # workaround for bug in the ruby interpreter, which causes the first 8 bytes of the regex string to be overwritten with garbage
-  r[x] = Regexp.new(z)
-}  
-envs.each { |x|
-  result = ''
-  inside = false # even if the environment starts at the beginning of the string, split() gives us a null string as our first string
-  tex.split(r[x]).each { |d|
-    if !(d=~/\A\s*\Z/) then
-      if inside then
-        d.gsub!(/%/,'KEEP_PERCENT')
-        d = "\\begin{#{x}}" + d + "\\end{#{x}}"
-      end
-      result = result + d
-    end
-    inside = !inside
-  } # end loop over d
-  tex = result
-} # end loop over x
-# Now, finally, get rid of comments:
-tex.gsub!(/\\index{#{curly}}/,'')
-tex.gsub!(/(?<!\\)%[^\n]*(\n?[ \t]*)?/,'')
-
-# remove whitespace from lines consisting of nothing but whitespace
-
-tex.gsub!(/^[ \t]+$/,'')
-
-# kludge, fix:
-tex.gsub!(/myoptionalsection/,'mysection')
-
-# minipages inside figures aren't necessary in html, and confuse the parser
-tex.gsub!(/\\begin{minipage}\[[a-z]\]{\d+[a-z]*}/,'')
-tex.gsub!(/\\end{minipage}/,'')
-# ... and, e.g., make it do something sensible with non-graphical figures, as in EM 1
-tex.gsub!(/\\docaption{(#{curly})}/) {"ZZZWEB:fig,zzzfake,narrow,1,#{newlines_to_spaces($1)}END_CAPTION"} # name,width,anon,caption
-
-# split into sections for easier handling
-
-result = ''
-parse(tex,1,[]).each {|s|
-  t,m = s[0],s[1]
-  m = '<div class="margin">' + parse_para(m) + '</div>'  unless m=~/\A\s*\Z/
-  # FIXME: The following is meant to get the divs *after* the <h2> for a section, so that the css "clear" mechanism works properly.
-  # This should really be handled by making parse return an array of triplets, (h,t,m), rather than (t,m).
-  h = ''
-  1.upto(2) { |i|
-    if t =~ /^(\s*<h#{i}>(?:<a #{$anchor}=[^>]+><\/a>)?(?:[^<>]+)<\/h#{i}>)((.|\n)*)/ then
-      h,t=$1,$2
-    end
-  }
-  result = result + h + m + t # m has to come first, because that causes it to be positioned as close as possible to the top of the section
-}
-tex = result
-
-
-tex.gsub!(/ {2,}/,' ') # multiple spaces
-tex.gsub!(/<p>\s*<\/p>/,'') # peepholer to get rid of <p></p> pairs
-tex.gsub!(/\n{3,}/,"\n\n") # 3 or more newlines in a row
-tex.gsub!(/\\&/,"&amp;")
-tex.gsub!(/&(?![a-zA-Z0-9#]+;)/,"&amp;")
-tex.gsub!(/<\/h1>\n*<\/p>/,"</h1>") # happens in NP, which has part I, II, ...; see above in handling for mypart
-tex.gsub!(/<td>([^<>]+)<\/t>/) {"<td>#{$1}<\/td>"}; # bug in htlatex?
-tex.gsub!(/<!-- ZZZ_TWO_NEWLINES -->/,"\n\n")
-
-tex.gsub!(/#{$begin_div_not_p}(<div class="equation">([^\n])+)#{$end_div_not_p}\n/) {"</p>#{$1}<p>"}
-tex.gsub!(/#{$begin_div_not_p}/,'')
-tex.gsub!(/#{$end_div_not_p}/,'')
-
-# for human-readability, keep lines from getting too long:
-tex.gsub!(/(?<!\n)(<div)/) {"\n#{$1}"}
-tex.gsub!(/\n{0,1}(<p[^ ])/) {"\n\n#{$1}"}
-tex.gsub!(/(<\/p>)\n{0,1}/) {"#{$1}\n\n"}
-
-1.upto(10) { |i| # Allow for nesting 10 deep.
-  tex.gsub!(/(HIDE_ENV_[0-9a-f]+_HERE)/) {$hide_envs[$1]}
-  tex.gsub!(/(HIDE_FIG_[0-9a-f]+_HERE)/) {$hide_figs[$1]}
-  tex.gsub!(/(HIDE_MATHML_IN_CAPTIONS_[0-9a-f]+_HERE)/) {$hide_mathml_in_captions[$1]}
-}
-tex.gsub!(/<p><!--BEGIN_IMG-->/) {''}
-tex.gsub!(/<!--END_IMG--><\/p>/) {''}
-tex.gsub!(/<p>\s*(<div\s+class="[^"]*"\s*>)/) {$1}
-tex.gsub!(/(<\/div>)\s*<\/p>/) {$1}
-tex.gsub!(/(Example \d+): ZZZ_NO_EG_TITLE/) {$1}
-
-tex.gsub!(/KEEP_INDENTATION_(\d+)_SPACES/) {replicate_string(' ',$1.to_i)}
-tex.gsub!(/<!-- ZZZ_END_OF_CAPTION -->/,"")
-
-
-# ultra-kludge: depend on the formatting of the code at this point to let us to a final cleanup of a small number of cases where the $begin_div_not_p kludge didn't work:
-if $no_displayed_math_inside_paras then
-  paras = []
-  tex.split(/\n{2,}/).each { |para|
-    if para=~/\A<p/ && para=~/<\/p>\Z/ then
-      old = para.clone()
-      para.gsub!(/^(<div)(.*)(<\/div>)$/) {"</p>\n\n#{$1}#{$2}#{$3}<!-- I will come to your emotional rescue. -->\n\n<p>"}
-      #if old!=para then $stderr.print "******** changed from:\n#{old}\n******** to:\n#{para}\n********\n" end
-    end
-    paras.push(para)
-  }
-  tex = paras.join("\n\n")
-end
-
-if $wiki then
-  tex.gsub!(/PROTECT_TEX_MATH_FOR_MEDIAWIKI(.*)ZZZ/) {$protect_tex_math_for_mediawiki[$1]}
-  $tex_math_not_in_mediawiki.each { |k,v|
-    tex.gsub!(/\\#{k}/) {v}
-  }
-end
-
+#------------------------------------------------------------------------------------------------------------------------------------
+#      print_head()
+#------------------------------------------------------------------------------------------------------------------------------------
+def print_head()
 if $modern && !$html5 && !$wiki then
   if $config['forbid_mathml']==1 then
     doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
@@ -2190,7 +2231,7 @@ BANNER
 end
 
 if $config['standalone']==0 then
-print "<table style=\"width:#{$ad_width_pixels}px;\"><tr><td>" + $disclaimer_html + "</td></tr></table>\n"
+print "<table style=\"width:#{$ad_width_pixels}px;\"><tr><td>" + boilerplate('disclaimer_html',$format) + "</td></tr></table>\n"
   # ... people are probably more likely to read ad if it looks same width as this block of text, looks like part of page
 end
 
@@ -2205,28 +2246,14 @@ end # if wiki
 if $test_mode then
   $stderr.print "***************** not putting an ad in #{$config['book']}, ch. #{$ch}, for testing purposes\n"
 else
-  if $config['standalone']==0 then print $google_ad_html + "\n" end
+  if $config['standalone']==0 then print boilerplate('google_ad_html',$format) + "\n" end
 end
 
 if $want_chapter_toc then print $chapter_toc + "</div>" end
-
-tex.gsub!(/\\\$/,'$') # Do this here to avoid confusion with $...$ for math.
-
-if $wiki then
-  ['p','a','div'].each { |x|
-    tex.gsub!(/<#{x}(\s+[^>]*)?>/,'')
-    tex.gsub!(/<\/#{x}>/,'')
-  }
-  #tex.gsub!(/<img src="(figs|math)\/([^"]*)"([^>]*)>/) {"[http://www.lightandmatter.com/html_books/#{$config['book']}/ch#{$ch}/#{$1}/#{$2} figure #{$2} needs to be imported]"}
-  tex.gsub!(/<img src="(figs|math)\/([^"]*)"([^>]*)>/) {"{{Missing_fig|book=#{$config['book']}|ch=#{$ch}|file=#{$2}}} - "}
-  tex.gsub!(/(\n+)\s+/) {$1}
-  tex.gsub!(/<br>\n?{2,}\s+/,"<br>\n")
 end
 
-if !$wiki then print "<div class=\"container\">\n" end
-print tex
-if !$wiki then print "</div>\n" end
-
+#------------------------------------------------------------------------------------------------------------------------------------
+def warn_about_macros_not_handled(tex)
 macros_not_handled = {}
 # Look for macros that weren't handled.
 # We do get raw tex in alt tags and html comments, and that's ok.
@@ -2252,7 +2279,9 @@ chipmunk.scan(/(\\\w+({[^}]*})?)/) {
   if !math_ok then macros_not_handled[whole]=1 end
 }
 unless macros_not_handled.keys.empty? then $stderr.print "Warning: the following macros were not handled in this chapter: "+macros_not_handled.keys.join(' ')+"\n" end
-
+end
+#------------------------------------------------------------------------------------------------------------------------------------
+def print_footnotes_and_append_to_index(tex)
 if $footnote_ctr>0 then
   print <<-FOOTNOTES
     <h5>Footnotes</h5>
@@ -2278,24 +2307,53 @@ if !$wiki then print "</body></html>\n" end
 #   reasons: (1) it's not necessary, and (2) there's a bug that causes the TOC to get output multiple
 #   times if we're doing wiki output.
 #---------
-if ! $wiki && ! $no_write then
-File.open("#{$config['html_dir']}/index.html",'a') do |f|
-  kludge = $ch
-  and_more_kludge = $chapter_title
-  oh_my_god_another_kludge = $ch.to_i.to_s + '.'
-  if $ch=='00' && $config['book']=='1np' then
-    if tex=~/We Americans/ then
-      kludge = '001'
-      and_more_kludge = 'Preface'
-      oh_my_god_another_kludge = ''
-    else
-      kludge = '002'
-      and_more_kludge = 'Introduction and Review'
-      oh_my_god_another_kludge = '0'
-    end
+  if ! $wiki && ! $no_write then
+    File.open("#{$config['html_dir']}/index.html",'a') { |f|
+      ext = ".html" # ------->!!!! Link to .html, even if we're generating a file that will be called .xhtml. Mod_rewrite will redirect them if it's appropriate.
+      if $config['standalone']==1 && $config['html_file_extension']=~/\w/ then ext=$config['html_file_extension'] end
+      f.print "<p><a href=\"ch#{$ch}/ch#{$ch}#{ext}\">#{$ch.to_i.to_s + '.'} #{$chapter_title}</a></p>\n"
+    }
   end
-  ext = ".html" # ------->!!!! Link to .html, even if we're generating a file that will be called .xhtml. Mod_rewrite will redirect them if it's appropriate.
-  if $config['standalone']==1 && $config['html_file_extension']=~/\w/ then ext=$config['html_file_extension'] end
-  f.print "<p><a href=\"ch#{$ch}/ch#{kludge}#{ext}\">#{oh_my_god_another_kludge} #{and_more_kludge}</a></p>\n"
+end
+#------------------------------------------------------------------------------------------------------------------------------------
+def get_refs()
+# Code similar to this is duplicated in eruby_util.rb.
+refs_file = 'save.ref'
+unless File.exist?(refs_file) then
+  $stderr.print "File #{refs_file} doesn't exist. Do a 'make book' to create it."
+  exit(-1)
+end
+File.open(refs_file,'r') do |f|
+  # lines look like this:
+  #    fig:entropygraphb,h,255
+  t = f.gets(nil) # nil means read whole file
+  t.scan(/(.*),(.*),(.*)/) { |label,number,page|
+    $ref[label] = [number,page.to_i]
+  }
 end
 end
+#===============================================================================================================================
+#===============================================================================================================================
+#===============================================================================================================================
+#                                                main
+#===============================================================================================================================
+#===============================================================================================================================
+#===============================================================================================================================
+
+$ch = ENV['CHAPTER']
+
+if $test_mode then  $stderr.print "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< test mode >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n" end
+
+get_refs()
+
+tex = $stdin.gets(nil) # nil means read whole file
+
+tex = preprocess(tex)
+tex = process(tex) # has the side-effect of creating $chapter_toc
+tex = postprocess(tex)
+
+print_head() # uses $chapter_toc
+print tex
+print_footnotes_and_append_to_index(tex) # has the side-effect of writing to index.html
+
+warn_about_macros_not_handled(tex)
