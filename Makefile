@@ -33,6 +33,7 @@ book1:
 	@make preflight
 	@scripts/translate_to_html.rb --write_config_and_exit
 	@$(DO_PDFLATEX)
+	@scripts/translate_to_html.rb --util="learn_commands:$(BOOK).cmd"
 	@scripts/harvest_aux_files.rb
 	@rm -f $(TERMINAL_OUTPUT) # If pdflatex has a nonzero exit code, we don't get here, so the output file is available for inspection.
 
@@ -44,6 +45,7 @@ book:
 	@scripts/translate_to_html.rb --write_config_and_exit
 	make clean
 	@$(DO_PDFLATEX)
+	@scripts/translate_to_html.rb --util="learn_commands:$(BOOK).cmd"
 	@scripts/harvest_aux_files.rb
 	@$(DO_PDFLATEX)
 	@scripts/harvest_aux_files.rb
@@ -109,6 +111,7 @@ epubcheck:
 very_clean: clean
 	rm -f calc.pdf calc_lulu.pdf
 	rm -Rf calc_handheld
+	rm -f learned_commands.json
 
 clean:
 	# Sometimes we get into a state where LaTeX is unhappy, and erasing these cures it:
@@ -129,7 +132,7 @@ clean:
 	rm -f junk
 	rm -f err
 	rm -f calc_lulu.pdf calc.pdf *.epub *.mobi *.azw
-	rm -f temp.pdf ch*/ch*temp.temp temp.config
+	rm -f temp.pdf ch*/ch*temp.temp temp.config $(BOOK).cmd
 
 post:
 	cp calc.pdf $(WEB_DIR)

@@ -245,6 +245,7 @@ config_files.each {|config_file|
     File.open(config_file,'r') { |f|
       j = f.gets(nil) # nil means read whole file
       c = JSON.parse(j)
+      if c.has_key?('Error') then fatal_error("the JSON file #{config_file} has invalid syntax") end
       c.keys.each { |k|
         value = c[k]
         if k=~/_dir\Z/ then value.gsub!(/~/,ENV['HOME']) end
@@ -277,14 +278,57 @@ if $write_config_and_exit then exit(0) end
 #--------------------------------------------------------------------------------
 
 if $util=~/[a-z]/ then
+  handled = false
   if $util=='ebook_title_footer' then
+    handled = true
     today = Date.today()
     print <<-FOOTER;
       <p>(c) #{today.year} Benjamin Crowell, <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC-BY-SA</a> license.
       File generated #{today.year}-#{today.mon}-#{today.mday}.</p>
     FOOTER
   end
+  if $util=~/learn_commands:(.*)/ then
+    # learn-cmd-syntax.sty writes mybook.cmd, which contains data about the names and number of arguments of the commands defined in the .cls file.
+    # Read this file and convert it into a json file.
+    handled = true
+    infile = $1
+    unless File.exist?(infile) then fatal_error("in learn_commands: input file #{infile} does not exist") end
+    results = {'command'=>[],'environment'=>[]}
+    File.open(infile,'r') { |f|
+      csv = f.gets(nil) # nil means read whole file
+      csv.split(/\n/).each { |line|
+        $stderr.print "====== line=#{line}\n"
+        # command,\currenthwlabel ,0,0,
+        # environment,hw,0,1,1
+        if line=~/\A(command|environment),([^,]*),([^,]*),([^,]*),([^,]*)\Z/ then
+          type,name,n_req,n_opt,default = [$1,$2,$3.to_i,$4.to_i,$5]
+          name.gsub!(/\s/,'')
+          name.gsub!(/\\/,'\\\\\\\\')
+          dd = ''
+          if n_opt>0 then dd = ",\"default\":\"#{default}\"" end
+          results[type].push("    \"#{name}\":{\"n_req\":#{n_req},\"n_opt\":#{n_opt}#{dd}}")
+        else
+          unless line=~/\A\s*\Z/ then fatal_error("in learn_commands: syntax error in this line of #{infile}: #{line}") end
+        end
+      }
+      s = {'command'=>'','environment'=>''}
+      results.each_key { |type|
+        s[type] = "  \"#{type}\":{\n"+results[type].join(",\n")+"\n  }\n"
+      }
+      s = "{\n"+s.values.join(",\n")+"\n}\n"
+      outfile = "learned_commands"
+      File.open(outfile,'w') { |f|
+        f.print s
+      }
+      begin
+        JSON.parse(s)
+      rescue JSON::ParserError
+        fatal_error("in learn_commands: the JSON I generated in file #{outfile} has invalid syntax")
+      end
+    }
+  end
   if $util=~/patch_epub3:(.*)/ then
+    handled = true
     infile = $1
     unless File.exist?(infile) then fatal_error("in patch_epub3: input file #{infile} does not exist") end
     Dir.mktmpdir { |tmpdir|
@@ -368,6 +412,7 @@ if $util=~/[a-z]/ then
       File.rename("#{tmpdir}/#{infile}","#{old_dir}/#{infile}")
     }
   end
+  if !handled then fatal_error("illegal util command: #{$util}") end
   exit(0)
 end
 
@@ -1854,6 +1899,7 @@ def find_topic(ch,book,own)
     File.open(json_file,'r') { |f| json_data = f.gets(nil) }
     if json_data == '' then $stderr.print "Error reading file #{json_file} in translate_to_html.rb"; exit(-1) end
     $topic_map = JSON.parse(json_data)
+    if $topic_map.has_key?('Error') then fatal_error("file #{json_file} has invalid JSON syntax") end
     $read_topic_map = true
   end
 
