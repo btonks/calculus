@@ -1284,8 +1284,6 @@ infinitesimals.
                                          &= 1 \qquad .
 \end{align*}
 
-\pagebreak
-
 We can check our work using Inf:
 \begin{Code}
   \ii : (sin d)/d
@@ -1352,7 +1350,7 @@ In the following example, we have to use L'H\^{o}pital's rule twice before we ge
   \lim_{x\rightarrow \pi} \frac{1+\cos x}{(x-\pi)^2}
 \end{equation*}
 
-\eganswer Applying  L'H\^{o}pital's rule gives
+\eganswer Applying  l'H\^{o}pital's rule gives
 \begin{equation*}
   \frac{-\sin x}{2(x-\pi)} \qquad ,
 \end{equation*}
@@ -1360,6 +1358,26 @@ which still produces $0/0$ when we plug in $x=\pi$. Going again, we get
 \begin{equation*}
   \frac{-\cos x}{2} = \frac{1}{2} \qquad .
 \end{equation*}
+\end{eg}
+
+L'H\^{o}pital's rule
+also works when the numerator and denominator both blow up to infinity at a particular point.
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{1+1/x}{1+2/x} \qquad .
+\end{equation*}
+
+\eganswer Both the numerator and the denominator go to infinity. Differentiation of the top
+and bottom gives $(-x^{-2})/(-2x^{-2})\rightarrow 1/2$. We can see that the reason the rule
+worked was that (1) the constant terms were irrelevant because they become negligible as
+the $1/x$ terms blow up; and (2) differentiating the blowing-up $1/x$ terms makes them into
+the same $x^{-2}$ on top and bottom, which cancel.
+
+Note that we could also have gotten this result without l'H\^{o}pital's rule, simply by
+multiplying both the top and the bottom of the original expression by $x$ in order to rewrite it
+as $(x+1)/(x+2)$.
 \end{eg}
 
 \subsection{Another perspective on indeterminate forms}
@@ -1739,6 +1757,40 @@ Verify the following limits.
 \end{align*}
 \granville
 \end{hw}
+
+\begin{hwwithsoln}{lhospital-cos-exp}
+Evaluate 
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{x\cos x}{1-2^x}
+\end{equation*}
+exactly, and check your result by numerical approximation.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{lhospital-applied-incorrectly}
+Amy is asked to evaluate
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{e^x}{x} \qquad .
+\end{equation*}
+She applies l'H\^{o}pital's rule, differentiating top and bottom to find
+$1/e^x$, which equals 1 when she plugs in $x=0$. What is wrong with her reasoning?
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{lhospital-twice}
+Evaluate 
+\begin{equation*}
+  \lim_{u\rightarrow 0} \frac{u^2}{e^u+e^{-u}-2}
+\end{equation*}
+exactly, and check your result by numerical approximation.
+\end{hwwithsoln}
+
+\begin{hwwithsoln}{lhospital-not-at-zero}
+Evaluate 
+\begin{equation*}
+  \lim_{t\rightarrow \pi} \frac{\sin t}{t-\pi}
+\end{equation*}
+exactly, and check your result by numerical approximation.
+\end{hwwithsoln}
+
 
 \begin{hw}
 Prove that the linear function $y=ax+b$ is continuous, first using the definition of

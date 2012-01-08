@@ -549,6 +549,32 @@ is then at most $\epsilon/2+\epsilon/2$, which completes the proof.
 differs at most infinitesimally from $F$, and likewise for $g$ and $G$. This means that $f+g$ differs from $F+G$ by the sum of two infinitesimals,
 which is itself an infinitesimal, and therefore the standard part of $f+g$ evaluated at $x+\der x$ equals $F+G$, satisfying the definition.
 
+\hwsolnhdr{lhospital-cos-exp}
+
+Both numerator and denominator go to zero, so we can apply l'H\^{o}pital's rule. Differentiating top and bottom gives
+$(\cos x-x\sin x)/(-\ln 2 \cdot 2^x)$, which equals $-1/ln 2$ at $x=0$. To check this numerically, we plug 
+$x=10^{-3}$ into the original expression. The result is $-1.44219$, which is very close to $-1/ln 2=-1.44269\ldots$.
+
+\hwsolnhdr{lhospital-applied-incorrectly}
+
+L'H\^{o}pital's rule only works when both the numerator and the denominator go to zero.
+
+\hwsolnhdr{lhospital-twice}
+Applying l'H\^{o}pital's rule once gives
+\begin{equation*}
+  \lim_{u\rightarrow 0} \frac{2u}{e^u-e^{-u}} \qquad ,
+\end{equation*}
+which is still an indeterminate form. Applying the rule a second time, we get
+\begin{equation*}
+  \lim_{u\rightarrow 0} \frac{2}{e^u+e^{-u}} = 1 \qquad .
+\end{equation*}
+As a numerical check, plugging $u=0.01$ into the original expression results
+in $0.9999917$.
+
+\hwsolnhdr{lhospital-not-at-zero}
+L'H\^{o}pital's rule gives $\cos t/1\rightarrow -1$. Plugging in $t=3.1$
+gives -0.9997.
+
 \hwsolnhdr{nines-forever}
 
 The normal definition of a repeating decimal such as $0.999\ldots$ is that it is the \emph{limit} of the sequence
