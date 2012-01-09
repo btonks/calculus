@@ -158,6 +158,9 @@
 require "digest/md5"
 require "date"
 require "tmpdir"
+require 'json'
+require 'getoptlong' # pickaxe book, p. 452
+
 
 def fatal_error(message)
   $stderr.print "error in translate_to_html.rb: #{message}\n"
@@ -172,9 +175,17 @@ def file_contains(file,regexp)
   return nil
 end
 
-require 'json'
-
-require 'getoptlong' # pickaxe book, p. 452
+def get_json_from_file(file)
+  File.open(file,'r') { |f|
+    x = f.gets(nil) # nil means read whole file
+    begin
+      return JSON.parse(x)
+    rescue JSON::ParserError
+      fatal_error("invalid JSON syntax in file #{file}")
+    end
+  }
+  fatal_error("couldn't read JSON file #{file}")
+end
 
 opts = GetoptLong.new(
   [ "--modern",                GetoptLong::NO_ARGUMENT ],
@@ -244,8 +255,11 @@ config_files.each {|config_file|
   else
     File.open(config_file,'r') { |f|
       j = f.gets(nil) # nil means read whole file
-      c = JSON.parse(j)
-      if c.has_key?('Error') then fatal_error("the JSON file #{config_file} has invalid syntax") end
+      begin
+        c = JSON.parse(j)
+      rescue JSON::ParserError
+        fatal_error("the JSON file #{config_file} has invalid syntax") 
+      end
       c.keys.each { |k|
         value = c[k]
         if k=~/_dir\Z/ then value.gsub!(/~/,ENV['HOME']) end
@@ -297,7 +311,6 @@ if $util=~/[a-z]/ then
     File.open(infile,'r') { |f|
       csv = f.gets(nil) # nil means read whole file
       csv.split(/\n/).each { |line|
-        $stderr.print "====== line=#{line}\n"
         # command,\currenthwlabel ,0,0,
         # environment,hw,0,1,1
         if line=~/\A(command|environment),([^,]*),([^,]*),([^,]*),([^,]*)\Z/ then
@@ -306,9 +319,10 @@ if $util=~/[a-z]/ then
           name.gsub!(/\\/,'\\\\\\\\')
           dd = ''
           if n_opt>0 then dd = ",\"default\":\"#{default}\"" end
-          results[type].push("    \"#{name}\":{\"n_req\":#{n_req},\"n_opt\":#{n_opt}#{dd}}")
+          ignore = name=~/"/ || name=~/\\.*\\/ || name=~/\?/ # commands that are probably internal to some package, or that are likely to cause an error
+          results[type].push("    \"#{name}\":{\"n_req\":#{n_req},\"n_opt\":#{n_opt}#{dd}}") unless ignore
         else
-          unless line=~/\A\s*\Z/ then fatal_error("in learn_commands: syntax error in this line of #{infile}: #{line}") end
+          unless line=~/\A\s*\Z/ || line=="command,\\,,0,0," then fatal_error("in learn_commands: syntax error in this line of #{infile}: #{line}") end
         end
       }
       s = {'command'=>'','environment'=>''}
@@ -316,7 +330,7 @@ if $util=~/[a-z]/ then
         s[type] = "  \"#{type}\":{\n"+results[type].join(",\n")+"\n  }\n"
       }
       s = "{\n"+s.values.join(",\n")+"\n}\n"
-      outfile = "learned_commands"
+      outfile = "learned_commands.json"
       File.open(outfile,'w') { |f|
         f.print s
       }
@@ -681,9 +695,9 @@ def preprocess(tex)
   return tex
 end
 
-def process(tex)
+def process(tex,environment_data)
   result = ''
-  parse(tex,1,[]).each {|s|
+  parse(tex,1,[],environment_data).each {|s|
     t,m = s[0],s[1]
     m = '<div class="margin">' + parse_para(m) + '</div>'  unless m=~/\A\s*\Z/
     # FIXME: The following is meant to get the divs *after* the <h2> for a section, so that the css "clear" mechanism works properly.
@@ -880,24 +894,58 @@ def parse_macros_outside_para!(tex)
   tex.gsub!(/\\selfcheck{[^}]*}{(#{curly})}/) {"\\begin{selfcheck}#{$1}\\end{selfcheck}"} # kludge for SN, which doesn't have them as environments; fails if nested {} inside $1
 end
 
-def parse_section(tex)
+def get_environment_data
+  # Read command and environment data from learned_commands.json and custom.json.
+  # Returns [envs,env_data], where
+  #   envs = array containing names of environments that we actually intend to try to parse (only those in custom.json)
+  #   env_data = a hash containing info about each of those environments (plus data about other environments that we don't intend to try to parse)
+  # The only environments we actually try to parse are those in custom.json.
+  # In learned_commands.json, inferred from .cls file:
+  #   n_req = # of required args
+  #   n_opt = # of optional args (0 or 1)
+  #   default = default value for optional arg
+  # In custom.json:
+  #   use_arg_as_title : true, or number of arg to use, or nil if we don't want to use an arg as the title
+  #   generate_header : e.g., [2,'Summary'] -- level of <hN> tag, text of header
+  #   used only for environments that are going to become divs:
+  #     stick_in : string that goes right before the text
+  #     stick_at_end : goes right after text
+  #     stick_in_front_of_header
+  #   used only for environments that are not going to become divs:
+  #     surround_with_tag : e.g., 'ol' means surround it with <ol>...</ol>; must be present for anything that will not be a div
+  learned = get_json_from_file("learned_commands.json")['environment'] # {"eg":{"n_req":0,"n_opt":1,"default":""},...}
+  custom =  get_json_from_file("custom.json")['environment']           # {"eg":{"use_arg_as_title":true,...},...}
+  env_data = {}
+  learned.merge(custom).keys.each { |e|
+    if learned.has_key?(e) && custom.has_key?(e) then
+      env_data[e] = learned[e].merge(custom[e])
+    else
+      env_data[e] = learned[e] if learned.has_key?(e)
+      env_data[e] = custom[e] if custom.has_key?(e)
+    end
+  }
+  return [custom.keys,env_data]
+end
+
+def parse_section(tex,environment_data)
+  envs,env_data = environment_data
   parse_macros_outside_para!(tex)
   curly = "(?:(?:{[^{}]*}|[^{}]*)*)" # match anything, as long as any curly braces in it are paired properly, and not nested
 
-  # <ol>, <ul>, and <pre> can't occur inside paragraphs, so make sure they're separated into their own paragraphs:
-  ['itemize','enumerate','listing','tabular','verbatim'].each { |x|
+  # <ol>, <ul>, and <pre> can't occur inside paragraphs, so make sure they're separated into their own paragraphs.
+  # These are the environments that have a surround_with_tag (['itemize','enumerate','listing','tabular','verbatim'), plus tabular.
+  envs.select { |x| env_data[x].has_key?('surround_with_tag') }.push('tabular').each { |x|
     tex.gsub!(/(\\begin{#{x}})/) {"\n\n#{$1}"}
     tex.gsub!(/(\\end{#{x}})/) {"#{$1}\n\n"}
   }
 
   # Optional arguments are confusing, so replace them with {} that are always there.
-  envs = ['important','lessimportant']
+  envs_opt = envs.select{ |x| env_data[x].has_key?('n_opt') && env_data[x]['n_opt']>0} 
   r = {}
-  envs.each { |x|
-    r[x] = /\\(?:begin|end){#{x}}/
+  envs_opt.each { |x|
+    r[x] = /\\(?:begin|end){#{Regexp::quote(x)}}/ # workaround for ruby bug
   }  
-  debug = tex=~/The product  rule/
-  envs.each { |x|
+  envs_opt.each { |x|
     result = ''
     inside = false # even if the environment starts at the beginning of the string, split() gives us a null string as our first string
     tex.split(r[x]).each { |d|
@@ -921,33 +969,30 @@ def parse_section(tex)
   tex.gsub!(/\\begin{description}/,'\\begin{itemize}')
   tex.gsub!(/\\end{description}/,'\\end{itemize}')
   hw = 1
+
   # hwsection and summary are actually not needed in the following, since we change them to mysection using regexes early on
   # hwwithsoln is taken care of in prep_web.pl to homework
-  envs = ['homework','eg','optionaltopic','selfcheck','dq','summary','vocab','notation','othernotation','summarytext','hwsection',
-        'enumerate','itemize','important','lessimportant','dialogline',
-        'exploring','reading','egnoheader','listing','verbatim','exsection']
+
   r = {}
   s = {}
   envs.each { |x|
     pat = x
-    s[x] = "\\\\(?:begin|end){#{pat}}"
+    s[x] = "\\\\(?:begin|end){#{Regexp::quote(pat)}}"
     z = s[x].clone  # workaround for bug in the ruby interpreter, which causes the first 8 bytes of the regex string to be overwritten with garbage
     r[x] = Regexp.new(z)
   }  
   envs.each { |x|
-    nargs = {'eg'=>1,'optionaltopic'=>1,'important'=>1,'lessimportant'=>1,'selfcheck'=>1,'homework'=>3,'dialogline'=>1,'reading'=>2,'listing'=>1}[x]
-    use_arg_as_title = {'eg'=>true,'optionaltopic'=>true,'important'=>true,'lessimportant'=>true}[x]
-    generate_header = {'summary'=>[2,'Summary'],'vocab'=>[3,'Vocabulary'],'notation'=>[3,'Notation'],'othernotation'=>[3,'Other Notation'],
-                       'summarytext'=>[3,'Summary'],'hwsection'=>[2,'Homework Problems'],
-                        'exploring'=>[2,'Exploring further']}[x]
-    # The following are used for environments that are going to become divs:
-    stick_in = {'dq'=>'&loz;' , 'selfcheck'=>'<i>self-check:</i>' , 'exsection'=>'<h2>Exercises</h2>'} # goes right before the text
-    stick_at_end = {'selfcheck'=>'(answer in the back of the PDF version of the book)'} # goes right after the text
-    stick_in_front_of_header = {'eg'=>'Example NNNEG: ','optionaltopic'=>'Optional topic: '}
-    # The following are used for environments that are *not* going to become divs:
-    at_top = {'enumerate'=>'<ol>' ,'itemize'=>'<ul>','listing'=>'<pre>','verbatim'=>'<pre>'}
-    at_bottom = {'enumerate'=>'</ol>','itemize'=>'</ul>','listing'=>'</pre>','verbatim'=>'</pre>'}
-    will_not_be_a_div = at_top[x]!=nil
+    nargs = nil
+    if env_data[x].has_key?('n_req') && env_data[x].has_key?('n_opt') then nargs = env_data[x]['n_req']+env_data[x]['n_opt'] end
+    use_arg_as_title = env_data[x].has_key?('use_arg_as_title') ? env_data[x]['use_arg_as_title'] : nil
+    # The following become nil if the key doesn't exist:
+    generate_header = env_data[x]['generate_header']
+    stick_in = env_data[x]['stick_in']
+    stick_at_end = env_data[x]['stick_at_end']
+    stick_in_front_of_header = env_data[x]['stick_in_front_of_header']
+    surround_with_tag = env_data[x]['surround_with_tag']
+
+    will_not_be_a_div = surround_with_tag!=nil
     # Normally we hide what's inside an environment from the parser so it doesn't get confused. Don't do it on ones that won't be divs, because it doesn't work on those:
     no_hiding = will_not_be_a_div
     result = ''
@@ -955,6 +1000,7 @@ def parse_section(tex)
     tex.split(r[x]).each { |d|
       if !(d=~/\A\s*\Z/) then
         if inside then
+          if nargs==nil then fatal_error("environment #{x} is used, but I can't infer how many arguments it takes from learned_commands.json; add data to custom.json") end
           if generate_header!=nil then
             l,h = generate_header[0],generate_header[1]
             if $wiki then
@@ -973,18 +1019,20 @@ def parse_section(tex)
             }
           end
           arg = args[1]
-          #if d=~/Kepler/ then $stderr.print "((((#{d}))))" end
-          if use_arg_as_title and arg!=nil and arg.length>0 then
-            arg = handle_math(arg)
-            front = ''
-            if stick_in_front_of_header[x]!=nil then
-              front=stick_in_front_of_header[x].clone
-              if x=='eg' then $count_eg += 1 ; front.gsub!(/NNNEG/) {$count_eg.to_s} end
-            end
-            if $wiki then
-              d = "=====#{front}#{arg}=====\n#{d}"
-            else
-              d = "<h5 class=\"#{x}\">#{front}#{arg}</h5>\n#{d}"
+          if use_arg_as_title!=nil then
+            if use_arg_as_title==true then title=arg else title=args[use_arg_as_title] end
+            if title!=nil and title.length>0 then
+              title = handle_math(title)
+              front = ''
+              if stick_in_front_of_header!=nil then
+                front=stick_in_front_of_header.clone
+                if x=='eg' then $count_eg += 1 ; front.gsub!(/NNNEG/) {$count_eg.to_s} end
+              end
+              if $wiki then
+                d = "=====#{front}#{title}=====\n#{d}"
+              else
+                d = "<h5 class=\"#{x}\">#{front}#{title}</h5>\n#{d}"
+              end
             end
           end
           if $wiki then
@@ -1001,11 +1049,14 @@ def parse_section(tex)
             if args[3]=='1' then d = d + " &int;" end
           end
           if x=='reading' then top = top + "<b>#{args[1]}</b>, <i>#{args[2]}</i>. " end
-          if stick_in[x]!=nil then top = top + stick_in[x] end
+          if stick_in!=nil then top = top + stick_in end
           if x=='dialogline' then top = top + arg + ': ' end 
-          if at_top[x]!=nil then top=at_top[x]; top.gsub!(/DQCTR/) {$dq_ctr} end
-          if at_bottom[x]!=nil then bottom=at_bottom[x] end
-          if stick_at_end[x]!=nil then bottom = stick_at_end[x]+bottom end
+          if surround_with_tag!=nil then 
+            top="<#{surround_with_tag}>"
+            bottom="</#{surround_with_tag}>"
+            top.gsub!(/DQCTR/) {$dq_ctr} 
+          end
+          if stick_at_end!=nil then bottom = stick_at_end+bottom end
           if x=='listing' or x=='verbatim' then
             d.gsub!(/(<br>|<br\/>|<i>|<\/i>)/,'')
             d.gsub!('<','&lt;')
@@ -1020,7 +1071,7 @@ def parse_section(tex)
             d = d + '</li>' # add closing tag on last item
           end
           unless no_hiding then
-            y = top + parse_section(d) + bottom 
+            y = top + parse_section(d,environment_data) + bottom 
             result = result + "\n\n#{hide(y,'env')}\n\n"
           else
             result = result + top + d + bottom 
@@ -1898,8 +1949,11 @@ def find_topic(ch,book,own)
     json_data = ''
     File.open(json_file,'r') { |f| json_data = f.gets(nil) }
     if json_data == '' then $stderr.print "Error reading file #{json_file} in translate_to_html.rb"; exit(-1) end
-    $topic_map = JSON.parse(json_data)
-    if $topic_map.has_key?('Error') then fatal_error("file #{json_file} has invalid JSON syntax") end
+    begin
+      $topic_map = JSON.parse(json_data)
+    rescue JSON::ParserError
+      fatal_error("file #{json_file} has invalid JSON syntax")
+    end
     $read_topic_map = true
   end
 
@@ -2048,7 +2102,7 @@ end
 
 # returns an array consisting of text column and margin column blocks, [[t1,m1],[t2,m2],...]
 # m1, m2, ... will be null strings if the book has no marg() figures (as with Calculus), or if all_figs_inline is set
-def parse(t,level,current_section)
+def parse(t,level,current_section,environment_data)
   tex = t.clone
 
   tex.gsub!(/\\der ([A-Za-z])/) {"d#{$1}"} # otherwise we get "d x"
@@ -2058,7 +2112,7 @@ def parse(t,level,current_section)
   tex.gsub!(/(\\begin{(enumerate|itemize)})/) {"\n"+$1}
   if level<=$config['restart_figs_at_level']+1 then $fig_ctr = 0 end
   #------------------------------------------------------------------------------------------------------------------------------------
-  if level>$config['highest_section_level'] then return [ [parse_section(tex),''] ] end
+  if level>$config['highest_section_level'] then return [ [parse_section(tex,environment_data),''] ] end
   #------------------------------------------------------------------------------------------------------------------------------------
   marg_stuff = ''
   end_of_caption_marker = "<!-- ZZZ_END_OF_CAPTION -->"
@@ -2161,7 +2215,7 @@ def parse(t,level,current_section)
     section.gsub!(/(\\end{(important|lessimportant)})\n*/) {"#{$1}\n\n"}
 
     if !(section=~/\A\s*\Z/) then
-      result.concat(parse(section,level+1,current_section))
+      result.concat(parse(section,level+1,current_section,environment_data))
     end
     current_section.pop
     secnum += 1
@@ -2395,7 +2449,7 @@ get_refs()
 tex = $stdin.gets(nil) # nil means read whole file
 
 tex = preprocess(tex)
-tex = process(tex) # has the side-effect of creating $chapter_toc
+tex = process(tex,get_environment_data()) # has the side-effect of creating $chapter_toc
 tex = postprocess(tex)
 
 print_head() # uses $chapter_toc

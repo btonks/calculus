@@ -1,0 +1,29 @@
+{
+  "command":{
+  },
+  "environment":{
+    "dialogline":{},
+    "dq":{"stick_in":"&loz;"},
+    "eg":{"use_arg_as_title":true,"stick_in_front_of_header":"Example NNNEG: ","optionaltopic":"Optional topic: ","n_req":1,"n_opt":0},
+    "egnoheader":{},
+    "enumerate":{"surround_with_tag":"ol"},
+    "exploring":{"generate_header":[2,"Exploring further"]},
+    "exsection":{"stick_in":"<h2>Exercises</h2>"},
+    "homework":{"n_req":3,"n_opt":0},
+    "hw":{"n_req":3,"n_opt":0},
+    "hwsection":{"generate_header":[2,"Homework Problems"]},
+    "important":{"use_arg_as_title":true},
+    "itemize":{"surround_with_tag":"ul"},
+    "lessimportant":{"use_arg_as_title":true},
+    "listing":{"surround_with_tag":"pre","n_req":1,"n_opt":0},
+    "notation":{"generate_header":[2,"Notation"]},
+    "optionaltopic":{"use_arg_as_title":true},
+    "othernotation":{"generate_header":[2,"Other Notation"]},
+    "reading":{},
+    "selfcheck":{"stick_in":"<i>self-check:</i>","stick_at_end":"(answer in the back of the PDF version of the book)"},
+    "summary":{"generate_header":[2,"Summary"]},
+    "summarytext":{"generate_header":[2,"Summary"]},
+    "verbatim":{"surround_with_tag":"pre"},
+    "vocab":{"generate_header":[2,"Vocabulary"]}
+  }
+}
