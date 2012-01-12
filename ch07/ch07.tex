@@ -162,6 +162,8 @@ argument by $n$, giving a number with an argument of $\phi$.
 
 Euler's formula is used frequently in physics and engineering.
 
+\pagebreak
+
 \begin{eg}
 \egquestion Write the sine and cosine functions in terms of exponentials.
 
@@ -195,6 +197,31 @@ a manifestly real result.\footnote{In general, the use of complex number techniq
 do an integral could result in a complex number, but that complex number would
 be a constant, which could be subsumed within the usual constant of integration.}
 
+\end{eg}
+
+\begin{eg}
+Euler found the equation
+\begin{equation*}
+  \pi = 20\tan^{-1}\frac{1}{7}+8\tan^{-1}\frac{3}{79} \qquad ,
+\end{equation*}
+which allowed the computation of $\pi$ to high precision in the era before electronic
+calculators, since the Taylor series for the inverse tangent converges rapidly for
+small inputs. A cute way of proving the validity of the equation is to calculate
+\begin{equation*}
+  (7+i)^{20}(79+3i)^8
+\end{equation*}
+as follows in Yacas:
+\restartLineNumbers
+\begin{Code}
+  \ii (7+I)^20*(79+3*I)^8;
+  \oo{-1490116119384765625}
+  \oo{      00000000000000}
+\end{Code}
+The fact that it is purely real, and has a negative real part, demonstrates
+that the quantity on the right side of the original equation equals $\pi+2\pi n$,
+where $n$ is an integer. Numerical estimation shows that $n=0$.
+Although the proof was straightforward, it provides zero insight into
+how Euler figured it out in the first place!
 \end{eg}
 
 \section{Partial fractions revisited}\label{sec:complex-part-frac}\index{integration!methods of!partial fractions}\index{partial fractions}
