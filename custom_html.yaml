@@ -1,5 +1,25 @@
 ---
-command: {}
+command:
+  myvec: {}
+  myunit: {}
+  munit: {}
+  kgunit: {}
+  gunit: {}
+  sunit: {}
+  degcunit: {}
+  junit: {}
+  nunit: {}
+  kunit: {}
+  unitdot: {}
+  momunit: {}
+  btheta: {}
+  bomega: {}
+  balpha: {}
+  bsigma: {}
+  btau: {}
+  bell: {}
+  zu: {}
+  zb: {}
 environment:
   dialogline: {}
   dq:
