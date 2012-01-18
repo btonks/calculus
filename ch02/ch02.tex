@@ -1151,7 +1151,7 @@ Sometimes a limit can be evaluated simply by plugging in numbers:
 In some examples, plugging in fails if we try to do it directly, but
 can be made to work if we massage the expression into a different form:
 
-\begin{eg}
+\begin{eg}\label{eg:infty-infty-indet-form-by-massaging}
 \egquestion Evaluate
 \begin{equation*}
   \lim_{x\rightarrow 0} \frac{\frac{2}{x}+7}{\frac{1}{x}+8686} \qquad .
@@ -1233,7 +1233,7 @@ where the notations $x\rightarrow 0^{-}$ and $x\rightarrow 0^{+}$ are to be read
 below,'' and ``as $x$ approaches zero from above.''
 \end{eg}
 
-\subsection{L'H\^{o}pital's rule}\index{L'H\^{o}pital's rule}
+\subsection{L'H\^{o}pital's rule (simplest form)}\label{lhospital-simple}\index{L'H\^{o}pital's rule!simplest form}
 
 Consider the limit
 \begin{equation*}
@@ -1293,7 +1293,7 @@ We can check our work using Inf:
 
 This is a special case of a the following rule for calculating limits involving $0/0$:
 
-\begin{important}[L'H\^{o}pital's rule]
+\begin{important}[L'H\^{o}pital's rule (simplest form)]
 If $u$ and $v$ are functions with $u(a)=0$ and $v(a)=0$, the derivatives $\dot{v}(a)$ and $\dot{v}(a)$ are defined,
 and the derivative $\dot{v}(a)\ne 0$,
 then
@@ -1312,6 +1312,8 @@ is defined in terms of the standard part). The standard part of a quotient like 
 standard parts, provided that both $p$ and $q$ are finite (which we've established), and $q \ne 0$ (which is
 true by assumption). But the standard part of $\der u/\der x$ is the definition of the derivative $\dot{u}$, and
 likewise for  $\der v/\der x$, so this establishes the result.
+
+We will generalize L'H\^{o}pital's rule on p.~\pageref{lhospital-general}.
 
 By the way, the housetop accent on the ``\^{o}'' in l'H\^{o}pital means that in Old French it used to be spelled and
 pronounced ``l'Hospital,'' but the ``s'' later became silent, so they stopped writing it. So yes, it is the
@@ -1342,43 +1344,6 @@ the limit is undefined, and undefine because it blows up to infinity, we write
 \end{equation*}
 \end{eg}
 
-In the following example, we have to use l'H\^{o}pital's rule twice before we get an answer.
-
-\begin{eg}
-\egquestion Evaluate
-\begin{equation*}
-  \lim_{x\rightarrow \pi} \frac{1+\cos x}{(x-\pi)^2}
-\end{equation*}
-
-\eganswer Applying  l'H\^{o}pital's rule gives
-\begin{equation*}
-  \frac{-\sin x}{2(x-\pi)} \qquad ,
-\end{equation*}
-which still produces $0/0$ when we plug in $x=\pi$. Going again, we get
-\begin{equation*}
-  \frac{-\cos x}{2} = \frac{1}{2} \qquad .
-\end{equation*}
-\end{eg}
-
-L'H\^{o}pital's rule
-also works when the numerator and denominator both blow up to infinity at a particular point.
-
-\begin{eg}
-\egquestion Evaluate
-\begin{equation*}
-  \lim_{x\rightarrow 0} \frac{1+1/x}{1+2/x} \qquad .
-\end{equation*}
-
-\eganswer Both the numerator and the denominator go to infinity. Differentiation of the top
-and bottom gives $(-x^{-2})/(-2x^{-2})\rightarrow 1/2$. We can see that the reason the rule
-worked was that (1) the constant terms were irrelevant because they become negligible as
-the $1/x$ terms blow up; and (2) differentiating the blowing-up $1/x$ terms makes them into
-the same $x^{-2}$ on top and bottom, which cancel.
-
-Note that we could also have gotten this result without l'H\^{o}pital's rule, simply by
-multiplying both the top and the bottom of the original expression by $x$ in order to rewrite it
-as $(x+1)/(x+2)$.
-\end{eg}
 
 \subsection{Another perspective on indeterminate forms}
 
@@ -1497,7 +1462,7 @@ from $\sin a$ for all positive infinite values of $a$.
 Often we're interested in finding the limit as $x$ approaches infinity of an expression
 that is written as an indeterminate form like $H/K$, where both  $H$ and $K$ are infinite.
 
-\begin{eg}
+\begin{eg}\label{eg:a-limit-at-infinity}
 \egquestion Evaluate the limit
 \begin{equation*}
   \lim_{x\rightarrow \infty} \frac{2x+7}{x+8686} \qquad .
@@ -1517,6 +1482,161 @@ bottom is 1, and the standard part of the whole thing is therefore 2.
 Another approach is to use l'H\^{o}pital's rule. The derivative
 of the top is 2, and the derivative of the bottom is 1, so the limit is 2/1=2.
 \end{eg}
+
+
+\subsection{L'H\^{o}pital's rule (general form)}\label{lhospital-general}\index{L'H\^{o}pital's rule!general form}
+
+Mathematical theorems are often like cars. I own a Honda Fit that is about as bare-bones as you can get
+these days, but persuading a dealer to sell me that car was like pulling teeth. The salesman was absolutely
+certain that any sane customer would want to pay an extra \$1,800 for such crucial amenities as
+floor mats and a chrome tailpipe. L'H\^{o}pital's rule in its most general form is a much fancier piece of machinery
+than the stripped down model described on p.~\pageref{lhospital-simple}. The price you pay for the deluxe model
+is that the proof becomes much more complicated than the one-liner that sufficed for the simple version.
+We will develop the luxury features one at a time.
+
+\subsubsection{Multiple applications of the rule}
+In the following example, we have to use l'H\^{o}pital's rule twice before we get an answer.
+
+\begin{eg}\label{eg:lhospital-differentiating-twice}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow \pi} \frac{1+\cos x}{(x-\pi)^2}
+\end{equation*}
+
+\eganswer Applying  l'H\^{o}pital's rule gives
+\begin{equation*}
+  \frac{-\sin x}{2(x-\pi)} \qquad ,
+\end{equation*}
+which still produces $0/0$ when we plug in $x=\pi$. Going again, we get
+\begin{equation*}
+  \frac{-\cos x}{2} = \frac{1}{2} \qquad .
+\end{equation*}
+\end{eg}
+
+The proof that this always works can be broken down into two steps.
+
+Step 1: We first have to establish a stronger form of l'H\^{o}pital's rule
+that states that $\lim u/v=\lim \dot{u}/\dot{v}$ rather than $\lim u/v=\dot{u}/\dot{v}$.
+This form is stronger, because in a case like example \ref{eg:lhospital-differentiating-twice},
+$\dot{u}/\dot{v}$ isn't defined, but $\lim \dot{u}/\dot{v}$ is.
+The stronger form can be proved through a somewhat tedious argument using the mean value theorem (p.~\pageref{mean-value-theorem-stated});
+the interested reader can find it in the Wikipedia article on l'H\^{o}pital's rule.
+
+Step 2: If we need
+to take $n$ derivatives, the proof follows by applying the extra-strength rule $n$ times.\footnote{There is a logical
+subtlety here, which is that although we've given a clearcut recipe for cooking up a proof for any given
+$n$, that isn't quite the same thing as proving it for any positive integer $n$. This is an example where what we really need is a technique called
+proof by induction. In general, proof by induction works like this. Suppose we prove some statement
+about the integer 1, e.g., that l'H\^{o}pital's rule is valid when you take 1 derivative. Now say
+that we can also prove that if that statement holds for a given $n$, it also holds for $n+1$. Proof by
+induction means that we can then consider the statement as having been proved for all positive integers.
+For suppose the contrary. Then there would be some least $n$ for which it failed, but this would
+be a contradiction, since it would hold for $n-1$.}
+
+\subsubsection{Change of variable}
+
+We will build up the rest of the features of l'H\^{o}pital's rule  using the technique of a change of variable. To demonstrate
+how this works, let's imagine that we were starting from an even more stripped down version of l'H\^{o}pital's rule
+than the one on p.~\pageref{lhospital-simple}. Say we only know how to do limits of the form $x\rightarrow0$ rather than
+$x\rightarrow a$ for an arbitrary real number $a$. We could then evaluate $\lim_{x\rightarrow a} u/v$ simply
+by defining $t=x-a$ and reexpressing $u$ and $v$ in terms of $t$.
+
+\begin{eg}
+\egquestion
+Reduce
+\begin{equation*}
+  \lim_{x\rightarrow \pi}\frac{\sin x}{x-\pi}
+\end{equation*}
+to a form involving a limit at 0.
+
+\eganswer
+Define $t=x-\pi$. Solving for $x$ gives $x=t+\pi$. We substitute into the above expression
+to find
+\begin{equation*}
+  \lim_{x\rightarrow \pi}\frac{\sin x}{x-\pi} =   \lim_{t\rightarrow 0}\frac{\sin (t+\pi)}{t} \qquad .
+\end{equation*}
+If all we knew was the $\rightarrow0$ form of l'H\^{o}pital's rule, then this would suffice
+to reduce the problem to one we knew how to solve. In fact, this kind of change of variable works in
+all cases, not just for a limit at $\pi$, so rather then going through a laborious change of variable
+every time, we could simply establish the more general form on p.~\pageref{lhospital-simple}, with
+$\rightarrow a$.
+\end{eg}
+
+This change of variable is a specific example of a much more general method of problem-solving in which we look for a way to reduce a hard problem
+to an easier one. We will encounter changes of variable again on p.~\pageref{change-of-variable-for-integration} as a technique for
+integration, which means undoing the operation of differentiation.
+
+\subsubsection{The indeterminate form $\infty/\infty$}
+Consider an example like this:
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{1+1/x}{1+2/x} \qquad .
+\end{equation*}
+This is an indeterminate form like $\infty/\infty$ rather than the $0/0$ form for which we've already
+proved l'H\^{o}pital's rule. It turns out that l'H\^{o}pital's rule applies to examples like this as
+well.
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow 0} \frac{1+1/x}{1+2/x} \qquad .
+\end{equation*}
+
+\eganswer Both the numerator and the denominator go to infinity. Differentiation of the top
+and bottom gives $(-x^{-2})/(-2x^{-2}) = 1/2$. We can see that the reason the rule
+worked was that (1) the constant terms were irrelevant because they become negligible as
+the $1/x$ terms blow up; and (2) differentiating the blowing-up $1/x$ terms makes them into
+the same $x^{-2}$ on top and bottom, which cancel.
+
+Note that we could also have gotten this result without l'H\^{o}pital's rule, simply by
+multiplying both the top and the bottom of the original expression by $x$ in order to rewrite it
+as $(x+1)/(x+2)$.
+\end{eg}
+
+To prove that l'H\^{o}pital's rule works in general for $\infty/\infty$ forms, 
+we do a change of variable on the \emph{outputs} of the functions $u$ and $v$
+rather than their inputs. Suppose that our original problem is of the form
+\begin{equation*}
+  \lim \frac{u}{v} \qquad ,
+\end{equation*}
+where both functions blow up.\footnote{Think about what happens when only $u$ blows up,
+or only $v$.} We then define $U=1/u$ and $V=1/v$. We now have
+\begin{equation*}
+  \lim \frac{u}{v} = \lim \frac{1/U}{1/V} =\lim \frac{V}{U} \qquad ,
+\end{equation*}
+and since $U$ and $V$ both approach zero, we have reduced the problem to one that can be solved
+using the version of l'H\^{o}pital's rule already proved
+for indeterminate forms like $0/0$. Differentiating and applying the chain rule, we have
+\begin{equation*}
+  \lim \frac{u}{v} = \lim \frac{\dot{V}}{\dot{U}} = \lim \frac{-v^{-2}\dot{v}}{-u^{-2}\dot{u}} \qquad .
+\end{equation*}
+Since $\lim ab=\lim a \lim b$ provided that $\lim a$ and $\lim b$ are both defined, we can rearrange
+factors to produce the desired result.
+
+\subsubsection{Limits at infinity}
+It is straightforward to prove a variant of l'H\^{o}pital's rule that allows us to
+do limits at infinity.
+The general proof is left as an exercise (problem \ref{hw:lhospital-at-infinity}, p.~\pageref{hw:lhospital-at-infinity}).
+The result is that l'H\^{o}pital's rule is equally valid when the limit is at $\pm\infty$ rather than at some
+real number $a$.
+
+\begin{eg}
+\egquestion Evaluate
+\begin{equation*}
+  \lim_{x\rightarrow \infty} \frac{2x+7}{x+8686} \qquad .
+\end{equation*}
+
+\egquestion 
+We could use a change of variable to make this into example \ref{eg:infty-infty-indet-form-by-massaging} 
+on p.~\pageref{eg:infty-infty-indet-form-by-massaging}, which was solved using an \emph{ad hoc} and
+multiple-step procedure. But having established the more general form of l'H\^{o}pital's rule, we can
+do it in one step.
+Differentiation of the top and bottom produces
+\begin{equation*}
+  \lim_{x\rightarrow \infty} \frac{2x+7}{x+8686} = \frac{2}{1} = 1 \qquad .
+\end{equation*}
+\end{eg}
+
+
 
 
 \begin{hwsection}
@@ -1790,6 +1910,15 @@ Evaluate
 \end{equation*}
 exactly, and check your result by numerical approximation.
 \end{hwwithsoln}
+
+\begin{hw}\label{hw:lhospital-at-infinity}
+Prove a form of l'H\^{o}pital's rule stating that
+\begin{equation*}
+\lim_{x\rightarrow\infty}\frac{f(x)}{g(x)}
+\end{equation*}
+is equal to the limit of $f'/g'$ at infinity. Hint: change to some 
+new variable $u$ such that $x\rightarrow\infty$ corresponds to $u\rightarrow0$.
+\end{hw}
 
 
 \begin{hw}
